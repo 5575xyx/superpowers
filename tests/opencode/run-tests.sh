@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Main test runner for OpenCode plugin test suite
 # Runs all tests and reports results
 set -euo pipefail

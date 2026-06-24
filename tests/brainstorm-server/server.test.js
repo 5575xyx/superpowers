@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Integration tests for the brainstorm server.
  *
  * Tests the full server behavior: HTTP serving, WebSocket communication,

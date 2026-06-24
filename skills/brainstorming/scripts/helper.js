@@ -1,4 +1,4 @@
-(function() {
+﻿(function() {
   const MIN_RECONNECT_MS = 500;
   const MAX_RECONNECT_MS = 30000;
   const TOMBSTONE_AFTER_MS = 15000; // show the "paused" overlay after this long disconnected

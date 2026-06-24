@@ -1,4 +1,4 @@
-# Task Reviewer Prompt Template
+﻿# Task Reviewer Prompt Template
 
 Use this template when dispatching a task reviewer subagent. The reviewer
 reads the task's diff once and returns two verdicts: spec compliance and

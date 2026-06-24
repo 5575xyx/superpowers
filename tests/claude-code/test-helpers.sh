@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Helper functions for Claude Code skill tests
 
 # Run Claude Code with a prompt and capture output
@@ -143,7 +143,7 @@ cleanup_test_project() {
 create_test_plan() {
     local project_dir="$1"
     local plan_name="${2:-test-plan}"
-    local plan_file="$project_dir/docs/superpowers/plans/$plan_name.md"
+    local plan_file="$project_dir/docs/PowersNexus/plans/$plan_name.md"
 
     mkdir -p "$(dirname "$plan_file")"
 

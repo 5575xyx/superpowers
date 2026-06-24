@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tests for the injected browser client (helper.js).
  *
  * helper.js runs in the browser, so its DOM behaviour is exercised live; here we

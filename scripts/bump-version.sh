@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 #
 # bump-version.sh — bump version numbers across all declared files,
 # with drift detection and repo-wide audit for missed files.

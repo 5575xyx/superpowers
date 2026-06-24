@@ -1,4 +1,4 @@
----
+﻿---
 name: IDE / Platform Support Request
 about: Request support for a new IDE, editor, or AI coding tool
 labels: platform-support
@@ -19,7 +19,7 @@ requested or discussed.
      integrations typically work with this tool. -->
 
 ## Have you tried manual installation?
-<!-- Many tools work with Superpowers through manual setup even without
+<!-- Many tools work with PowersNexus through manual setup even without
      official support. Did you try? What happened? -->
 
 ## Environment (required)

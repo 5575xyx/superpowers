@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Extended multi-turn test with more conversation history
 # This tries to reproduce the failure by building more context
 
@@ -8,11 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 TIMESTAMP=$(date +%s)
-OUTPUT_DIR="/tmp/superpowers-tests/${TIMESTAMP}/explicit-skill-requests/extended-multiturn"
+OUTPUT_DIR="/tmp/PowersNexus-tests/${TIMESTAMP}/explicit-skill-requests/extended-multiturn"
 mkdir -p "$OUTPUT_DIR"
 
 PROJECT_DIR="$OUTPUT_DIR/project"
-mkdir -p "$PROJECT_DIR/docs/superpowers/plans"
+mkdir -p "$PROJECT_DIR/docs/PowersNexus/plans"
 
 echo "=== Extended Multi-Turn Test ==="
 echo "Output dir: $OUTPUT_DIR"

@@ -1,4 +1,4 @@
-# Implementer Subagent Prompt Template
+﻿# Implementer Subagent Prompt Template
 
 Use this template when dispatching an implementer subagent.
 

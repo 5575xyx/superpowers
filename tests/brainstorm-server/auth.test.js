@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Security tests for the brainstorm server's per-session key.
  *
  * The companion server is reachable by any local browser tab (default loopback

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Unit tests for the zero-dependency WebSocket protocol implementation.
  *
  * Tests the WebSocket frame encoding/decoding, handshake computation,

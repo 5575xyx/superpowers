@@ -1,4 +1,4 @@
-: << 'CMDBLOCK'
+﻿: << 'CMDBLOCK'
 @echo off
 REM Cross-platform polyglot wrapper for hook scripts.
 REM On Windows: cmd.exe runs the batch portion, which finds and calls bash.

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Test runner for Claude Code skills
 # Tests skills by invoking Claude Code CLI and verifying behavior
 set -euo pipefail

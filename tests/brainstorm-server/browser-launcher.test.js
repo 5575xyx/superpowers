@@ -1,4 +1,4 @@
-const assert = require('assert');
+﻿const assert = require('assert');
 const {
   browserLauncherForPlatform
 } = require('../../skills/brainstorming/scripts/server.cjs');

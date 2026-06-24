@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Test: Bootstrap Content Caching (#1202)
 # Verifies the OpenCode transform caches bootstrap content between agent steps.
 set -euo pipefail
@@ -11,13 +11,13 @@ source "$SCRIPT_DIR/setup.sh"
 trap cleanup_test_env EXIT
 
 run_present_file_check() {
-    node "$SCRIPT_DIR/test-bootstrap-caching.mjs" "$SUPERPOWERS_PLUGIN_FILE" present
+    node "$SCRIPT_DIR/test-bootstrap-caching.mjs" "$PowersNexus_PLUGIN_FILE" present
 }
 
 run_missing_file_check() {
-    mv "$SUPERPOWERS_SKILLS_DIR/using-superpowers/SKILL.md" "$TEST_HOME/using-superpowers.SKILL.md.bak"
+    mv "$PowersNexus_SKILLS_DIR/using-PowersNexus/SKILL.md" "$TEST_HOME/using-PowersNexus.SKILL.md.bak"
 
-    node "$SCRIPT_DIR/test-bootstrap-caching.mjs" "$SUPERPOWERS_PLUGIN_FILE" missing
+    node "$SCRIPT_DIR/test-bootstrap-caching.mjs" "$PowersNexus_PLUGIN_FILE" missing
 }
 
 echo "Test 1: Caches bootstrap after the first successful transform..."

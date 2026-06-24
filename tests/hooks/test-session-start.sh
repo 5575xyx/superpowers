@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -207,24 +207,24 @@ assert_command_output \
     bash "$HOOK_UNDER_TEST"
 
 legacy_home="$(make_home legacy-warning-removed)"
-mkdir -p "$legacy_home/.config/superpowers/skills"
+mkdir -p "$legacy_home/.config/PowersNexus/skills"
 assert_command_output \
     "SessionStart omits obsolete legacy custom-skill warning" \
     "nested" \
     "" \
-    "Superpowers now uses"$'\037'"~/.config/superpowers/skills"$'\037'"~/.claude/skills"$'\037'"legacy" \
+    "PowersNexus now uses"$'\037'"~/.config/PowersNexus/skills"$'\037'"~/.claude/skills"$'\037'"legacy" \
     "$legacy_home" \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$HOOK_UNDER_TEST"
 
 codex_legacy_home="$(make_home codex-legacy-warning-removed)"
 codex_legacy_data="$TEST_ROOT/codex-legacy-warning-removed/data"
-mkdir -p "$codex_legacy_home/.config/superpowers/skills" "$codex_legacy_data"
+mkdir -p "$codex_legacy_home/.config/PowersNexus/skills" "$codex_legacy_data"
 assert_command_output \
     "Codex SessionStart omits obsolete legacy custom-skill warning" \
     "nested" \
     "" \
-    "Superpowers now uses"$'\037'"~/.config/superpowers/skills"$'\037'"~/.claude/skills"$'\037'"legacy" \
+    "PowersNexus now uses"$'\037'"~/.config/PowersNexus/skills"$'\037'"~/.claude/skills"$'\037'"legacy" \
     "$codex_legacy_home" \
     PLUGIN_DATA="$codex_legacy_data" \
     CLAUDE_PLUGIN_DATA="$codex_legacy_data" \

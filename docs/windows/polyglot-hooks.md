@@ -1,4 +1,4 @@
-# Cross-Platform Polyglot Hooks for Claude Code
+﻿# Cross-Platform Polyglot Hooks for Claude Code
 
 Claude Code plugins need hooks that work on Windows, macOS, and Linux. This document describes the single generic dispatcher pattern used in `hooks/run-hook.cmd`.
 

@@ -1,4 +1,4 @@
-# Creation Log: Systematic Debugging Skill
+﻿# Creation Log: Systematic Debugging Skill
 
 Reference example of extracting, structuring, and bulletproofing a critical skill.
 
