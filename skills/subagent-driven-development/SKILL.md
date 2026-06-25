@@ -202,6 +202,66 @@ These documents contain binding requirements that MUST be followed throughout im
 - For implementers: Replace `[MASTER_SPECS_PATH]`, `[DESIGN_DOC_PATH]`, and `[DELTA_SPECS_PATH]` with actual file paths
 - For reviewers: Replace the same placeholders so they can verify design compliance
 
+## Design Deviation Tracking
+
+**Purpose:** Allow flexibility in implementation while maintaining traceability and user control.
+
+**Deviation Process:**
+
+1. **Detection:** Implementer identifies a discrepancy between design and actual implementation
+2. **Reporting:** Implementer reports the deviation with:
+   - Original design specification
+   - Proposed change
+   - Reason for deviation
+   - Impact analysis
+3. **User Decision:** Present to user for approval:
+   ```markdown
+   ⚠️ Design Deviation Detected
+
+   **Original Design:**
+   [description from design document]
+
+   **Proposed Change:**
+   [description of actual implementation]
+
+   **Reason:**
+   [why this change is necessary/better]
+
+   **Impact:**
+   - Affected modules: [list]
+   - Risk level: [Low/Medium/High]
+   - Testing required: [Yes/No]
+
+   **Options:**
+   - [ ] Follow original design (revert to design specification)
+   - [ ] Approve deviation and continue
+   - [ ] Pause and discuss further
+   ```
+
+4. **Recording:** If approved, record deviation in `deviations.md`:
+   ```markdown
+   # Design Deviations
+
+   | ID | Description | Original | Change | Reason | Impact | Approval |
+   |----|-------------|----------|--------|--------|--------|----------|
+   | DEV-001 | Database selection | MySQL | PostgreSQL | JSON support better | Low | Approved |
+   ```
+
+5. **Review:** Reviewer must verify that all deviations have been approved before marking task complete.
+
+**Allowed vs. Forbidden Deviations:**
+
+| Type | Example | Handling |
+|------|---------|----------|
+| ✅ Technical optimization | MySQL → PostgreSQL | Record + user approval |
+| ✅ API refinement | Parameter name change | Update design document |
+| ✅ Implementation simplification | Remove redundant step | Record + user approval |
+| ❌ Requirement scope change | Remove feature | Must user confirmation |
+| ❌ Security downgrade | Skip validation | Forbidden |
+| ❌ Data model change | Change table structure | Must user confirmation |
+
+**Deviation Log:** Store at `.novaway/powersnexus/changes/<name>/deviations.md`
+
 Never use `HEAD~1`, which silently truncates multi-commit tasks.
 - A dispatch prompt describes one task, not the session's history. Do not
   paste accumulated prior-task summaries ("state after Tasks 1-3") into

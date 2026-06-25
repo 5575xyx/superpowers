@@ -21,49 +21,67 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
+### Phase 0: Project Assessment
 1. **Explore project context** — check files, docs, recent commits
-2. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure
-3. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
-4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-5. **Propose 2-3 approaches** — with trade-offs and your recommendation
-6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies
-8. **Design self-review** — review the design for completeness, consistency, testability, and maintainability
-9. **Generate OpenSpec artifacts** — create proposal, delta specs, design, tasks, and cross-reference documents
-10. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-11. **User reviews written spec** — ask user to review the spec file before proceeding
-12. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+2. **Assess project complexity** — determine Fast/Standard/Complete path with user approval
+3. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure
+
+### Phase 1: Design (All Paths)
+4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
+5. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+6. **Propose 2-3 approaches** — with trade-offs and your recommendation
+7. **Present design** — in sections scaled to their complexity, get user approval after each section
+
+### Phase 2: Quality Assurance (Standard/Complete Paths Only)
+8. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies (Complete Path only)
+9. **Design self-review** — review the design for completeness, consistency, testability, and maintainability (Complete Path only)
+
+### Phase 3: Generate Artifacts (All Paths)
+10. **Generate OpenSpec artifacts** — create appropriate documents based on selected path:
+    - **Fast Path:** design.md + tasks.md
+    - **Standard Path:** proposal.md + delta-specs/ + design.md + tasks.md + cross-reference.md
+    - **Complete Path:** all artifacts + risk assessment + NFR documentation
+11. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
+12. **User reviews written spec** — ask user to review the spec file before proceeding (Standard/Complete Paths only)
+
+### Phase 4: Transition to Implementation
+13. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
 ```dot
 digraph brainstorming {
     "Explore project context" [shape=box];
+    "Assess complexity\n(Fast/Standard/Complete)" [shape=diamond];
     "Initialize OpenSpec" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Risk assessment" [shape=box];
-    "Design self-review" [shape=box];
+    "Risk assessment\n(Complete only)" [shape=box];
+    "Design self-review\n(Complete only)" [shape=box];
     "Generate OpenSpec artifacts" [shape=box];
-    "Spec self-review\n(fix inline)" [shape=box];
+    "Spec self-review\n(Standard/Complete)" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
-    "Explore project context" -> "Initialize OpenSpec";
+    "Explore project context" -> "Assess complexity\n(Fast/Standard/Complete)";
+    "Assess complexity\n(Fast/Standard/Complete)" -> "Initialize OpenSpec";
     "Initialize OpenSpec" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Risk assessment" [label="yes"];
-    "Risk assessment" -> "Design self-review";
-    "Design self-review" -> "Generate OpenSpec artifacts";
-    "Generate OpenSpec artifacts" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews spec?";
+    "User approves design?" -> "Risk assessment\n(Complete only)" [label="yes, Complete"];
+    "User approves design?" -> "Generate OpenSpec artifacts" [label="yes, Fast/Standard"];
+    "Risk assessment\n(Complete only)" -> "Design self-review\n(Complete only)";
+    "Design self-review\n(Complete only)" -> "Generate OpenSpec artifacts";
+    "Generate OpenSpec artifacts" -> "Spec self-review\n(Standard/Complete)" [label="Standard/Complete"];
+    "Generate OpenSpec artifacts" -> "Invoke writing-plans skill" [label="Fast"];
+    "Spec self-review\n(Standard/Complete)" -> "User reviews spec?";
     "User reviews spec?" -> "Generate OpenSpec artifacts" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+}
 }
 ```
 
@@ -71,7 +89,57 @@ digraph brainstorming {
 
 ## The Process
 
-**Understanding the idea:**
+### Project Complexity Assessment
+
+**Before asking detailed questions, assess the project complexity:**
+
+```markdown
+## Project Complexity Assessment
+
+Based on your description, I've evaluated this project as:
+
+**[Simple / Medium / Complex]**
+
+**Evaluation Criteria:**
+- **Scope:** [description]
+- **Estimated duration:** [time estimate]
+- **Affected modules:** [count]
+- **Dependencies:** [list]
+
+**Recommended Workflow:** [Fast Path / Standard Path / Complete Path]
+
+**Options:**
+- [ ] Fast Path (推荐) - Quick design + direct implementation
+  - Best for: small fixes, single-file changes, < 1 day work
+  - Output: brief design + tasks
+- [ ] Standard Path - Structured design + implementation
+  - Best for: typical features, 1-5 day work, multiple files
+  - Output: proposal + delta-specs + design + tasks + cross-reference
+- [ ] Complete Path - Full quality assurance
+  - Best for: complex systems, > 5 day work, critical features
+  - Output: complete artifacts + risk assessment + design review + NFR
+
+**Which workflow would you like to use?**
+```
+
+**Workflow Definitions:**
+
+| Path | Complexity | Output | Quality Gates |
+|------|------------|--------|---------------|
+| **Fast Path** | Simple | design.md, tasks.md | User approval |
+| **Standard Path** | Medium | Full artifacts | User approval + spec self-review |
+| **Complete Path** | Complex | Full artifacts + risk assessment + design review | All gates |
+
+**Auto-detection:**
+- If the request is clearly simple (e.g., "fix a typo", "change a color"), auto-select Fast Path
+- If the request involves multiple modules or complex logic, auto-select Standard Path
+- If the request involves critical systems (auth, payments, security), auto-select Complete Path
+
+**User override:** User can always choose a different path regardless of auto-detection
+
+**After user selection:** Proceed with the appropriate depth of documentation and review.
+
+### Understanding the idea:
 
 - Check out the current project state first (files, docs, recent commits)
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
@@ -132,6 +200,37 @@ After user approves the design and before generating artifacts, conduct a thorou
 4. **Early warning signs** — how we'll detect it early
 
 For high-impact/high-likelihood risks, include mitigation steps in the design itself.
+
+**Risk Quantification Standards (Complete Path):**
+
+Use this standardized matrix for risk assessment:
+
+| Likelihood | Condition | Examples |
+|------------|-----------|----------|
+| High (H) | Historical data shows >50% occurrence in similar projects | New tech stack adoption, complex integrations |
+| Medium (M) | Historical data shows 20-50% occurrence | Third-party API usage, moderate complexity |
+| Low (L) | Historical data shows <20% occurrence | Standard CRUD operations, well-understood patterns |
+
+| Impact | Condition | Examples |
+|--------|-----------|----------|
+| High (H) | Affects >10% users or core business functions | Payment failures, authentication issues |
+| Medium (M) | Affects 1-10% users or secondary functions | UI rendering issues, notification delays |
+| Low (L) | Affects <1% users or edge cases | Log formatting, minor UI tweaks |
+
+**Risk Priority Matrix:**
+
+|          | Impact Low | Impact Medium | Impact High |
+|----------|-----------|---------------|-------------|
+| **Likelihood Low** | ⚪ Very Low | 🟢 Low | 🟡 Medium |
+| **Likelihood Medium** | 🟢 Low | 🟡 Medium | 🟠 High |
+| **Likelihood High** | 🟡 Medium | 🟠 High | 🔴 Critical |
+
+**Action Thresholds:**
+- 🔴 Critical → Must resolve before implementation begins
+- 🟠 High → Must have mitigation plan + early warning
+- 🟡 Medium → Should have mitigation plan
+- 🟢 Low → Acceptable risk, no action needed
+- ⚪ Very Low → Ignore
 
 ## Design Self-Review
 

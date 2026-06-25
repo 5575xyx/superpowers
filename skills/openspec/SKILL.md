@@ -182,6 +182,7 @@ Use templates from `skills/openspec/templates/`:
 - `design.md` — Design template
 - `tasks.md` — Tasks template
 - `cross-reference.md` — Document relationship tracking template
+- `deviations.md` — Design deviation tracking template
 
 ## Schema
 

@@ -62,7 +62,52 @@ Cannot proceed with merge/PR until all acceptance criteria are verified.
 
 Stop. Don't proceed to Step 2.
 
-**If acceptance criteria met:** Continue to Step 2.
+**If acceptance criteria met:** Continue to Step 1.7.
+
+### Step 1.7: Document Consistency Check
+
+**Automated check for document consistency:**
+
+1. **Cross-reference validation:**
+   - Read `.novaway/powersnexus/changes/<name>/cross-reference.md`
+   - Verify Requirements ↔ Tasks mapping is complete
+   - Verify Tasks ↔ Files mapping reflects actual changes
+   - Check for any unimplemented requirements
+
+2. **Design vs. Implementation check:**
+   - Compare actual file changes with design document
+   - Check for unapproved deviations (read `deviations.md` if exists)
+   - Verify all design decisions have been implemented
+
+3. **Generate consistency report:**
+   ```markdown
+   ## Document Consistency Report
+
+   **Cross-reference Status:**
+   - Requirements mapped to tasks: {{N}}/{{TOTAL}}
+   - Tasks mapped to files: {{N}}/{{TOTAL}}
+   - Unimplemented requirements: [LIST]
+
+   **Design Compliance:**
+   - Implemented as designed: {{N}}/{{TOTAL}}
+   - Approved deviations: {{N}}
+   - Unapproved deviations: {{N}}
+
+   **Overall Status:** [✅ Consistent / ⚠️ Minor gaps / ❌ Inconsistent]
+   ```
+
+**If status is ❌ Inconsistent:**
+```
+Document inconsistency detected:
+
+[List issues]
+
+Cannot proceed with merge/PR until documents are consistent.
+```
+
+Stop. Don't proceed to Step 2.
+
+**If status is ✅ Consistent or ⚠️ Minor gaps:** Continue to Step 2.
 
 ### Step 2: Archive OpenSpec Change
 
