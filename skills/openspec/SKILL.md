@@ -153,7 +153,8 @@ After design approval in brainstorming:
 3. Generate delta specs based on requirements
 4. Generate design document
 5. Generate tasks checklist
-6. Transition to writing-plans skill
+6. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, this step is skipped and master specs are updated during archive)
+7. Transition to writing-plans skill
 
 ### Writing Plans → OpenSpec
 

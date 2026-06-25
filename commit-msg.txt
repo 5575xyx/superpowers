@@ -1,13 +1,22 @@
-修复 OpenCode 插件加载问题 - 保留原导出名称
+统一文档路径为 .novaway/powersnexus/
 
-根本原因：OpenCode 的插件系统可能硬编码了对 `SuperpowersPlugin` 导出名称的查找。
-
-解决方案：
-- 创建 `.opencode/plugins/superpowers.js`（与原项目相同的文件名）
-- 使用 `export const SuperpowersPlugin`（与原项目相同的导出名称）
-- 内部引用改为 `using-powersnexus` 技能
-- 更新 package.json main 入口指向新文件
+将所有工作流文档存储路径从 `.powersnexus/` 调整为 `.novaway/powersnexus/`，实现统一的目录结构。
 
 文件更新：
-- 创建 .opencode/plugins/superpowers.js - 兼容原项目结构
-- 修改 package.json - main 指向 superpowers.js
+- .gitignore - 将 .powersnexus/ 改为 .novaway/
+- skills/openspec/SKILL.md - 更新所有路径引用
+- skills/brainstorming/SKILL.md - 更新设计文档保存路径
+- skills/writing-plans/SKILL.md - 更新任务文档保存路径
+- skills/subagent-driven-development/SKILL.md - 更新进度和任务文档路径
+- skills/finishing-a-development-branch/SKILL.md - 更新归档路径
+
+新目录结构：
+```
+.novaway/
+├── powersnexus/
+│   ├── specs/                 # 主规格文档
+│   └── changes/               # 变更管理
+│       ├── <name>/            # 活动变更
+│       └── archive/           # 已完成变更
+└── ...                        # 其他工具的文档
+```

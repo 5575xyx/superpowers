@@ -112,6 +112,7 @@ After user approves the design, generate all OpenSpec artifacts in `.novaway/pow
 2. **delta-specs/** — Delta specs with ADDED/MODIFIED/REMOVED requirements
 3. **design.md** — Technical approach, architecture decisions, data flow
 4. **tasks.md** — Implementation checklist
+5. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, skip this step and let finishing-a-development-branch handle the merge)
 
 **Documentation:**
 
