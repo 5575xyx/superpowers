@@ -55,7 +55,7 @@ You MUST create a task for each of these items and complete them in order:
 
 ### Phase 1: Design (All Paths)
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
-5. **Ask clarifying questions** — Use the `AskUserQuestion` tool. One question at a time. MAXIMUM 8 questions total. Each question MUST have:
+5. **Ask clarifying questions** — Use the `question` tool. One question at a time. MAXIMUM 8 questions total. Each question MUST have:
    - 2-4 clear options (multiSelect: false/true)
    - An "Other" option at the end for custom input
    - Focus on: purpose, constraints, success criteria
@@ -184,10 +184,10 @@ Based on your description, I've evaluated this project as:
 - Check out the current project state first (files, docs, recent commits)
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
-- For appropriately-scoped projects, use the `AskUserQuestion` tool to ask clarifying questions
+- For appropriately-scoped projects, use the `question` tool to ask clarifying questions
 - **IMPORTANT: MAXIMUM 8 questions total.** You must be sharp and ask only the most critical questions. Avoid trivial or redundant questions.
 - **Question format requirements:**
-  - Always use `AskUserQuestion` tool (NOT plain text)
+  - Always use `question` tool (NOT plain text)
   - 2-4 clear options per question
   - ALWAYS include an "Other" option at the end for custom input
   - Set multiSelect to true only when multiple choices make sense
@@ -403,7 +403,7 @@ Wait for the user's response. If they request changes, make them and re-run the 
 ## Key Principles
 
 - **One question at a time** - Don't overwhelm with multiple questions
-- **Use AskUserQuestion tool** - Always use the tool for structured questions
+- **Use question tool** - Always use the tool for structured questions
 - **Max 8 questions** - Be sharp, ask only the most critical
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
 - **Always include "Other"** - For custom input when options don't cover all cases
