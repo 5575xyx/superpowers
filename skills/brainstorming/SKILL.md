@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. Auto-triggers task-size-assessor to recommend L0-L4 process level."
 ---
 
 # Brainstorming Ideas Into Designs
@@ -13,9 +13,25 @@ Start by understanding the current project context, then ask questions one at a 
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
 </HARD-GATE>
 
+## Five-Level Process System（五级流程体系）
+
+PowersNexus uses a 5-level process system. The task-size-assessor skill automatically evaluates the task and recommends the appropriate level.
+
+| Level | Name | Use Case | Core Steps | Docs Output | Est. Time |
+|-------|------|----------|------------|-------------|-----------|
+| **L0** | Micro Fix | typo, config, copy | Change → Verify → Commit | None | < 5 min |
+| **L1** | Quick Fix | small features, bug fixes | Quick design → Implement → Test | tasks.md | < 30 min |
+| **L2** | Standard | medium features, modules | design + tasks + review + test | design + tasks | 1-2 hrs |
+| **L3** | Full Process | large features, architecture | Full OpenSpec + Red Team | full docs | 4-8 hrs |
+| **L4** | Heavyweight | core architecture, major refactor | L3 + multi-review + user approval | full + review records | 1 day+ |
+
+**Assessment trigger:** Automatically invoke task-size-assessor at the start of brainstorming to evaluate task size and recommend process level.
+
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
 Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+
+**L0/L1 exceptions:** For L0 (micro fix) and L1 (quick fix), the design can be extremely brief — even just a few lines. But you still need to present and get approval.
 
 ## Checklist
 
@@ -23,8 +39,9 @@ You MUST create a task for each of these items and complete them in order:
 
 ### Phase 0: Project Assessment
 1. **Explore project context** — check files, docs, recent commits, knowledge base
-2. **Assess project complexity** — determine Fast/Standard/Complete path with decision expert recommendation and user approval
-3. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure
+2. **Task size assessment** — invoke task-size-assessor skill to evaluate task and recommend L0-L4 process level; get user approval
+3. **Module existence check** — for each target module, check if `.novaway/powersnexus/specs/<module>/spec.md` exists; determine create mode (Greenfield/Brownfield/Mixed)
+4. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure (skip for L0/L1)
 
 ### Phase 1: Design (All Paths)
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.

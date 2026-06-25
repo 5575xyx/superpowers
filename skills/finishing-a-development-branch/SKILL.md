@@ -309,19 +309,27 @@ After merge completes:
 
 ### Step 2.5: Knowledge Base Update & Retrospective
 
-**Capture lessons learned and update the project knowledge base:**
+**MANDATORY: This step MUST be completed before finishing. Do NOT skip.**
+
+Capture lessons learned and update the project knowledge base. This is how we improve over time — every change makes the next one better.
 
 1. **Review what was learned:**
    - What went well? (best practices to keep)
    - What went wrong? (mistakes to avoid next time)
    - What was surprising? (unexpected findings)
    - What patterns emerged? (reusable solutions)
+   - What was hard? (things to simplify)
+   - What took longer than expected? (estimation lessons)
 
-2. **Update knowledge base files:**
+2. **Mandatory knowledge base update:**
 
-   **If `lessons-learned.md` exists:**
-   - Append new lessons to the appropriate category
-   - Include: description, source (this change), severity, date
+   **Always create a retrospective:**
+   - Save to `.novaway/powersnexus/knowledge/retrospectives/YYYY-MM-DD-<change-name>.md`
+   - This is MANDATORY — do NOT skip
+
+   **If lessons were learned:**
+   - Update `lessons-learned.md` with key takeaways
+   - Include: description, source, severity, date
 
    **If common mistakes were made:**
    - Update `knowledge/common-mistakes/*.md` with new entries
@@ -329,13 +337,19 @@ After merge completes:
 
    **If new best practices were discovered:**
    - Update `knowledge/best-practices/*.md` with new entries
-   - Include:适用场景, 具体做法, 代码示例
+   - Include: 适用场景, 具体做法, 代码示例
 
    **If reusable patterns were created:**
    - Add new pattern document to `knowledge/patterns/`
    - Include: 完整设计, 利弊分析, 使用示例
 
-3. **Generate retrospective report:**
+3. **Update knowledge base index:**
+   - Read `.novaway/powersnexus/knowledge/README.md`
+   - Add new entries to the index
+   - Categorize by type: 经验教训 / 常见错误 / 最佳实践 / 设计模式
+   - Include links for easy navigation
+
+4. **Generate retrospective report:**
    - Save to `.novaway/powersnexus/knowledge/retrospectives/YYYY-MM-DD-<change-name>.md`
    - Template structure:
 

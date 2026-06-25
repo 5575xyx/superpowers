@@ -5,27 +5,59 @@
 ## Core Principle
 
 **置信度驱动决策：**
-- 置信度高 → 自动决策，事后告知
-- 置信度中 → 推荐方案，等待确认
-- 置信度低 → 上报用户，由用户决定
+- 置信度极高 → 全自动执行，不打扰用户
+- 置信度高 → 执行后通知用户
+- 置信度中 → 推荐方案，一键确认
+- 置信度低 → 协商决策，给出选项
 - 安全敏感 → 始终用户决定
 
 ---
 
-## Decision Levels
+## Five-Level Confidence System（五级置信度系统）
 
-### L0 - Automatic Decision (自动决策)
+| 级别 | 名称 | 置信度 | 动作 | 用户干预 |
+|------|------|--------|------|----------|
+| **L0** | 全自动执行 | > 95% | 直接执行 | 无，事后可能不提 |
+| **L1** | 执行后通知 | 85-95% | 直接执行 | 事后告知 |
+| **L2** | 推荐+一键确认 | 70-85% | 给出推荐 | 快速确认（一键） |
+| **L3** | 协商决策 | 50-70% | 给出选项+理由 | 需要选择 |
+| **L4** | 用户决策 | < 50% | 陈述问题 | 必须用户决定 |
 
-**Trigger: Confidence > 90%**
+### L0 - Fully Automatic (全自动执行)
+
+**Trigger: Confidence > 95%**
+
+**Decision Types:**
+- Code formatting and style
+- Variable naming following conventions
+- Standard import ordering
+- Simple refactoring (no behavior change)
+- File organization within established patterns
+- Routine documentation updates
+
+**Process:**
+1. Evaluate options
+2. Make decision
+3. Implement immediately
+4. Do NOT mention unless asked
+
+**Example:**
+- 自动按项目风格格式化代码
+- 自动按字母顺序排序 import
+- 自动使用项目约定的变量命名
+
+---
+
+### L1 - Execute and Notify (执行后通知)
+
+**Trigger: Confidence 85-95%**
 
 **Decision Types:**
 - Variable naming and code structure
 - Algorithm selection for well-known problems
 - Refactoring choices (no behavior change)
-- Code style and formatting
-- File organization within established patterns
-- Rename and move operations
 - Standard implementation patterns
+- File structure following project conventions
 
 **Process:**
 1. Evaluate options
@@ -35,15 +67,15 @@
 
 **Example Output:**
 ```
-已决定使用 TypeScript 接口定义数据结构（L0 自动决策，置信度 95%）。
+已决定使用 TypeScript 接口定义数据结构（L1 决策，置信度 92%）。
 这是此类项目的标准做法，如有不同偏好请告诉我。
 ```
 
 ---
 
-### L1 - Recommended Decision (推荐决策)
+### L2 - Recommend + One-Click Confirm (推荐+一键确认)
 
-**Trigger: Confidence 70-90%**
+**Trigger: Confidence 70-85%**
 
 **Decision Types:**
 - Technology selection within established stack
@@ -51,13 +83,26 @@
 - Design pattern selection
 - API design choices
 - Database schema decisions (non-critical)
-- Architecture decisions within known patterns
 
 **Process:**
 1. Evaluate options with pros/cons
 2. Pick recommendation with reasoning
-3. Implement immediately
-4. Report decision with full rationale
+3. Present clearly with "recommended" label
+4. User can confirm with single response
+
+**Example Output:**
+```
+我建议使用 Zod 作为数据验证库（置信度 78%）。
+
+推荐理由：
+- 已有项目中使用过，团队熟悉
+- TypeScript 类型推断友好
+- 生态成熟，社区活跃
+
+确认使用 Zod 吗？（回复"确认"或"换一个"）
+```
+
+---
 5. User can override later
 
 **Example Output:**
@@ -84,7 +129,7 @@
 
 ---
 
-### L2 - Consultative Decision (协商决策)
+### L3 - Consultative Decision (协商决策)
 
 **Trigger: Confidence 50-70%**
 
@@ -103,44 +148,9 @@
 4. Wait for user confirmation
 5. Proceed only after approval
 
-**Example Output:**
-```markdown
-## 决策建议：微服务拆分方案
-
-**问题：** 是否将用户服务拆分为独立微服务？
-
-**推荐：** 保持单体，先模块化
-**置信度：** 60%（L2 - 协商决策）
-
-**选项分析：**
-
-### 方案 A：保持单体，内部模块化
-- ✅ 开发速度快，部署简单
-- ✅ 事务一致性容易保证
-- ❌ 未来扩展性有限
-- ❌ 团队协作可能冲突
-
-### 方案 B：拆分为微服务
-- ✅ 独立部署，独立扩展
-- ✅ 团队自治
-- ❌ 复杂度大幅增加
-- ❌ 需要处理分布式事务
-
-**风险评估：**
-- 选方案 A：未来可能需要拆分（可接受）
-- 选方案 B：前期成本高，可能过度设计
-
-**建议：** 先选方案 A，做好模块化，等真的需要时再拆分。
-
-**您的选择：**
-- [ ] 方案 A（推荐）
-- [ ] 方案 B
-- [ ] 我们再聊聊
-```
-
 ---
 
-### L3 - User Decision (用户决策)
+### L4 - User Decision (用户决策)
 
 **Trigger: Confidence < 50% OR involves core business interests**
 
@@ -160,32 +170,86 @@
 4. Do NOT express preference (stay neutral)
 5. Wait for user decision
 
-**Example Output:**
+---
+
+## Batch Decision Mechanism（批量决策机制）
+
+### What is Batch Decisioning
+
+Instead of asking the user about every single decision, collect multiple decisions and present them in a batch. This reduces context switching and user interruption.
+
+### When to Use Batch Decisions
+
+- Multiple L0/L1/L2 decisions accumulate
+- Decisions are related (e.g., all about architecture)
+- No urgent need for immediate answer
+- User has expressed preference for batch updates
+
+### Batch Size
+
+- **Small batch:** 3-5 decisions (recommended)
+- **Medium batch:** 5-8 decisions
+- **Large batch:** 8+ decisions (only if user explicitly wants)
+
+### Batch Decision Format
+
 ```markdown
-## 需要您的决策：认证方案
+## 📋 决策批量确认（共 5 项）
 
-**问题：** 用户认证系统的整体方案
+### 1. [L0] 代码风格 - 自动执行
+- **决策：** 使用 2 空格缩进
+- **置信度：** 98%
+- **状态：** ✅ 已自动执行
 
-**选项分析（中立呈现）：**
+### 2. [L1] 数据结构 - 已执行，无需确认
+- **决策：** 使用 TypeScript interface
+- **置信度：** 92%
+- **状态：** ✅ 已执行，可随时调整
 
-### 方案 A：自研认证系统
-- 完全控制，可定制化高
-- 需要投入大量开发和维护成本
-- 安全责任完全在自己
+### 3. [L2] 库选择 - 推荐确认
+- **决策：** 使用 Zod 做数据验证
+- **置信度：** 78%
+- **推荐理由：** 项目已有使用经验，TypeScript 友好
+- **状态：** ⏳ 待确认
 
-### 方案 B：使用 Auth0 / 第三方认证
-- 成熟稳定，安全性有保障
-- 有持续成本
-- 定制化受限
+### 4. [L2] 架构模式 - 推荐确认
+- **决策：** 使用 Repository 模式
+- **置信度：** 72%
+- **推荐理由：** 便于测试和扩展
+- **状态：** ⏳ 待确认
 
-### 方案 C：使用开源方案（Keycloak 等）
-- 免费开源，自己部署
-- 部署和维护需要技术能力
-- 功能全面
+### 5. [L3] 技术选型 - 需协商
+- **决策：** 数据库选择 PostgreSQL
+- **置信度：** 65%
+- **理由：** JSON 支持好，社区活跃
+- **备选：** MySQL（更熟悉）
+- **状态：** ⏳ 需您选择
 
-**这是 L3 级决策（安全相关 + 核心架构），需要您来决定。**
-我可以根据您的选择提供详细的实施方案。
+---
+
+### ✅ 一键确认所有推荐
+回复 "全部确认" 即可应用所有推荐（项 1-4）
+项 5 需要您单独决策。
+
+### 📝 逐项调整
+或者告诉我您想调整哪一项。
 ```
+
+### Batch Decision Triggers
+
+Automatically trigger batch review when:
+- 3+ L2 decisions are pending
+- A natural stopping point in the workflow
+- User asks "what decisions have been made?"
+- End of a major phase (e.g., design complete)
+
+### Decision Summary
+
+At the end of each major phase, provide a decision summary:
+- Total decisions made
+- Breakdown by level (L0/L1/L2/L3/L4)
+- Key decisions to remember
+- Any pending decisions needing input
 
 ---
 
