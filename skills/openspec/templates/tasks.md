@@ -129,12 +129,42 @@ describe('{{FeatureName}}', () => {
 Run: `npm test -- --testPathPattern="{{name}}.test.ts" --testNamePattern="should {{expected_behavior}}"`
 Expected: FAIL
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: Run test to verify it fails (RED STAGE MANDATORY VERIFICATION)**
 
 ```bash
 npm test -- --testPathPattern="{{name}}.test.ts" --testNamePattern="should {{expected_behavior}}"
 ```
-Expected: FAIL with "{{error_message}}"
+
+**RED 阶段验证清单（必须全部满足）：**
+- [ ] 测试确实运行失败了（不是语法错误，不是配置问题）
+- [ ] 失败原因是"功能未实现"（不是测试写错了）
+- [ ] 失败输出包含：
+  - 测试名称
+  - 失败断言位置
+  - 预期值 vs 实际值
+  - 错误堆栈（如有）
+- [ ] 如果测试直接通过了 → 测试写得不对 → 必须重写
+
+**失败输出示例：**
+```
+ FAIL  tests/unit/{{name}}.test.ts
+  ● {{FeatureName}} › should {{expected_behavior}}
+
+    expect(received).toEqual(expected)
+
+    Expected: {{expected}}
+    Received: {{actual}}
+
+      12 |     // Assert
+      13 |     expect(result).toEqual({{expected}});
+         |                   ^
+      14 |   });
+      15 | });
+
+      at Object.<anonymous> (tests/unit/{{name}}.test.ts:13:19)
+```
+
+**Expected: FAIL with "{{error_message}}"
 
 - [ ] **Step 3: Write minimal implementation**
 

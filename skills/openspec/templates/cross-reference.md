@@ -59,6 +59,41 @@
 
 ---
 
+## Requirement Implementation Traceability
+
+> 用于追踪需求的代码实现和测试覆盖情况，由 finishing 阶段自动检查
+
+| 需求 ID | 需求描述 | 优先级 | 代码实现位置 | 测试覆盖位置 | 实现状态 | 测试状态 |
+|---------|----------|--------|-------------|-------------|----------|----------|
+| REQ-001 | {{DESCRIPTION}} | P0/P1/P2 | `src/path/to/file.ts:LINE` | `tests/path/to/file.test.ts:LINE` | ✅/⚠️/❌ | ✅/⚠️/❌ |
+| REQ-002 | {{DESCRIPTION}} | P0/P1/P2 | `src/path/to/file.ts:LINE` | `tests/path/to/file.test.ts:LINE` | ✅/⚠️/❌ | ✅/⚠️/❌ |
+
+### Traceability Rules
+
+**代码标注规范：**
+```typescript
+// REQ-001: 用户登录时返回 JWT token
+export function login(username: string, password: string): Promise<AuthResult> {
+  // ...
+}
+```
+
+**测试标注规范：**
+```typescript
+// REQ-001 - 验证登录成功返回 token
+test('login returns jwt token on success', () => {
+  // ...
+});
+```
+
+### Acceptance Criteria for Traceability
+
+- **P0 需求**：必须有 ✅ 代码实现 + ✅ 测试覆盖
+- **P1 需求**：必须有 ✅ 代码实现 + 建议有测试
+- **未实现的需求**：必须有明确的原因说明
+
+---
+
 ## NFR → Tasks Mapping
 
 | NFR | 目标值 | 对应任务 | 验证方法 | 验证状态 |

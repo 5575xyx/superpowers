@@ -156,6 +156,58 @@ complete: you hold the plan and cross-task context the reviewer
 lacks. If you confirm an item is a real gap, treat it as a failed spec
 review — send it back to the implementer and re-review.
 
+## Multi-Tier Review System
+
+Review happens at multiple levels to ensure quality. Each task goes through several review layers.
+
+### Review Tiers
+
+| Tier | Reviewer | Scope | Trigger | Depth |
+|------|----------|-------|---------|-------|
+| **L1: Self-Review** | Implementer | All code | Every task | Quick check |
+| **L2: Dedicated Review** | Task Reviewer | All code | Every task | Standard |
+| **L3: Random Spot Check** | 2nd Reviewer | 15% of tasks | Random selection | Deep |
+| **L4: Mandatory Dual Review** | 2 Reviewers | Critical tasks | P0 requirements, security-related | Full |
+
+### Spot Check Algorithm
+
+- Base rate: **15%** of all tasks are randomly selected for spot check
+- Minimum: At least 1 task per batch must be spot-checked
+- If critical issues found in spot check → ALL tasks in that batch get re-reviewed
+- After 3 consecutive clean batches → rate drops to 10%
+- After 3 consecutive problematic batches → rate rises to 25%
+
+### When to Use L4 Dual Review
+
+Dual review (two independent reviewers) is mandatory when:
+- Task implements P0 requirements
+- Task involves authentication or authorization
+- Task modifies shared state or locking
+- Task changes public API contracts
+- Task touches security-sensitive code
+
+### Review Depth Levels
+
+| Depth | Time | Focus |
+|-------|------|-------|
+| **Quick** (~10min) | Shallow | Code style, obvious bugs, basic logic |
+| **Standard** (~30min) | Full | Complete logic, edge cases, test coverage |
+| **Deep** (1hr+) | Thorough | Architecture, security, performance, maintainability |
+
+L1 self-review = Quick
+L2 dedicated review = Standard
+L3 spot check = Deep
+L4 dual review = Deep (both reviewers)
+
+### Spot Check Selection
+
+When you finish a batch of tasks:
+1. Roll random selection for spot checks
+2. For each selected task, dispatch a second reviewer with the same diff
+3. Compare results of both reviewers
+4. If second reviewer finds critical issues that first reviewer missed → audit the whole batch
+5. Record spot check results in progress ledger
+
 ## Constructing Reviewer Prompts
 
 Per-task reviews are task-scoped gates. The broad review happens once, at the

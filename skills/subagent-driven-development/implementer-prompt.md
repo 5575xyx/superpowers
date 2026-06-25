@@ -25,6 +25,29 @@ Subagent (general-purpose):
 
     These documents contain binding requirements, architectural decisions, and constraints that MUST be followed. If you find any conflict between the task brief and these documents, raise it immediately before proceeding.
 
+    ## Document Understanding Verification (MANDATORY)
+
+    BEFORE starting implementation, you MUST demonstrate that you understand the requirements and design by answering the following questions in your report:
+
+    ### Comprehension Test
+
+    1. **Core Requirement:** What is the core requirement of this feature/task? Summarize in one sentence.
+
+    2. **Design Rationale:** Why was the design approach chosen? What are the key architectural decisions and why were they made?
+
+    3. **Edge Cases:** List at least 3 edge cases or exception scenarios that need to be handled.
+
+    4. **Acceptance Criteria:** What are the acceptance criteria for this task? List all key conditions.
+
+    5. **Dependencies:** What modules/services does this task depend on? What modules/services will be affected by this change?
+
+    ### Scoring
+    - 4-5 correct answers: PASS - you may begin implementation
+    - 2-3 correct answers: REVIEW - go back and re-read the relevant sections
+    - 0-1 correct answers: FAIL - you must re-read ALL documents before attempting again
+
+    Do NOT start implementation until you have answered these questions. The controller will verify your answers.
+
     ## Context
 
     [Scene-setting: where this fits, dependencies, architectural context]

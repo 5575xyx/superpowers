@@ -1,20 +1,26 @@
-添加文档关联追踪机制并完善模板细节
+实现双模式流程和质量保障增强
 
 主要变更：
 
-**1. 新增 cross-reference.md 交叉引用文档**
-- 追踪所有文档之间的关联关系
-- 包含 Requirements ↔ Tasks ↔ Design ↔ Files 映射
-- 包含一致性检查清单
+**1. 双模式流程（Fast/Standard/Complete）**
+- 在 brainstorming 中添加项目复杂度评估
+- 根据复杂度自动推荐流程路径
+- 用户可自由选择任意路径
+- 更新 checklist 和流程图反映分支逻辑
 
-**2. 完善标准化文档模板**
-- proposal.md：添加审批流程、备选方案对比、开放问题
-- spec.md：添加 Gherkin 格式测试场景、需求交叉引用
-- design.md：添加 ADR、API 设计、安全设计、部署策略
-- tasks.md：添加 TDD 步骤模板、进度台账
+**2. 量化风险评估标准**
+- 添加标准化风险矩阵（Likelihood × Impact）
+- 定义优先级阈值（Critical/High/Medium/Low/Very Low）
+- 明确行动阈值（必须解决/必须缓解/建议缓解/接受）
 
-**3. 增强 brainstorming 技能**
-- 添加风险评估和设计自审查环节
-- 添加生成 cross-reference.md 步骤
+**3. 设计偏离记录机制**
+- 在 subagent-driven-development 中添加偏离检测流程
+- 用户可选择遵循原设计/批准偏离/暂停讨论
+- 区分允许偏离和禁止偏离类型
+- 新增 deviations.md 模板记录所有偏离
 
-这套机制确保设计、规格、任务可追溯一致，每个需求都有对应的实施任务和验收标准。
+**4. 文档一致性自动检查**
+- 在 finishing-a-development-branch 中添加 Step 1.7
+- 自动验证 cross-reference 映射完整性
+- 检查设计与实施的一致性
+- 生成一致性报告

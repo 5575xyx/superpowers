@@ -107,7 +107,133 @@ Cannot proceed with merge/PR until documents are consistent.
 
 Stop. Don't proceed to Step 2.
 
-**If status is ✅ Consistent or ⚠️ Minor gaps:** Continue to Step 2.
+**If status is ✅ Consistent or ⚠️ Minor gaps:** Continue to Step 1.8.
+
+### Step 1.8: Requirement Implementation Traceability Check
+
+**Verify that all requirements have corresponding code and tests:**
+
+1. **Extract all REQ-IDs from delta-specs:**
+   - Read all files in `.novaway/powersnexus/changes/<name>/delta-specs/`
+   - Collect all requirement IDs (REQ-XXX)
+   - Note priority level (P0/P1/P2) for each
+
+2. **Scan codebase for REQ-ID annotations:**
+   - Search for `// REQ-XXX:` comments in source code
+   - Record file and line number for each match
+   - These indicate code implementations
+
+3. **Scan test files for REQ-ID annotations:**
+   - Search for `// REQ-XXX -` comments in test files
+   - Record file and line number for each match
+   - These indicate test coverage
+
+4. **Generate traceability report:**
+   ```markdown
+   ## Requirement Implementation Traceability Report
+
+   | REQ-ID | Description | Priority | Code Implementation | Test Coverage | Status |
+   |--------|-------------|----------|---------------------|---------------|--------|
+   | REQ-001 | [desc] | P0 | ✅ src/foo.ts:23 | ✅ tests/foo.test.ts:15 | ✅ Complete |
+   | REQ-002 | [desc] | P1 | ✅ src/bar.ts:45 | ❌ Missing | ⚠️ Needs test |
+   | REQ-003 | [desc] | P0 | ❌ Missing | ❌ Missing | ❌ Not implemented |
+
+   ### Summary
+   - Total requirements: [N]
+   - Fully implemented + tested: [N]
+   - Implemented but missing tests: [N]
+   - Not implemented: [N]
+   ```
+
+5. **Apply acceptance rules:**
+   - **P0 requirements**: MUST have both code AND tests
+   - **P1 requirements**: MUST have code, SHOULD have tests
+   - **Unimplemented P0/P1 requirements**: Must have documented reason
+
+**If any P0 requirement is missing code OR tests:**
+```
+Requirement traceability failed:
+
+[List P0 requirements missing code or tests]
+
+Cannot proceed with merge/PR until all P0 requirements have both implementation and tests.
+```
+
+Stop. Don't proceed to Step 2.
+
+**If all P0 requirements have code + tests:** Continue to Step 1.9.
+
+### Step 1.9: Code Red Team Review
+
+**Perform expert code review before finishing:**
+
+**Check which review path to use:**
+- **Fast Path**: Skip this step (simple changes, no code review needed)
+- **Standard Path**: Code Expert review only
+- **Complete Path**: Security Expert + Architect + Code Expert review
+
+**Review Process:**
+
+1. **Identify changed files:**
+   - Read git diff or changed files list
+   - Focus on: source code, test code, configuration files
+
+2. **Launch code reviewers in parallel:**
+
+   **Standard Path (Code Expert only):**
+   - Code Expert: Review code quality, coding standards, maintainability
+
+   **Complete Path (Full Panel):**
+   - Security Expert: Review for security vulnerabilities in code (input validation, sensitive data, auth logic)
+   - Architect: Review design-to-code consistency, module coupling, error handling
+   - Code Expert: Review code quality, coding standards, design patterns
+
+3. **Collect review results:**
+   - Save to `.novaway/powersnexus/changes/<name>/code-red-team-review.md`
+   - Use the template from `skills/red-team/SKILL.md`
+
+4. **Generate summary:**
+   ```markdown
+   ## Code Red Team Review Summary
+
+   ### Reviewers
+   - ✅ Security Expert (Complete Path only)
+   - ✅ Architect (Complete Path only)
+   - ✅ Code Expert
+
+   ### Issue Summary
+   | Severity | Count | Action Required |
+   |----------|-------|-----------------|
+   | 🔴 Critical | [N] | Must fix all |
+   | 🟠 Important | [N] | Should fix, justify if skipped |
+   | 🟡 Minor | [N] | Record only |
+
+   ### Critical Issues (Must Fix)
+   [List all critical issues]
+
+   ### Action Required
+   - [ ] Fix all critical issues
+   - [ ] Review important issues
+   - [ ] Re-review after fixes (if any critical issues)
+   ```
+
+5. **Apply acceptance rules:**
+   - **🔴 Critical issues**: MUST be fixed before proceeding
+   - **🟠 Important issues**: SHOULD be fixed, can be skipped with documented justification
+   - **🟡 Minor issues**: Record only, don't block
+
+**If any critical issues found:**
+```
+Code red team review found critical issues:
+
+[List critical issues]
+
+Cannot proceed with merge/PR until all critical issues are fixed.
+```
+
+Stop. Don't proceed to Step 2.
+
+**If no critical issues or all fixed:** Continue to Step 2.
 
 ### Step 2: Archive OpenSpec Change
 
@@ -122,7 +248,97 @@ Stop. Don't proceed to Step 2.
 - **MODIFIED**: Replace the existing requirement
 - **REMOVED**: Delete the requirement from the spec
 
-**If no OpenSpec change exists:** Skip this step and continue to Step 3.
+**If no OpenSpec change exists:** Skip this step and continue to Step 2.5.
+
+### Step 2.5: Knowledge Base Update & Retrospective
+
+**Capture lessons learned and update the project knowledge base:**
+
+1. **Review what was learned:**
+   - What went well? (best practices to keep)
+   - What went wrong? (mistakes to avoid next time)
+   - What was surprising? (unexpected findings)
+   - What patterns emerged? (reusable solutions)
+
+2. **Update knowledge base files:**
+
+   **If `lessons-learned.md` exists:**
+   - Append new lessons to the appropriate category
+   - Include: description, source (this change), severity, date
+
+   **If common mistakes were made:**
+   - Update `knowledge/common-mistakes/*.md` with new entries
+   - Include: problem, root cause, solution, prevention
+
+   **If new best practices were discovered:**
+   - Update `knowledge/best-practices/*.md` with new entries
+   - Include:适用场景, 具体做法, 代码示例
+
+   **If reusable patterns were created:**
+   - Add new pattern document to `knowledge/patterns/`
+   - Include: 完整设计, 利弊分析, 使用示例
+
+3. **Generate retrospective report:**
+   - Save to `.novaway/powersnexus/knowledge/retrospectives/YYYY-MM-DD-<change-name>.md`
+   - Template structure:
+
+```markdown
+# Retrospective: <Change Name>
+
+**Date:** {{DATE}}
+**Duration:** {{DURATION}}
+**Team:** AI Agent + {{HUMAN_PARTNER}}
+
+## What Went Well
+- {{ITEM}}
+- {{ITEM}}
+
+## What Could Be Improved
+- {{ITEM}}
+- {{ITEM}}
+
+## Lessons Learned
+### Technical
+- {{LESSON}}
+
+### Process
+- {{LESSON}}
+
+### Human-AI Collaboration
+- {{LESSON}}
+
+## Action Items
+- [ ] {{ACTION}} - update knowledge base
+- [ ] {{ACTION}} - improve process
+
+## Knowledge Base Updates
+- ✅ Added to lessons-learned.md
+- ⚠️ Updated common-mistakes/xxx.md
+- ✅ Added new pattern: patterns/xxx.md
+```
+
+4. **Create knowledge base directory if it doesn't exist:**
+   ```
+   .novaway/powersnexus/knowledge/
+   ├── lessons-learned.md
+   ├── best-practices/
+   ├── common-mistakes/
+   ├── patterns/
+   └── retrospectives/
+   ```
+
+**Why this matters:**
+- Each project makes the next one better
+- Avoids repeating the same mistakes
+- Builds institutional memory
+- Accelerates future development
+
+**If this is the first change (no knowledge base yet):**
+- Create the initial knowledge base structure
+- Seed with lessons from this project
+- Don't worry about being comprehensive — it grows over time
+
+Continue to Step 3.
 
 ### Step 3: Detect Environment
 

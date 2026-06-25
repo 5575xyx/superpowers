@@ -16,16 +16,42 @@ All OpenSpec artifacts live in `.novaway/powersnexus/`:
 ├── specs/                        # Master specifications (source of truth)
 │   └── <domain>/
 │       └── spec.md
-└── changes/
-    ├── <change-name>/            # Active change
-    │   ├── proposal.md           # Why and what
-    │   ├── design.md             # Technical approach
-    │   ├── tasks.md              # Implementation checklist
-    │   └── delta-specs/          # Delta specs (incremental changes)
-    │       └── <domain>/
-    │           └── spec.md
-    └── archive/                  # Completed changes
-        └── YYYY-MM-DD-<name>/
+├── changes/
+│   ├── <change-name>/            # Active change
+│   │   ├── proposal.md           # Why and what
+│   │   ├── design.md             # Technical approach
+│   │   ├── tasks.md              # Implementation checklist
+│   │   ├── cross-reference.md    # Document relationship tracking
+│   │   ├── deviations.md         # Design deviation log
+│   │   ├── progress.md           # Progress tracking
+│   │   ├── red-team-review.md    # Red team review results (Complete Path)
+│   │   └── delta-specs/          # Delta specs (incremental changes)
+│   │       └── <domain>/
+│   │           └── spec.md
+│   └── archive/                  # Completed changes
+│       └── YYYY-MM-DD-<name>/
+├── knowledge/                    # Project knowledge base
+│   ├── lessons-learned.md        # Lessons learned overview
+│   ├── best-practices/           # Best practices by domain
+│   │   ├── authentication.md
+│   │   ├── api-design.md
+│   │   ├── database.md
+│   │   └── testing.md
+│   ├── common-mistakes/          # Common mistakes and pitfalls
+│   │   ├── race-conditions.md
+│   │   ├── security-gotchas.md
+│   │   └── performance-pitfalls.md
+│   ├── retrospectives/           # Historical retrospectives
+│   │   └── YYYY-MM-DD-<name>.md
+│   └── patterns/                 # Reusable patterns
+│       ├── crud-api.md
+│       ├── realtime-collab.md
+│       └── payment-integration.md
+└── explorations/                 # Exploration mode artifacts
+    └── YYYY-MM-DD-<name>/
+        ├── exploration-log.md
+        ├── findings.md
+        └── recommendations.md
 ```
 
 ## Core Functions

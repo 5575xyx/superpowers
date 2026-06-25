@@ -22,66 +22,74 @@ Every project goes through this process. A todo list, a single-function utility,
 You MUST create a task for each of these items and complete them in order:
 
 ### Phase 0: Project Assessment
-1. **Explore project context** — check files, docs, recent commits
-2. **Assess project complexity** — determine Fast/Standard/Complete path with user approval
+1. **Explore project context** — check files, docs, recent commits, knowledge base
+2. **Assess project complexity** — determine Fast/Standard/Complete path with decision expert recommendation and user approval
 3. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure
 
 ### Phase 1: Design (All Paths)
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 5. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-6. **Propose 2-3 approaches** — with trade-offs and your recommendation
+6. **Propose 2-3 approaches** — with trade-offs and your recommendation (use decision expert framework)
 7. **Present design** — in sections scaled to their complexity, get user approval after each section
 
-### Phase 2: Quality Assurance (Standard/Complete Paths Only)
-8. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies (Complete Path only)
-9. **Design self-review** — review the design for completeness, consistency, testability, and maintainability (Complete Path only)
+### Phase 2: Quality Assurance
+8. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies (Standard/Complete Paths)
+9. **Design self-review** — review the design for completeness, consistency, testability, and maintainability (Standard/Complete Paths)
+10. **Red team review** — parallel review by security expert, architect, testing expert, performance expert:
+    - **Complete Path:** Full panel (all 4 reviewers)
+    - **Standard Path:** Simplified panel (architect + testing expert)
+    - **Fast Path:** No red team review
+11. **Fix critical issues** — address all 🔴 Critical issues from red team review
 
 ### Phase 3: Generate Artifacts (All Paths)
-10. **Generate OpenSpec artifacts** — create appropriate documents based on selected path:
+12. **Generate OpenSpec artifacts** — create appropriate documents based on selected path:
     - **Fast Path:** design.md + tasks.md
     - **Standard Path:** proposal.md + delta-specs/ + design.md + tasks.md + cross-reference.md
-    - **Complete Path:** all artifacts + risk assessment + NFR documentation
-11. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
-12. **User reviews written spec** — ask user to review the spec file before proceeding (Standard/Complete Paths only)
+    - **Complete Path:** all artifacts + risk assessment + NFR documentation + red-team-review.md
+13. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
+14. **User reviews written spec** — ask user to review the spec file before proceeding (Standard/Complete Paths only)
 
 ### Phase 4: Transition to Implementation
-13. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+15. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
 ```dot
 digraph brainstorming {
-    "Explore project context" [shape=box];
-    "Assess complexity\n(Fast/Standard/Complete)" [shape=diamond];
+    "Explore project context\n+ knowledge base" [shape=box];
+    "Assess complexity\n(Decision Expert recommendation)" [shape=diamond];
     "Initialize OpenSpec" [shape=box];
     "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
+    "Propose 2-3 approaches\n(Decision Expert framework)" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Risk assessment\n(Complete only)" [shape=box];
-    "Design self-review\n(Complete only)" [shape=box];
+    "Risk assessment\n(Standard/Complete)" [shape=box];
+    "Design self-review\n(Standard/Complete)" [shape=box];
+    "Red Team Review Panel\n(parallel, Standard/Complete)" [shape=box];
+    "Fix critical issues" [shape=box];
     "Generate OpenSpec artifacts" [shape=box];
     "Spec self-review\n(Standard/Complete)" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
-    "Explore project context" -> "Assess complexity\n(Fast/Standard/Complete)";
-    "Assess complexity\n(Fast/Standard/Complete)" -> "Initialize OpenSpec";
+    "Explore project context\n+ knowledge base" -> "Assess complexity\n(Decision Expert recommendation)";
+    "Assess complexity\n(Decision Expert recommendation)" -> "Initialize OpenSpec";
     "Initialize OpenSpec" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
+    "Ask clarifying questions" -> "Propose 2-3 approaches\n(Decision Expert framework)";
+    "Propose 2-3 approaches\n(Decision Expert framework)" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Risk assessment\n(Complete only)" [label="yes, Complete"];
-    "User approves design?" -> "Generate OpenSpec artifacts" [label="yes, Fast/Standard"];
-    "Risk assessment\n(Complete only)" -> "Design self-review\n(Complete only)";
-    "Design self-review\n(Complete only)" -> "Generate OpenSpec artifacts";
+    "User approves design?" -> "Risk assessment\n(Standard/Complete)" [label="yes, Std/Complete"];
+    "User approves design?" -> "Generate OpenSpec artifacts" [label="yes, Fast"];
+    "Risk assessment\n(Standard/Complete)" -> "Design self-review\n(Standard/Complete)";
+    "Design self-review\n(Standard/Complete)" -> "Red Team Review Panel\n(parallel, Standard/Complete)";
+    "Red Team Review Panel\n(parallel, Standard/Complete)" -> "Fix critical issues";
+    "Fix critical issues" -> "Generate OpenSpec artifacts";
     "Generate OpenSpec artifacts" -> "Spec self-review\n(Standard/Complete)" [label="Standard/Complete"];
     "Generate OpenSpec artifacts" -> "Invoke writing-plans skill" [label="Fast"];
     "Spec self-review\n(Standard/Complete)" -> "User reviews spec?";
     "User reviews spec?" -> "Generate OpenSpec artifacts" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
-}
 }
 ```
 

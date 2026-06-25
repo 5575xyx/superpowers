@@ -86,6 +86,27 @@ Subagent (general-purpose):
     Warnings or other noise in the implementer's reported test output are
     findings — test output should be pristine.
 
+    ### RED Phase Verification (MANDATORY)
+
+    You MUST verify that the TDD RED phase was actually performed correctly:
+
+    1. **Did the test fail first?**
+       - Look for evidence of a failing test BEFORE the implementation was written
+       - Check the implementer's report for RED phase output
+       - Verify the failure was because functionality was missing, NOT because of syntax errors or test bugs
+
+    2. **RED Phase Checklist:**
+       - [ ] Test code exists and is properly structured
+       - [ ] Evidence of test failure (RED) before implementation
+       - [ ] Failure output includes: test name, assertion error, expected vs actual
+       - [ ] Failure reason is "feature not implemented" (not test error)
+       - [ ] Same test passes after implementation (GREEN)
+
+    3. **If RED phase evidence is missing or invalid:**
+       - Mark as **Important** issue
+       - Require the implementer to properly re-do the TDD cycle
+       - Do not approve until proper RED phase evidence is provided
+
     ## Part 1: Spec Compliance
 
     Compare the diff against What Was Requested:
