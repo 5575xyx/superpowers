@@ -3,6 +3,41 @@
 > 版本：v2.0
 > 日期：2026-06-25
 > 核心理念：质量优先，宁重勿滥
+> v2.1 增补：OpenSpec 工作流调整（创建模式 + 主规格模板）
+
+---
+
+## 〇、v2.1 增补内容
+
+### OpenSpec 工作流调整（2026-06-25）
+
+**背景：** 在体验完整 v2.0 流程创建 `code-style-checker` 变更时，发现 OpenSpec 工作流存在以下问题：
+
+1. 首次创建模块（Greenfield）场景的语义不清晰
+2. delta-specs 模板未区分模式
+3. 决策逻辑不清晰
+4. 归档逻辑一刀切
+
+**解决方案：** 引入"创建模式"概念，支持 4 种场景：
+
+| 模式 | 场景 | 主规格状态 | 处理方式 |
+|------|------|------------|----------|
+| **Greenfield (A)** | 首次创建 | 不存在 | 直接创建主规格 + delta-specs（仅 ADDED） |
+| **Brownfield (B)** | 后续修改 | 存在 | 只创建 delta-specs，归档时合并 |
+| **Mixed (C)** | 跨模块混合 | 部分存在 | 按 module 独立走 A 或 B |
+| **Multi-Brownfield (D)** | 多模块修改 | 全部存在 | 同 B，但涉及多个 module |
+
+**新增/修改文件：**
+
+| 文件 | 变更 |
+|------|------|
+| `skills/openspec/templates/master-spec.md` | **新增** - 主规格模板 |
+| `skills/openspec/templates/merge-report.md` | **新增** - 合并报告模板 |
+| `skills/openspec/templates/spec.md` | 增加变更模式标识段 |
+| `skills/openspec/SKILL.md` | 增加创建模式概念 |
+| `skills/brainstorming/SKILL.md` | 增加模块存在性检查 |
+| `skills/finishing-a-development-branch/SKILL.md` | 重写 Step 2 归档逻辑 |
+| `.novaway/powersnexus/specs/code-style/spec.md` | 迁移到新主规格模板 |
 
 ---
 

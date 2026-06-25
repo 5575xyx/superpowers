@@ -237,16 +237,73 @@ Stop. Don't proceed to Step 2.
 
 ### Step 2: Archive OpenSpec Change
 
-**Before presenting options, archive the OpenSpec change:**
+**Before presenting options, archive the OpenSpec change with mode-aware merge logic:**
 
-1. **Merge Delta Specs**: Apply ADDED/MODIFIED/REMOVED sections from `.novaway/powersnexus/changes/<name>/delta-specs/` to `.novaway/powersnexus/specs/`
-2. **Move to Archive**: Move change folder to `.novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/`
-3. **Preserve Context**: All artifacts remain intact for audit trail
+#### 2.1: Read Create Mode
 
-**Delta Merge Rules:**
-- **ADDED**: Append to the corresponding spec file
-- **MODIFIED**: Replace the existing requirement
-- **REMOVED**: Delete the requirement from the spec
+Read the create mode from `proposal.md` Metadata or `delta-specs/<domain>/spec.md` "变更模式" section:
+
+```bash
+# From proposal.md Metadata
+MODE=$(grep "创建模式" ".novaway/powersnexus/changes/<name>/proposal.md" | head -1)
+
+# Or from delta-specs
+MODE=$(grep -A 1 "变更模式" ".novaway/powersnexus/changes/<name>/delta-specs/<domain>/spec.md" | tail -1)
+```
+
+Valid modes: `Greenfield` / `Brownfield` / `Mixed` / `Multi-Brownfield`
+
+#### 2.2: Mode-Specific Merge Strategy
+
+**Mode A: Greenfield (首次创建)**
+
+Apply when: `.novaway/powersnexus/specs/<module>/spec.md` does not exist.
+
+1. **Verify precondition**: Specs file MUST NOT exist (otherwise abort and prompt user)
+2. **Read delta-specs**: Get the `## ADDED Requirements` section
+3. **Generate master spec**: Use `templates/master-spec.md` template structure
+4. **Write to**: `.novaway/powersnexus/specs/<module>/spec.md`
+5. **Initialize §6 变更历史** with: `v1.0 | <DATE> | INITIAL | <change-name>`
+6. **Validate**: MODIFIED/REMOVED sections MUST be empty; abort if found
+
+**Mode B: Brownfield (后续修改)**
+
+Apply when: `.novaway/powersnexus/specs/<module>/spec.md` exists.
+
+1. **ADDED**: Append to spec file with new REQ-IDs (continue from max + 1)
+2. **MODIFIED**: Replace existing requirement with same ID; preserve old value in `archive/changelog/`
+3. **REMOVED**: Delete requirement from spec; add REMOVED line to §6 变更历史
+4. **Bump version**: Increment master spec version number
+
+**Mode C: Mixed (跨模块混合)**
+
+Apply when: Multiple modules, at least one master spec exists, at least one missing.
+
+1. For each module, independently apply Mode A or Mode B based on its existence
+2. Generate separate merge report entries for each module
+
+**Mode D: Multi-Brownfield (多模块修改)**
+
+Apply when: Multiple modules, all master specs exist.
+
+1. Apply Mode B logic to each module independently
+
+#### 2.3: Common Operations (All Modes)
+
+After merge completes:
+1. **Generate merge report**: Create `merge-report.md` from `templates/merge-report.md`
+2. **Save pre-merge snapshot**: Copy existing master specs to `archive/pre-merge-snapshot/`
+3. **Move to archive**: `mv .novaway/powersnexus/changes/<name>/ .novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/`
+4. **Preserve context**: All artifacts remain intact for audit trail
+
+#### 2.4: Failure Handling
+
+| Scenario | Action |
+|----------|--------|
+| Greenfield but specs/ exists | Abort, prompt user: overwrite or rename? |
+| Brownfield but specs/ missing | Auto-downgrade to Greenfield, log to `deviations.md` |
+| REQ-ID conflict | Abort, prompt user to resolve |
+| Module missing in Mixed | Abort, prompt user to verify module list |
 
 **If no OpenSpec change exists:** Skip this step and continue to Step 2.5.
 

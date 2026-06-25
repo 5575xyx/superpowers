@@ -175,13 +175,17 @@ When a change is complete:
 ### Brainstorming → OpenSpec
 
 After design approval in brainstorming:
-1. Create change directory in `.novaway/powersnexus/changes/`
-2. Generate proposal from brainstorming output
-3. Generate delta specs based on requirements
-4. Generate design document
-5. Generate tasks checklist
-6. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, this step is skipped and master specs are updated during archive)
-7. Transition to writing-plans skill
+1. **Module existence check** — For each target module, check if `.novaway/powersnexus/specs/<module>/spec.md` exists. Determine create mode (A/B/C/D).
+2. Create change directory in `.novaway/powersnexus/changes/`
+3. Generate proposal from brainstorming output (with create mode in Metadata)
+4. Generate delta specs based on requirements (with mode field in header)
+5. Generate design document
+6. Generate tasks checklist
+7. **Conditional Master Spec Initialization**:
+   - **Greenfield (A)**: Create master spec at `.novaway/powersnexus/specs/<module>/spec.md` using `master-spec.md` template
+   - **Brownfield (B)**: Skip; master spec will be updated during archive
+   - **Mixed (C)**: For each new module, create master spec; for existing modules, skip
+8. Transition to writing-plans skill
 
 ### Writing Plans → OpenSpec
 
@@ -196,19 +200,43 @@ After each task completion:
 ### Finishing a Development Branch → OpenSpec
 
 Before merging:
-1. Archive the change
-2. Merge delta specs to master specs
-3. Move change to archive
+1. **Read create mode** from `proposal.md` or `delta-specs/<domain>/spec.md`
+2. **Mode-specific merge**:
+   - **Greenfield (A)**: Initialize master spec from delta-specs ADDED section
+   - **Brownfield (B)**: Apply ADDED/MODIFIED/REMOVED to existing master spec
+   - **Mixed (C)**: Process each module independently based on its sub-mode
+3. Generate `merge-report.md` recording all merge actions
+4. Move change to archive
 
 ## Templates
 
 Use templates from `skills/openspec/templates/`:
 - `proposal.md` — Proposal template
-- `spec.md` — Delta spec template
+- `master-spec.md` — **Master spec template** (single source of truth, used for Greenfield)
+- `spec.md` — Delta spec template (used for incremental changes)
 - `design.md` — Design template
 - `tasks.md` — Tasks template
 - `cross-reference.md` — Document relationship tracking template
 - `deviations.md` — Design deviation tracking template
+- `merge-report.md` — **Archive merge report template** (records merge actions)
+
+## Create Modes（创建模式）
+
+PowersNexus OpenSpec 支持 4 种创建模式，根据主规格是否存在以及涉及模块数自动识别：
+
+| 模式 | 场景 | 主规格状态 | 处理方式 |
+|------|------|------------|----------|
+| **Greenfield (A)** | 首次创建模块 | 不存在 | brainstorming 直接创建主规格 + delta-specs（仅 ADDED） |
+| **Brownfield (B)** | 后续修改模块 | 已存在 | 只创建 delta-specs（含 ADDED/MODIFIED/REMOVED），归档时合并 |
+| **Mixed (C)** | 跨模块混合 | 部分存在 | 按 module 独立走 A 或 B |
+| **Multi-Brownfield (D)** | 跨模块修改 | 全部存在 | 同 B，但涉及多个 module |
+
+**模式识别时机：** brainstorming 阶段 Phase 0 的"模块存在性检查"步骤
+
+**模式判定结果记录到：**
+- `proposal.md` 的 Metadata 段
+- `delta-specs/<domain>/spec.md` 的"变更模式"段
+- `cross-reference.md` 的"模块状态表"（Mixed 模式）
 
 ## Schema
 

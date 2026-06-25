@@ -280,12 +280,48 @@ Fix any issues found. If significant changes are needed, go back through user ap
 
 After user approves the design, generate all OpenSpec artifacts in `.novaway/powersnexus/changes/<name>/`:
 
-1. **proposal.md** — Intent, scope, and approach
-2. **delta-specs/** — Delta specs with ADDED/MODIFIED/REMOVED requirements
+1. **proposal.md** — Intent, scope, and approach (with create mode in Metadata)
+2. **delta-specs/** — Delta specs with ADDED/MODIFIED/REMOVED requirements (with mode field in header)
 3. **design.md** — Technical approach, architecture decisions, data flow, risk assessment
 4. **tasks.md** — Implementation checklist
 5. **cross-reference.md** — Document relationship tracking (requirements ↔ tasks ↔ design ↔ files)
-6. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, skip this step and let finishing-a-development-branch handle the merge)
+6. **Initialize Master Specs (Conditional)**:
+   - **Greenfield (A)**: Create master spec at `.novaway/powersnexus/specs/<module>/spec.md` using `master-spec.md` template
+   - **Brownfield (B)**: Skip; master spec will be updated during archive
+   - **Mixed (C)**: For each new module, create master spec; for existing modules, skip
+
+**Module Existence Check (Phase 0.2.5)**
+
+Before generating artifacts, identify the target module(s) and check their existence:
+
+```bash
+for module in ${TARGET_MODULES[@]}; do
+  if [ -f ".novaway/powersnexus/specs/${module}/spec.md" ]; then
+    echo "EXISTS: ${module}"
+  else
+    echo "MISSING: ${module}"
+  fi
+done
+```
+
+**Mode determination:**
+- All EXIST → 场景 B (Brownfield)
+- All MISSING → 场景 A (Greenfield)
+- Mixed → 场景 C (Mixed)
+- Multiple modules all EXIST → 场景 D (Multi-Brownfield)
+
+**Record mode to:**
+- `proposal.md` Metadata: `创建模式: Greenfield/Brownfield/Mixed`
+- `delta-specs/<domain>/spec.md` 变更模式段
+- `cross-reference.md` 顶部模块状态表（Mixed 模式）
+
+**Artifact generation by mode:**
+
+| 模式 | 主规格 | delta-specs | proposal | cross-reference |
+|------|--------|-------------|----------|-----------------|
+| A (Greenfield) | ✅ 创建 | ✅ 仅 ADDED 段 | ✅ | ✅ |
+| B (Brownfield) | ❌ 不动 | ✅ ADDED/MODIFIED/REMOVED | ✅ | ✅ |
+| C (Mixed) | 🟡 部分创建 | 🟡 按 module 独立 | ✅ + 模块状态表 | ✅ + 模块状态表 |
 
 **Documentation:**
 
