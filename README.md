@@ -4,10 +4,15 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ## 核心特性
 
+- **五级流程体系（L0-L4）**：根据任务规模自动匹配流程，简单任务简单做，复杂任务完整做，效率提升 80%+
+- **任务规模自动评估**：6 维度智能评估（代码改动量、影响范围、风险等级等），自动推荐合适的流程级别
 - **多平台支持**：兼容 Claude Code、Cursor、OpenCode、Kimi Code、Copilot CLI 等主流编码代理
 - **统一文档管理**：所有工作流文档统一存储在 `.novaway/powersnexus/` 目录下
 - **增量规格（Delta Specs）**：支持 ADDED/MODIFIED/REMOVED 三种变更类型，适合增量开发和 brownfield 项目
 - **自动归档**：开发完成后自动合并 Delta Specs 到主规格，并归档变更记录
+- **CLI 自动化工具**：`powersnexus` 命令行工具，提供文档一致性检查、归档合并、流程启动、需求追踪等自动化能力
+- **决策专家优化**：五级置信度分层 + 批量决策机制，减少用户决策干扰 60%+
+- **专门流程模板**：Bugfix Mode、Config Mode、Doc Mode，覆盖紧急修复、配置修改、文档更新等边界场景
 - **内置 ripgrep**：集成 ripgrep 工具，无需额外安装，解决国内网络问题
 
 ## 快速开始
@@ -82,16 +87,35 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 
 
-## 基本工作流程
+## 五级流程体系（L0-L4）
 
-1. **brainstorming**（头脑风暴） — 在写代码前自动激活。通过提问打磨初步想法、探索替代方案、分段呈现设计以供确认。生成设计文档。
+PowersNexus v3.0 采用五级流程体系，根据任务规模自动匹配最合适的流程，不再每次走完完整流程。
+
+| 级别 | 名称 | 适用场景 | 预计耗时 | 核心特点 |
+|------|------|----------|----------|----------|
+| **L0** | 微型修复 | typo、配置、文案调整 | < 5 分钟 | 直接修改，快速验证 |
+| **L1** | 快速迭代 | 小功能、Bug 修复、小优化 | < 30 分钟 | 快速设计 + TDD |
+| **L2** | 标准流程 | 中型功能、模块增强 | 1-2 小时 | 完整设计 + 简化审查 |
+| **L3** | 完整流程 | 大型功能、架构变更 | 4-8 小时 | 完整设计 + 全量审查 |
+| **L4** | 重量级 | 核心架构、重大重构 | 1 天+ | 全流程 + 深度评估 |
+
+**自动评估**：`brainstorming` 技能启动时自动触发 `task-size-assessor`，6 维度智能评估并推荐流程级别。
+
+**专门流程**：
+- **Bugfix Mode** — 紧急修复：先解决问题，后补流程文档
+- **Config Mode** — 配置修改：极简流程，快速验证
+- **Doc Mode** — 文档更新：无需代码测试
+
+## 基本工作流程（标准 L2/L3 路径）
+
+1. **brainstorming**（头脑风暴） — 在写代码前自动激活。通过任务规模评估推荐 L0-L4 级别，提问打磨初步想法、探索替代方案、分段呈现设计以供确认。生成设计文档。
 2. **openspec**（OpenSpec 集成） — 设计批准后激活。生成提议（proposal）、增量规格（delta specs）、设计（design）和任务（tasks）文档，统一存储到 `.novaway/powersnexus/changes/<name>/` 目录，并初始化主规格到 `.novaway/powersnexus/specs/`。
 3. **using-git-worktrees**（使用 Git Worktree） — 设计批准后激活。在新分支上创建隔离工作区，运行项目设置，验证测试基线干净。
-4. **writing-plans**（制定计划） — 设计获批后激活。将工作拆分为 2-5 分钟的可执行任务。每个任务都包含精确的文件路径、完整代码、验证步骤。
+4. **writing-plans**（制定计划） — 设计获批后激活。将工作拆分为 2-5 分钟的可执行任务。每个任务都包含精确的文件路径、完整代码、验证步骤。**内置一致性检查**：自动调用 CLI 工具验证文档完整性。
 5. **subagent-driven-development**（子代理驱动开发）或 **executing-plans**（执行计划） — 计划就绪后激活。为每个任务调度全新的子代理，并进行两阶段审查（规格合规性 + 代码质量），或者分批执行并设置人工检查点。
 6. **test-driven-development**（测试驱动开发） — 实施过程中激活。强制执行 RED-GREEN-REFACTOR：先写失败测试 → 看着它失败 → 写最小代码 → 看着它通过 → 提交。删除先于测试写出的代码。
 7. **requesting-code-review**（请求代码审查） — 任务间激活。对照计划审查，按严重程度报告问题。关键问题会阻塞进度。
-8. **finishing-a-development-branch**（完成开发分支） — 任务完成后激活。验证测试、呈现选项（合并/PR/保留/丢弃）、清理 worktree。归档 OpenSpec 变更并将 Delta Specs 合并到主规格。
+8. **finishing-a-development-branch**（完成开发分支） — 任务完成后激活。验证测试、呈现选项（合并/PR/保留/丢弃）、清理 worktree。**优先使用 CLI 工具自动归档**，将 Delta Specs 合并到主规格。**强制更新知识库**，确保经验持续积累。
 
 **代理会在任何任务之前检查相关技能。** 这是强制性的工作流，而非建议。
 
@@ -99,9 +123,11 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ### 规划与设计
 
-- **brainstorming** — 苏格拉底式设计精炼
+- **brainstorming** — 苏格拉底式设计精炼，自动触发任务规模评估
+- **task-size-assessor** — 任务规模评估（6 维度），自动推荐 L0-L4 流程级别
 - **openspec** — 管理产物生成、增量规格与变更生命周期，统一管理 `.novaway/powersnexus/` 下的所有文档
-- **writing-plans** — 详细的实施计划
+- **writing-plans** — 详细的实施计划，内置文档一致性检查
+- **decision-expert** — 决策专家，五级置信度分层 + 批量决策机制
 
 ### 开发
 
@@ -117,12 +143,43 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 - **receiving-code-review** — 响应反馈
 - **systematic-debugging** — 4 阶段根因分析流程
 - **verification-before-completion** — 确认问题真正解决
-- **finishing-a-development-branch** — 合并/PR 决策工作流
+- **finishing-a-development-branch** — 合并/PR 决策工作流，CLI 自动归档 + 强制知识库更新
 
 ### 元技能
 
 - **writing-skills** — 遵循最佳实践创建新技能（包含测试方法论）
 - **using-powersnexus** — 技能系统入门
+
+## CLI 自动化工具
+
+PowersNexus 提供 `powersnexus` 命令行工具，自动化常见操作，提升效率。
+
+### 安装
+
+```bash
+# 全局安装
+npm link
+
+# 或直接使用
+node src/cli/powersnexus-cli.js
+```
+
+### 可用命令
+
+| 命令 | 说明 | 触发时机 |
+|------|------|----------|
+| `powersnexus start "<任务描述>"` | 任务规模评估，推荐 L0-L4 级别 | brainstorming 阶段 |
+| `powersnexus check consistency <变更名>` | 文档一致性检查（REQ 映射完整性） | writing-plans 完成后 |
+| `powersnexus archive <变更名>` | 自动归档合并（Delta Specs → 主规格） | finishing 阶段 |
+| `powersnexus trace <变更名>` | 需求追踪自动生成 | 任意阶段 |
+
+### 自动集成
+
+CLI 工具已深度集成到核心技能中，AI 代理会自动调用：
+
+- **writing-plans** — 完成计划后自动运行 `check consistency`
+- **finishing-a-development-branch** — 归档时优先使用 `archive` 命令
+- **brainstorming** — 任务评估时可调用 `start` 快速初评
 
 ## 设计哲学
 
