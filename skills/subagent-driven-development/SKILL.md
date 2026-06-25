@@ -185,7 +185,24 @@ final whole-branch review. When you fill a reviewer template:
   file). The output never enters your own context, and the reviewer sees
   the commit list, stat summary, and full diff with context in one Read
   call. Use the BASE you recorded before dispatching the implementer —
-  never `HEAD~1`, which silently truncates multi-commit tasks.
+
+## Project Documents Binding
+
+Before dispatching any implementer or reviewer subagent, locate and pass the following project documents:
+
+1. **Master Specifications**: `.novaway/powersnexus/specs/` — The single source of truth for project requirements
+2. **Design Document**: `.novaway/powersnexus/changes/<name>/design.md` — Technical architecture, data flow, and design decisions
+3. **Delta Specs**: `.novaway/powersnexus/changes/<name>/delta-specs/` — Incremental changes for this feature
+
+These documents contain binding requirements that MUST be followed throughout implementation. The implementer must read them before starting work, and the reviewer must verify compliance against them.
+
+**When documents don't exist:** If the project hasn't been initialized with PowersNexus (no `.novaway/powersnexus/` directory), skip this step and proceed with the standard workflow. The absence of documents means there are no binding requirements yet.
+
+**When dispatching:**
+- For implementers: Replace `[MASTER_SPECS_PATH]`, `[DESIGN_DOC_PATH]`, and `[DELTA_SPECS_PATH]` with actual file paths
+- For reviewers: Replace the same placeholders so they can verify design compliance
+
+Never use `HEAD~1`, which silently truncates multi-commit tasks.
 - A dispatch prompt describes one task, not the session's history. Do not
   paste accumulated prior-task summaries ("state after Tasks 1-3") into
   later dispatches — a real session's dispatch hit 42k chars of which 99%

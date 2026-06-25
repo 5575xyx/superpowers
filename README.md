@@ -4,7 +4,6 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ## 核心特性
 
-- **零命令依赖**：所有功能（包含 OpenSpec 规范驱动开发）已集成到技能中，无需额外执行任何 CLI 命令
 - **多平台支持**：兼容 Claude Code、Cursor、OpenCode、Kimi Code、Copilot CLI 等主流编码代理
 - **统一文档管理**：所有工作流文档统一存储在 `.novaway/powersnexus/` 目录下
 - **增量规格（Delta Specs）**：支持 ADDED/MODIFIED/REMOVED 三种变更类型，适合增量开发和 brownfield 项目
@@ -13,7 +12,7 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ## 快速开始
 
-为你的编码代理安装 PowersNexus：[Claude Code](#claude-code) · [Cursor](#cursor) · [OpenCode](#opencode) · [Kimi Code](#kimi-code) · [GitHub Copilot CLI](#github-copilot-cli) · [Gemini CLI](#gemini-cli) · [Pi](#pi)
+为你的编码代理安装 PowersNexus：[OpenCode](#opencode) 
 
 ## 工作原理
 
@@ -66,37 +65,8 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 不同编码代理的安装方式各不相同。如果你使用多个代理，请分别为每个代理安装 PowersNexus。
 
-### Claude Code
 
-PowersNexus 已上架 [Claude 官方插件市场](https://claude.com/plugins/PowersNexus)。
-
-```bash
-/plugin install PowersNexus@claude-plugins-official
-```
-
-### Cursor
-
-- 在 Cursor Agent 聊天中通过市场安装：
-
-```text
-/add-plugin PowersNexus
-```
-
-- 或者在插件市场中搜索 "PowersNexus"。
-
-### OpenCode
-
-OpenCode 使用自己的插件安装机制；即使你已经在其他代理中使用过，也需要单独安装。
-
-**方式一：通过 INSTALL.md 安装（推荐）**
-
-告诉 OpenCode：
-
-```
-抓取并按照 https://raw.githubusercontent.com/obra/PowersNexus/refs/heads/main/.opencode/INSTALL.md 中的说明操作
-```
-
-**方式二：手动配置 opencode.json**
+手动配置 opencode.json**
 
 在 `opencode.json`（全局或项目级别）中添加：
 
@@ -110,61 +80,7 @@ OpenCode 使用自己的插件安装机制；即使你已经在其他代理中�
 
 验证安装：询问 "告诉我你的 powersnexus 是什么"
 
-**Windows 安装问题**
 
-如果 OpenCode 无法通过 git 安装插件，尝试使用本地安装：
-
-```powershell
-npm install powersnexus@git+https://gitee.com/nova-way/powersnexus.git --prefix "$HOME\.config\opencode"
-```
-
-然后在 `opencode.json` 中使用本地路径：
-
-```json
-{
-  "plugin": ["~/.config/opencode/node_modules/powersnexus"]
-}
-```
-
-### Kimi Code
-
-PowersNexus 已上架 Kimi Code 的插件市场。
-
-- 打开 Kimi Code 的插件管理器：
-
-```text
-/plugins
-```
-
-- 进入 `Marketplace` > `PowersNexus` 并安装它。
-
-### GitHub Copilot CLI
-
-```bash
-copilot plugin marketplace add obra/PowersNexus-marketplace
-copilot plugin install PowersNexus@PowersNexus-marketplace
-```
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/obra/PowersNexus
-gemini extensions update PowersNexus
-```
-
-### Pi
-
-从此仓库作为 Pi 包安装：
-
-```bash
-pi install git:github.com/obra/PowersNexus
-```
-
-本地开发时，可将当前仓库作为临时包加载运行 Pi：
-
-```bash
-pi -e /path/to/PowersNexus
-```
 
 ## 基本工作流程
 
@@ -214,33 +130,3 @@ pi -e /path/to/PowersNexus
 - **系统化优于临时应对** — 流程优于猜测
 - **降低复杂度** — 以简洁为首要目标
 - **证据优于断言** — 在宣告成功前先验证
-
-## 贡献
-
-PowersNexus 的一般贡献流程如下。请注意，我们通常不接受新技能的贡献，且任何技能更新都必须在所有支持的编码代理上正常工作。
-
-1. Fork 仓库
-2. 切换到 `dev` 分支
-3. 为你的工作创建一个分支
-4. 遵循 `writing-skills` 技能创建和测试新技能或修改现有技能
-5. 提交 PR，确保填写了 Pull Request 模板
-
-技能行为测试使用 [PowersNexus-evals](https://github.com/prime-radiant-inc/PowersNexus-evals/) 中的 drill eval harness，需克隆到 `evals/` 目录 —— 设置说明见 `evals/README.md`。插件基础设施测试位于 `tests/`，通过相关 `run-*.sh` 或 `npm test` 运行。
-
-完整指南请参阅 `skills/writing-skills/SKILL.md`。
-
-## 更新
-
-PowersNexus 的更新在某种程度上依赖编码代理，但通常是自动的。
-
-## 许可证
-
-MIT 许可证 —— 详见 LICENSE 文件。
-
-## 社区
-
-PowersNexus 由 [Jesse Vincent](https://blog.fsck.com) 及 [Prime Radiant](https://primeradiant.com) 团队构建。
-
-- **Discord**：[加入我们](https://discord.gg/35wsABTejz) 获取社区支持、提问与分享你正在使用 PowersNexus 构建的项目
-- **Issues**：https://github.com/obra/PowersNexus/issues
-- **发布公告**：[订阅](https://primeradiant.com/PowersNexus/) 以获取新版本通知

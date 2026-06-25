@@ -50,6 +50,7 @@ Create a new change directory with artifact templates:
 ├── proposal.md
 ├── design.md
 ├── tasks.md
+├── cross-reference.md       # Document relationship tracking
 └── delta-specs/
 ```
 
@@ -180,6 +181,7 @@ Use templates from `skills/openspec/templates/`:
 - `spec.md` — Delta spec template
 - `design.md` — Design template
 - `tasks.md` — Tasks template
+- `cross-reference.md` — Document relationship tracking template
 
 ## Schema
 
@@ -203,6 +205,10 @@ artifacts:
   - id: tasks
     generates: tasks.md
     requires: [specs, design]
+  
+  - id: cross-reference
+    generates: cross-reference.md
+    requires: [proposal, specs, design, tasks]
 ```
 
 Dependencies are enablers, not gates. You can create artifacts in any order that makes sense.

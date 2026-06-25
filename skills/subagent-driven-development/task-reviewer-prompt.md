@@ -1,4 +1,4 @@
-﻿# Task Reviewer Prompt Template
+# Task Reviewer Prompt Template
 
 Use this template when dispatching a task reviewer subagent. The reviewer
 reads the task's diff once and returns two verdicts: spec compliance and
@@ -14,13 +14,24 @@ Subagent (general-purpose):
          model silently inherits the session's most expensive one]
   prompt: |
     You are reviewing one task's implementation: first whether it matches its
-    requirements, then whether it is well-built. This is a task-scoped gate,
+    requirements, then whether it is well-built, and finally whether it aligns
+    with the overall project design and architecture. This is a task-scoped gate,
     not a merge review — a broad whole-branch review happens separately after
     all tasks are complete.
 
     ## What Was Requested
 
     Read the task brief: [BRIEF_FILE]
+
+    ## Project Design and Specifications
+
+    Read the following documents to verify design compliance:
+
+    1. **Master Specifications:** [MASTER_SPECS_PATH] - The single source of truth for project requirements
+    2. **Design Document:** [DESIGN_DOC_PATH] - Technical architecture, data flow, and design decisions
+    3. **Delta Specs:** [DELTA_SPECS_PATH] - Incremental changes for this feature (ADDED/MODIFIED/REMOVED)
+
+    ## Global Constraints
 
     Global constraints from the spec/design that bind this task:
     [GLOBAL_CONSTRAINTS]
@@ -90,7 +101,18 @@ Subagent (general-purpose):
     unchanged code or spans tasks), report it as a ⚠️ item instead of
     broadening your search.
 
-    ## Part 2: Code Quality
+    ## Part 2: Design Compliance
+
+    Verify the implementation aligns with the project design and specifications:
+
+    - **Architecture alignment:** Does the implementation follow the design document's architecture?
+    - **Data flow:** Does the code follow the specified data flow patterns?
+    - **API design:** Are APIs implemented as specified in the design?
+    - **Naming conventions:** Do names match the design document's conventions?
+    - **Code organization:** Does the implementation follow the file structure from the design?
+    - **Constraints:** Does the implementation respect all stated constraints?
+
+    ## Part 3: Code Quality
 
     **Code quality:**
     - Clean separation of concerns?
@@ -146,6 +168,11 @@ Subagent (general-purpose):
       diff alone, and what the controller should check — report alongside the
       ✅/❌ verdict for everything you could verify]
 
+    ### Design Compliance
+
+    - ✅ Design compliant | ❌ Issues found: [architecture/data flow/API/naming/organization/constraint violations,
+      with file:line references]
+
     ### Strengths
     [What's well done? Be specific.]
 
@@ -169,6 +196,9 @@ Subagent (general-purpose):
 - `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection
 - `[BRIEF_FILE]` — REQUIRED: the task brief file (`scripts/task-brief PLAN N`
   prints the path; same file the implementer worked from)
+- `[MASTER_SPECS_PATH]` — REQUIRED: path to the master specifications directory (`.novaway/powersnexus/specs/`)
+- `[DESIGN_DOC_PATH]` — REQUIRED: path to the design document (`.novaway/powersnexus/changes/<name>/design.md`)
+- `[DELTA_SPECS_PATH]` — REQUIRED: path to the delta specs directory (`.novaway/powersnexus/changes/<name>/delta-specs/`)
 - `[GLOBAL_CONSTRAINTS]` — the binding requirements copied verbatim from
   the plan's Global Constraints section or the spec: exact values, formats,
   and stated relationships between components (not process rules — those
@@ -181,7 +211,7 @@ Subagent (general-purpose):
   package to (`scripts/review-package BASE HEAD` prints the unique path it
   wrote; the package never enters the controller's context)
 
-**Reviewer returns:** Spec Compliance verdict (✅/❌/⚠️), Strengths, Issues
+**Reviewer returns:** Spec Compliance verdict (✅/❌/⚠️), Design Compliance verdict (✅/❌), Strengths, Issues
 (Critical/Important/Minor), Task quality verdict
 
 A fix dispatch can address spec gaps and quality findings together;

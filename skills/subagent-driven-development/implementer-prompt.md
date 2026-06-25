@@ -1,4 +1,4 @@
-﻿# Implementer Subagent Prompt Template
+# Implementer Subagent Prompt Template
 
 Use this template when dispatching an implementer subagent.
 
@@ -14,6 +14,16 @@ Subagent (general-purpose):
 
     Read your task brief first: [BRIEF_FILE]
     It contains the full task text from the plan.
+
+    ## Project Specifications and Design
+
+    BEFORE starting implementation, read the following project documents to ensure your work aligns with the overall design:
+
+    1. **Master Specifications:** [MASTER_SPECS_PATH] - The single source of truth for project requirements
+    2. **Design Document:** [DESIGN_DOC_PATH] - Technical architecture, data flow, and design decisions
+    3. **Delta Specs:** [DELTA_SPECS_PATH] - Incremental changes for this feature (ADDED/MODIFIED/REMOVED)
+
+    These documents contain binding requirements, architectural decisions, and constraints that MUST be followed. If you find any conflict between the task brief and these documents, raise it immediately before proceeding.
 
     ## Context
 
@@ -137,3 +147,11 @@ Subagent (general-purpose):
     Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need
     information that wasn't provided. Never silently produce work you're unsure about.
 ```
+
+**Placeholders:**
+- `[MODEL]` — REQUIRED: model per SKILL.md Model Selection
+- `[BRIEF_FILE]` — REQUIRED: path to the task brief file
+- `[MASTER_SPECS_PATH]` — REQUIRED: path to the master specifications directory (`.novaway/powersnexus/specs/`)
+- `[DESIGN_DOC_PATH]` — REQUIRED: path to the design document (`.novaway/powersnexus/changes/<name>/design.md`)
+- `[DELTA_SPECS_PATH]` — REQUIRED: path to the delta specs directory (`.novaway/powersnexus/changes/<name>/delta-specs/`)
+- `[REPORT_FILE]` — REQUIRED: path to write the implementer report

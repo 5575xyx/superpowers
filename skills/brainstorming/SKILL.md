@@ -22,15 +22,17 @@ Every project goes through this process. A todo list, a single-function utility,
 You MUST create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, recent commits
-2. **Initialize OpenSpec** — create `.powersnexus/changes/<name>/` directory structure
+2. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure
 3. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 5. **Propose 2-3 approaches** — with trade-offs and your recommendation
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Generate OpenSpec artifacts** — create proposal, delta specs, design, and tasks documents
-8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **User reviews written spec** — ask user to review the spec file before proceeding
-10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+7. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies
+8. **Design self-review** — review the design for completeness, consistency, testability, and maintainability
+9. **Generate OpenSpec artifacts** — create proposal, delta specs, design, tasks, and cross-reference documents
+10. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+11. **User reviews written spec** — ask user to review the spec file before proceeding
+12. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -42,6 +44,8 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
+    "Risk assessment" [shape=box];
+    "Design self-review" [shape=box];
     "Generate OpenSpec artifacts" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
@@ -53,7 +57,9 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Generate OpenSpec artifacts" [label="yes"];
+    "User approves design?" -> "Risk assessment" [label="yes"];
+    "Risk assessment" -> "Design self-review";
+    "Design self-review" -> "Generate OpenSpec artifacts";
     "Generate OpenSpec artifacts" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Generate OpenSpec artifacts" [label="changes requested"];
@@ -102,6 +108,65 @@ digraph brainstorming {
 - Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
 - Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
+## Risk Assessment
+
+After user approves the design and before generating artifacts, conduct a thorough risk assessment. Present the findings to the user as part of the design review.
+
+**Technical Risks:**
+- Performance bottlenecks — slow operations, N+1 queries, memory concerns
+- Scalability limits — behavior at 10× and 100× load
+- Security vulnerabilities — injection risks, auth gaps, data exposure
+- Dependency risks — third-party libraries, version constraints, maintenance burden
+- Operational complexity — deployment, monitoring, debugging difficulty
+- Data integrity — race conditions, consistency guarantees, migration risks
+
+**Dependency Risks:**
+- External services — reliability, rate limits, cost
+- Internal dependencies — teams/people outside your control
+- Timing risks — hard deadlines or time-sensitive integrations
+
+**For each risk identified:**
+1. **Likelihood** — Low / Medium / High
+2. **Impact** — Low / Medium / High
+3. **Mitigation strategy** — what we'll do if it occurs
+4. **Early warning signs** — how we'll detect it early
+
+For high-impact/high-likelihood risks, include mitigation steps in the design itself.
+
+## Design Self-Review
+
+After risk assessment and before generating artifacts, review the design with these quality criteria:
+
+**Completeness:**
+- Are all requirements from the user's request covered?
+- Are edge cases and error conditions addressed?
+- Is the failure mode clear for each component?
+
+**Consistency:**
+- Do all parts of the design agree with each other?
+- Are naming conventions consistent?
+- Is data flow coherent (no circular dependencies, no missing inputs)?
+
+**Testability:**
+- Can each unit be tested independently?
+- Are there clear interfaces for mocking/stubbing?
+- Is observability built in (logs, metrics, error reporting)?
+- Can acceptance criteria be verified objectively?
+
+**Maintainability:**
+- Is the design simple enough for a new team member to understand?
+- Are concerns well-separated?
+- Is there unnecessary complexity (YAGNI check)?
+- Will changes in one area ripple through others?
+
+**Non-functional requirements:**
+- Performance — are response times and throughput addressed?
+- Scalability — can it handle expected growth?
+- Security — are auth, validation, and data protection covered?
+- Accessibility — if UI, are a11y standards considered?
+
+Fix any issues found. If significant changes are needed, go back through user approval for the revised design.
+
 ## After the Design
 
 **OpenSpec Artifacts Generation:**
@@ -110,14 +175,20 @@ After user approves the design, generate all OpenSpec artifacts in `.novaway/pow
 
 1. **proposal.md** — Intent, scope, and approach
 2. **delta-specs/** — Delta specs with ADDED/MODIFIED/REMOVED requirements
-3. **design.md** — Technical approach, architecture decisions, data flow
+3. **design.md** — Technical approach, architecture decisions, data flow, risk assessment
 4. **tasks.md** — Implementation checklist
-5. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, skip this step and let finishing-a-development-branch handle the merge)
+5. **cross-reference.md** — Document relationship tracking (requirements ↔ tasks ↔ design ↔ files)
+6. **Initialize Master Specs**: Copy delta-specs content to `.novaway/powersnexus/specs/` as the initial master specs (for first-time setup, this creates the master specs; for subsequent changes, skip this step and let finishing-a-development-branch handle the merge)
 
 **Documentation:**
 
 - Write the validated design to `.novaway/powersnexus/changes/<name>/design.md`
   - (User preferences for spec location override this default)
+- Create `cross-reference.md` to track relationships between all documents
+  - Requirements ↔ Tasks mapping
+  - Requirements ↔ Design mapping
+  - Tasks ↔ Files mapping
+  - Acceptance Criteria ↔ Verification mapping
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 

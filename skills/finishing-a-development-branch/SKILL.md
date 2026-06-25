@@ -35,7 +35,34 @@ Cannot proceed with merge/PR until tests pass.
 
 Stop. Don't proceed to Step 2.
 
-**If tests pass:** Continue to Step 2.
+**If tests pass:** Continue to Step 1.5.
+
+### Step 1.5: Verify Acceptance Criteria (Integration Tests)
+
+**Run integration/end-to-end tests to verify acceptance criteria:**
+
+```bash
+# Run integration tests
+npm run test:integration / pytest --integration / go test ./... -run Integration
+```
+
+**Check acceptance criteria from the plan:**
+- Read `.novaway/powersnexus/changes/<name>/tasks.md` for acceptance criteria
+- Verify each criterion has been met
+- Document any gaps or incomplete criteria
+
+**If acceptance criteria not met:**
+```
+Acceptance criteria not fully met:
+
+[List unmet criteria]
+
+Cannot proceed with merge/PR until all acceptance criteria are verified.
+```
+
+Stop. Don't proceed to Step 2.
+
+**If acceptance criteria met:** Continue to Step 2.
 
 ### Step 2: Archive OpenSpec Change
 
@@ -254,3 +281,24 @@ git worktree prune  # Self-healing: clean up any stale registrations
 - Clean up worktree for Options 1 & 4 only
 - `cd` to main repo root before worktree removal
 - Run `git worktree prune` after removal
+
+## Iteration Retrospective
+
+After completing any option (except Discard), conduct a brief retrospective to capture lessons learned:
+
+**What worked well:**
+- Which parts of the workflow were smooth?
+- Which skills or processes were effective?
+- What collaboration patterns worked?
+
+**What could be improved:**
+- Where did the process break down?
+- What assumptions were wrong?
+- What skills or processes need adjustment?
+
+**Action items:**
+- [ ] Update skills based on lessons learned
+- [ ] Improve documentation or templates
+- [ ] Adjust workflow for future iterations
+
+**Record:** Save the retrospective to `.novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/retrospective.md` for future reference.

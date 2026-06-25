@@ -74,6 +74,24 @@ naming and copy rules, platform requirements — one line each, with exact
 values copied verbatim from the spec. Every task's requirements implicitly
 include this section.]
 
+## Acceptance Criteria
+
+[End-to-end conditions that must be true for this feature to be considered
+complete. These are testable, objective statements. Each should map to a
+verification step in the final integration test task.]
+
+## Non-Functional Requirements
+
+[Quality attributes that the implementation must satisfy:
+
+- **Performance:** response time targets, throughput requirements, memory limits
+- **Reliability:** error rates, availability targets, retry policies
+- **Security:** authentication requirements, data protection, input validation
+- **Maintainability:** code quality standards, documentation requirements
+- **Observability:** logging, metrics, error reporting requirements
+
+Include only what's relevant. Copy exact values from the spec if present.]
+
 ---
 ```
 
@@ -148,9 +166,15 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+**2. Acceptance criteria coverage:** Does the final integration/verification task cover every acceptance criterion? Each criterion must have a corresponding test or verification step.
 
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+**3. Non-functional requirements:** Are NFRs (performance, security, etc.) reflected in the plan? Do any tasks explicitly verify them? Add verification steps if missing.
+
+**4. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+
+**5. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+
+**6. Integration test task:** Is there a final integration/end-to-end test task that verifies the whole feature works together? This should be the last task before completion.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
