@@ -239,6 +239,35 @@ Stop. Don't proceed to Step 2.
 
 **Before presenting options, archive the OpenSpec change with mode-aware merge logic:**
 
+**TRY CLI TOOL FIRST (recommended):
+Use the PowersNexus CLI tool to automate the archive process:
+
+```bash
+node src/cli/powersnexus-cli.js archive <change-name>
+```
+
+Or if `powersnexus` command is available:
+
+```bash
+powersnexus archive <change-name>
+```
+
+**What the CLI does automatically:**
+- Reads the create mode from proposal.md
+- Performs Greenfield/Brownfield merge
+- Generates merge report
+- Saves pre-merge snapshot
+- Moves change to archive
+
+**If CLI tool succeeds:** Skip to Step 2.5 (Knowledge Base Update).
+
+**If CLI tool fails or is unavailable:**
+ Fall back to the manual process below.**
+
+---
+
+#### Manual Archive Process (fallback):
+
 #### 2.1: Read Create Mode
 
 Read the create mode from `proposal.md` Metadata or `delta-specs/<domain>/spec.md` "变更模式" section:

@@ -40,6 +40,16 @@ You MUST create a task for each of these items and complete them in order:
 ### Phase 0: Project Assessment
 1. **Explore project context** — check files, docs, recent commits, knowledge base
 2. **Task size assessment** — invoke task-size-assessor skill to evaluate task and recommend L0-L4 process level; get user approval
+
+   **Quick CLI shortcut (optional):**
+   You can use the PowersNexus CLI for a quick initial assessment:
+   ```bash
+   node src/cli/powersnexus-cli.js start "<task description>"
+   ```
+   Or: `powersnexus start "<task description>"`
+   
+   The CLI provides a quick level recommendation. Then follow up with the full task-size-assessor skill for detailed analysis.
+
 3. **Module existence check** — for each target module, check if `.novaway/powersnexus/specs/<module>/spec.md` exists; determine create mode (Greenfield/Brownfield/Mixed)
 4. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure (skip for L0/L1)
 

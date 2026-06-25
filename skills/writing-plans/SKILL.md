@@ -178,6 +178,37 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
+## Consistency Check (Auto-Verify)
+
+**MANDATORY: Run the consistency check after self-review.**
+
+Use the PowersNexus CLI tool to verify document consistency:
+
+```bash
+node src/cli/powersnexus-cli.js check consistency <change-name>
+```
+
+Or if `powersnexus` command is available:
+
+```bash
+powersnexus check consistency <change-name>
+```
+
+**What it checks:**
+- All REQ IDs in design.md are covered in tasks.md
+- All REQ IDs in design.md are covered in test-plan.md
+- All IDs follow the naming convention
+- No orphaned requirements
+
+**If inconsistencies are found:**
+- Fix them before proceeding
+- Do NOT skip this step — inconsistent documents cause implementation failures
+- Re-run the check after fixes until it passes
+
+**If CLI tool is unavailable:**
+- Manually verify cross-references as best you can
+- Note the manual verification in deviations.md
+
 ## Execution Handoff
 
 After saving the plan, offer execution choice:
