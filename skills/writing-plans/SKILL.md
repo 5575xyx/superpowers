@@ -15,9 +15,9 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** If working in an isolated worktree, it should have been created via the `PowersNexus:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `.powersnexus/changes/<name>/tasks.md`
+**Save plans to:** `.novaway/powersnexus/changes/<name>/tasks.md`
 - (User preferences for plan location override this default)
-- Read existing tasks from `.powersnexus/changes/<name>/tasks.md` if it exists from brainstorming
+- Read existing tasks from `.novaway/powersnexus/changes/<name>/tasks.md` if it exists from brainstorming
 
 ## Scope Check
 
@@ -158,7 +158,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `.powersnexus/changes/<name>/tasks.md`. Two execution options:**
+**"Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 

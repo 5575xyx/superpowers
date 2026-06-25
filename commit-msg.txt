@@ -1,10 +1,13 @@
-修复 OpenCode 插件加载问题
+修复 OpenCode 插件加载问题 - 保留原导出名称
 
-主要变更：
-- 在 powersnexus.js 中添加 `export const Plugin` 和 `export default` 导出
-- OpenCode 插件系统根据包名查找特定的导出名称，原 superpowers 使用 `SuperpowersPlugin`，而 powersnexus 需要兼容多种导出格式
-- 添加多个导出确保不同 OpenCode 版本都能正确加载插件
+根本原因：OpenCode 的插件系统可能硬编码了对 `SuperpowersPlugin` 导出名称的查找。
+
+解决方案：
+- 创建 `.opencode/plugins/superpowers.js`（与原项目相同的文件名）
+- 使用 `export const SuperpowersPlugin`（与原项目相同的导出名称）
+- 内部引用改为 `using-powersnexus` 技能
+- 更新 package.json main 入口指向新文件
 
 文件更新：
-- .opencode/plugins/powersnexus.js - 添加兼容导出
-- docs/README.opencode.md - 更新为中文版文档
+- 创建 .opencode/plugins/superpowers.js - 兼容原项目结构
+- 修改 package.json - main 指向 superpowers.js

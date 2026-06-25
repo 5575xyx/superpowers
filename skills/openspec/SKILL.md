@@ -1,6 +1,6 @@
 ---
 name: openspec
-description: "Manages artifact generation, delta specs, and change lifecycle for PowersNexus. Generates proposal, specs, design, and tasks documents in .powersnexus/changes/ directory."
+description: "Manages artifact generation, delta specs, and change lifecycle for PowersNexus. Generates proposal, specs, design, and tasks documents in .novaway/powersnexus/changes/ directory."
 ---
 
 # OpenSpec Integration for PowersNexus
@@ -9,10 +9,10 @@ Manage the lifecycle of changes using structured artifacts and delta-based speci
 
 ## Directory Structure
 
-All OpenSpec artifacts live in `.powersnexus/`:
+All OpenSpec artifacts live in `.novaway/powersnexus/`:
 
 ```
-.powersnexus/
+.novaway/powersnexus/
 ├── specs/                        # Master specifications (source of truth)
 │   └── <domain>/
 │       └── spec.md
@@ -32,10 +32,10 @@ All OpenSpec artifacts live in `.powersnexus/`:
 
 ### 1. Initialize OpenSpec
 
-**Check if `.powersnexus/` exists.** If not, create the directory structure:
+**Check if `.novaway/powersnexus/` exists.** If not, create the directory structure:
 
 ```
-.powersnexus/
+.novaway/powersnexus/
 ├── specs/
 └── changes/
     └── archive/
@@ -46,7 +46,7 @@ All OpenSpec artifacts live in `.powersnexus/`:
 Create a new change directory with artifact templates:
 
 ```
-.powersnexus/changes/<change-name>/
+.novaway/powersnexus/changes/<change-name>/
 ├── proposal.md
 ├── design.md
 ├── tasks.md
@@ -134,8 +134,8 @@ When a task is completed, update the checkbox from `[ ]` to `[x]`.
 ### 8. Archive Change
 
 When a change is complete:
-1. **Merge Delta Specs**: Apply ADDED/MODIFIED/REMOVED sections from `.powersnexus/changes/<name>/delta-specs/` to `.powersnexus/specs/`
-2. **Move to Archive**: Move change folder to `.powersnexus/changes/archive/YYYY-MM-DD-<name>/`
+1. **Merge Delta Specs**: Apply ADDED/MODIFIED/REMOVED sections from `.novaway/powersnexus/changes/<name>/delta-specs/` to `.novaway/powersnexus/specs/`
+2. **Move to Archive**: Move change folder to `.novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/`
 3. **Preserve Context**: All artifacts remain intact for audit trail
 
 **Delta Merge Rules:**
@@ -148,7 +148,7 @@ When a change is complete:
 ### Brainstorming → OpenSpec
 
 After design approval in brainstorming:
-1. Create change directory in `.powersnexus/changes/`
+1. Create change directory in `.novaway/powersnexus/changes/`
 2. Generate proposal from brainstorming output
 3. Generate delta specs based on requirements
 4. Generate design document
@@ -157,7 +157,7 @@ After design approval in brainstorming:
 
 ### Writing Plans → OpenSpec
 
-Read `.powersnexus/changes/<name>/tasks.md` as the task source.
+Read `.novaway/powersnexus/changes/<name>/tasks.md` as the task source.
 
 ### Subagent-Driven Development → OpenSpec
 

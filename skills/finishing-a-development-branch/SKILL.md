@@ -41,8 +41,8 @@ Stop. Don't proceed to Step 2.
 
 **Before presenting options, archive the OpenSpec change:**
 
-1. **Merge Delta Specs**: Apply ADDED/MODIFIED/REMOVED sections from `.powersnexus/changes/<name>/delta-specs/` to `.powersnexus/specs/`
-2. **Move to Archive**: Move change folder to `.powersnexus/changes/archive/YYYY-MM-DD-<name>/`
+1. **Merge Delta Specs**: Apply ADDED/MODIFIED/REMOVED sections from `.novaway/powersnexus/changes/<name>/delta-specs/` to `.novaway/powersnexus/specs/`
+2. **Move to Archive**: Move change folder to `.novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/`
 3. **Preserve Context**: All artifacts remain intact for audit trail
 
 **Delta Merge Rules:**

@@ -106,7 +106,7 @@ digraph brainstorming {
 
 **OpenSpec Artifacts Generation:**
 
-After user approves the design, generate all OpenSpec artifacts in `.powersnexus/changes/<name>/`:
+After user approves the design, generate all OpenSpec artifacts in `.novaway/powersnexus/changes/<name>/`:
 
 1. **proposal.md** — Intent, scope, and approach
 2. **delta-specs/** — Delta specs with ADDED/MODIFIED/REMOVED requirements
@@ -115,7 +115,7 @@ After user approves the design, generate all OpenSpec artifacts in `.powersnexus
 
 **Documentation:**
 
-- Write the validated design to `.powersnexus/changes/<name>/design.md`
+- Write the validated design to `.novaway/powersnexus/changes/<name>/design.md`
   - (User preferences for spec location override this default)
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git

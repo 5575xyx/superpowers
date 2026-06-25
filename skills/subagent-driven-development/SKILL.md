@@ -251,7 +251,7 @@ sequences — the single most expensive failure observed. Track progress in
 a ledger file, not only in todos.
 
 - At skill start, check for a ledger:
-  `cat "$(git rev-parse --show-toplevel)/.powersnexus/changes/<name>/progress.md"`. Tasks listed there
+  `cat "$(git rev-parse --show-toplevel)/.novaway/powersnexus/changes/<name>/progress.md"`. Tasks listed there
   as complete are DONE — do not re-dispatch them; resume at the first task
   not marked complete.
 - When a task's review comes back clean, append one line to the ledger in
@@ -262,7 +262,7 @@ a ledger file, not only in todos.
   trust the ledger and `git log` over your own recollection.
 - `git clean -fdx` will destroy the ledger (it's git-ignored scratch); if
   that happens, recover from `git log`.
-- Update the task checkbox in `.powersnexus/changes/<name>/tasks.md` from `[ ]` to `[x]` when a task is complete.
+- Update the task checkbox in `.novaway/powersnexus/changes/<name>/tasks.md` from `[ ]` to `[x]` when a task is complete.
 
 ## Prompt Templates
 
