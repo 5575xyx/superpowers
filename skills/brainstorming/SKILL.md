@@ -55,7 +55,11 @@ You MUST create a task for each of these items and complete them in order:
 
 ### Phase 1: Design (All Paths)
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
-5. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+5. **Ask clarifying questions** — Use the `AskUserQuestion` tool. One question at a time. MAXIMUM 8 questions total. Each question MUST have:
+   - 2-4 clear options (multiSelect: false/true)
+   - An "Other" option at the end for custom input
+   - Focus on: purpose, constraints, success criteria
+   - Prioritize the most critical questions first
 6. **Propose 2-3 approaches** — with trade-offs and your recommendation (use decision expert framework)
 7. **Present design** — in sections scaled to their complexity, get user approval after each section
 
@@ -153,6 +157,7 @@ Based on your description, I've evaluated this project as:
 - [ ] Complete Path - Full quality assurance
   - Best for: complex systems, > 5 day work, critical features
   - Output: complete artifacts + risk assessment + design review + NFR
+- [ ] Other - Custom workflow (please specify)
 
 **Which workflow would you like to use?**
 ```
@@ -179,9 +184,20 @@ Based on your description, I've evaluated this project as:
 - Check out the current project state first (files, docs, recent commits)
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
-- For appropriately-scoped projects, ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
+- For appropriately-scoped projects, use the `AskUserQuestion` tool to ask clarifying questions
+- **IMPORTANT: MAXIMUM 8 questions total.** You must be sharp and ask only the most critical questions. Avoid trivial or redundant questions.
+- **Question format requirements:**
+  - Always use `AskUserQuestion` tool (NOT plain text)
+  - 2-4 clear options per question
+  - ALWAYS include an "Other" option at the end for custom input
+  - Set multiSelect to true only when multiple choices make sense
+  - One question per tool call
+- **Priority order for questions:**
+  1. Core functionality scope (what must it do?)
+  2. Technical constraints (tech stack, APIs, integrations)
+  3. Success criteria (how do we know it's done?)
+  4. User experience expectations
+  5. Edge cases and error handling
 - Focus on understanding: purpose, constraints, success criteria
 
 **Exploring approaches:**
@@ -256,16 +272,16 @@ Use this standardized matrix for risk assessment:
 
 |          | Impact Low | Impact Medium | Impact High |
 |----------|-----------|---------------|-------------|
-| **Likelihood Low** | ⚪ Very Low | 🟢 Low | 🟡 Medium |
-| **Likelihood Medium** | 🟢 Low | 🟡 Medium | 🟠 High |
-| **Likelihood High** | 🟡 Medium | 🟠 High | 🔴 Critical |
+| **Likelihood Low** | [ ] Very Low | [L] Low | [M] Medium |
+| **Likelihood Medium** | [L] Low | [M] Medium | [H] High |
+| **Likelihood High** | [M] Medium | [H] High | [C] Critical |
 
 **Action Thresholds:**
-- 🔴 Critical → Must resolve before implementation begins
-- 🟠 High → Must have mitigation plan + early warning
-- 🟡 Medium → Should have mitigation plan
-- 🟢 Low → Acceptable risk, no action needed
-- ⚪ Very Low → Ignore
+- [C] Critical → Must resolve before implementation begins
+- [H] High → Must have mitigation plan + early warning
+- [M] Medium → Should have mitigation plan
+- [L] Low → Acceptable risk, no action needed
+- [ ] Very Low → Ignore
 
 ## Design Self-Review
 
@@ -387,7 +403,10 @@ Wait for the user's response. If they request changes, make them and re-run the 
 ## Key Principles
 
 - **One question at a time** - Don't overwhelm with multiple questions
+- **Use AskUserQuestion tool** - Always use the tool for structured questions
+- **Max 8 questions** - Be sharp, ask only the most critical
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
+- **Always include "Other"** - For custom input when options don't cover all cases
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
 - **Incremental validation** - Present design, get approval before moving on
