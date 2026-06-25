@@ -1,22 +1,11 @@
-统一文档路径为 .novaway/powersnexus/
+优化首次设计时自动生成 Master Specs
 
-将所有工作流文档存储路径从 `.powersnexus/` 调整为 `.novaway/powersnexus/`，实现统一的目录结构。
+在 brainstorming 设计批准后，自动将 delta-specs 内容复制到 `.novaway/powersnexus/specs/` 作为初始主规格，让用户在首次设计完成后就能看到完整的规格文档。
 
-文件更新：
-- .gitignore - 将 .powersnexus/ 改为 .novaway/
-- skills/openspec/SKILL.md - 更新所有路径引用
-- skills/brainstorming/SKILL.md - 更新设计文档保存路径
-- skills/writing-plans/SKILL.md - 更新任务文档保存路径
-- skills/subagent-driven-development/SKILL.md - 更新进度和任务文档路径
-- skills/finishing-a-development-branch/SKILL.md - 更新归档路径
+修改内容：
+- skills/openspec/SKILL.md - 添加第6步：Initialize Master Specs
+- skills/brainstorming/SKILL.md - 添加第5步：Initialize Master Specs
 
-新目录结构：
-```
-.novaway/
-├── powersnexus/
-│   ├── specs/                 # 主规格文档
-│   └── changes/               # 变更管理
-│       ├── <name>/            # 活动变更
-│       └── archive/           # 已完成变更
-└── ...                        # 其他工具的文档
-```
+流程说明：
+- 首次设计：自动创建 Master Specs
+- 后续变更：跳过此步骤，由 finishing-a-development-branch 处理增量合并

@@ -6,13 +6,14 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 - **零命令依赖**：所有功能（包含 OpenSpec 规范驱动开发）已集成到技能中，无需额外执行任何 CLI 命令
 - **多平台支持**：兼容 Claude Code、Cursor、OpenCode、Kimi Code、Copilot CLI 等主流编码代理
-- **统一文档管理**：所有工作流文档统一存储在 `.powersnexus/` 目录下
+- **统一文档管理**：所有工作流文档统一存储在 `.novaway/powersnexus/` 目录下
 - **增量规格（Delta Specs）**：支持 ADDED/MODIFIED/REMOVED 三种变更类型，适合增量开发和 brownfield 项目
 - **自动归档**：开发完成后自动合并 Delta Specs 到主规格，并归档变更记录
+- **内置 ripgrep**：集成 ripgrep 工具，无需额外安装，解决国内网络问题
 
 ## 快速开始
 
-为你的编码代理安装 PowersNexus：[Claude Code](#claude-code) · [Antigravity](#antigravity) · [Codex App](#codex-app) · [Codex CLI](#codex-cli) · [Cursor](#cursor) · [Factory Droid](#factory-droid) · [Gemini CLI](#gemini-cli) · [GitHub Copilot CLI](#github-copilot-cli) · [Kimi Code](#kimi-code) · [OpenCode](#opencode) · [Pi](#pi)
+为你的编码代理安装 PowersNexus：[Claude Code](#claude-code) · [Cursor](#cursor) · [OpenCode](#opencode) · [Kimi Code](#kimi-code) · [GitHub Copilot CLI](#github-copilot-cli) · [Gemini CLI](#gemini-cli) · [Pi](#pi)
 
 ## 工作原理
 
@@ -28,25 +29,38 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ## 目录结构
 
-所有工作流产生的文档统一存储在项目根目录的 `.powersnexus/` 目录下：
+所有工作流产生的文档统一存储在项目根目录的 `.novaway/powersnexus/` 目录下：
 
 ```
-.powersnexus/
-├── specs/                        # 主规格（单一事实来源，完整规格文档）
-│   └── <domain>/
-│       └── spec.md
-└── changes/
-    ├── <change-name>/            # 活动变更
-    │   ├── proposal.md           # 提议文档
-    │   ├── design.md             # 设计文档
-    │   ├── tasks.md              # 任务清单
-    │   ├── progress.md           # 进度记录
-    │   └── delta-specs/          # 增量规格（相对于主规格的变更）
-    │       └── <domain>/
-    │           └── spec.md
-    └── archive/                  # 已完成变更归档
-        └── YYYY-MM-DD-<name>/
+.novaway/
+├── powersnexus/
+│   ├── specs/                        # 主规格（单一事实来源，完整规格文档）
+│   │   └── <domain>/
+│   │       └── spec.md
+│   └── changes/
+│       ├── <change-name>/            # 活动变更
+│       │   ├── proposal.md           # 提议文档
+│       │   ├── design.md             # 设计文档
+│       │   ├── tasks.md              # 任务清单
+│       │   ├── progress.md           # 进度记录
+│       │   └── delta-specs/          # 增量规格（相对于主规格的变更）
+│       │       └── <domain>/
+│       │           └── spec.md
+│       └── archive/                  # 已完成变更归档
+│           └── YYYY-MM-DD-<name>/
+└── ...                               # 其他工具的文档
 ```
+
+### 文档说明
+
+| 文件 | 说明 | 生成时机 |
+|------|------|---------|
+| `specs/<domain>/spec.md` | 主规格文档，项目的单一事实来源 | 首次设计时创建，后续变更时增量合并 |
+| `changes/<name>/proposal.md` | 提议文档，说明意图、范围和方法 | brainstorming 设计批准后 |
+| `changes/<name>/design.md` | 设计文档，技术方案和架构决策 | brainstorming 设计批准后 |
+| `changes/<name>/tasks.md` | 任务清单，实施步骤和验证方法 | writing-plans 技能生成 |
+| `changes/<name>/delta-specs/` | 增量规格，记录 ADDED/MODIFIED/REMOVED | brainstorming 设计批准后 |
+| `changes/archive/` | 已完成变更归档，保留完整审计轨迹 | finishing-a-development-branch 技能 |
 
 ## 安装方式
 
@@ -55,8 +69,6 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 ### Claude Code
 
 PowersNexus 已上架 [Claude 官方插件市场](https://claude.com/plugins/PowersNexus)。
-
-**官方市场安装：**
 
 ```bash
 /plugin install PowersNexus@claude-plugins-official
@@ -76,10 +88,42 @@ PowersNexus 已上架 [Claude 官方插件市场](https://claude.com/plugins/Pow
 
 OpenCode 使用自己的插件安装机制；即使你已经在其他代理中使用过，也需要单独安装。
 
-- 告诉 OpenCode：
+**方式一：通过 INSTALL.md 安装（推荐）**
+
+告诉 OpenCode：
 
 ```
 抓取并按照 https://raw.githubusercontent.com/obra/PowersNexus/refs/heads/main/.opencode/INSTALL.md 中的说明操作
+```
+
+**方式二：手动配置 opencode.json**
+
+在 `opencode.json`（全局或项目级别）中添加：
+
+```json
+{
+  "plugin": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
+}
+```
+
+重启 OpenCode，插件将自动安装并注册所有技能。
+
+验证安装：询问 "告诉我你的 powersnexus 是什么"
+
+**Windows 安装问题**
+
+如果 OpenCode 无法通过 git 安装插件，尝试使用本地安装：
+
+```powershell
+npm install powersnexus@git+https://gitee.com/nova-way/powersnexus.git --prefix "$HOME\.config\opencode"
+```
+
+然后在 `opencode.json` 中使用本地路径：
+
+```json
+{
+  "plugin": ["~/.config/opencode/node_modules/powersnexus"]
+}
 ```
 
 ### Kimi Code
@@ -94,14 +138,6 @@ PowersNexus 已上架 Kimi Code 的插件市场。
 
 - 进入 `Marketplace` > `PowersNexus` 并安装它。
 
-- 或者直接从此仓库安装：
-
-```text
-/plugins install https://github.com/obra/PowersNexus
-```
-
-- 详细文档：[docs/README.kimi.md](docs/README.kimi.md)
-
 ### GitHub Copilot CLI
 
 ```bash
@@ -115,34 +151,6 @@ copilot plugin install PowersNexus@PowersNexus-marketplace
 gemini extensions install https://github.com/obra/PowersNexus
 gemini extensions update PowersNexus
 ```
-
-### Factory Droid
-
-```bash
-droid plugin marketplace add https://github.com/obra/PowersNexus
-droid plugin install PowersNexus@PowersNexus
-```
-
-### Antigravity
-
-```bash
-agy plugin install https://github.com/obra/PowersNexus
-```
-
-### Codex App
-
-- 在 Codex 应用中，点击侧边栏的 Plugins。
-- 你将在 Coding 部分看到 `PowersNexus`。
-- 点击 PowersNexus 旁边的 `+`，按提示操作。
-
-### Codex CLI
-
-```bash
-/plugins
-PowersNexus
-```
-
-然后选择 `Install Plugin`。
 
 ### Pi
 
@@ -161,7 +169,7 @@ pi -e /path/to/PowersNexus
 ## 基本工作流程
 
 1. **brainstorming**（头脑风暴） — 在写代码前自动激活。通过提问打磨初步想法、探索替代方案、分段呈现设计以供确认。生成设计文档。
-2. **openspec**（OpenSpec 集成） — 设计批准后激活。生成提议（proposal）、增量规格（delta specs）、设计（design）和任务（tasks）文档，统一存储到 `.powersnexus/changes/<name>/` 目录。
+2. **openspec**（OpenSpec 集成） — 设计批准后激活。生成提议（proposal）、增量规格（delta specs）、设计（design）和任务（tasks）文档，统一存储到 `.novaway/powersnexus/changes/<name>/` 目录，并初始化主规格到 `.novaway/powersnexus/specs/`。
 3. **using-git-worktrees**（使用 Git Worktree） — 设计批准后激活。在新分支上创建隔离工作区，运行项目设置，验证测试基线干净。
 4. **writing-plans**（制定计划） — 设计获批后激活。将工作拆分为 2-5 分钟的可执行任务。每个任务都包含精确的文件路径、完整代码、验证步骤。
 5. **subagent-driven-development**（子代理驱动开发）或 **executing-plans**（执行计划） — 计划就绪后激活。为每个任务调度全新的子代理，并进行两阶段审查（规格合规性 + 代码质量），或者分批执行并设置人工检查点。
@@ -176,7 +184,7 @@ pi -e /path/to/PowersNexus
 ### 规划与设计
 
 - **brainstorming** — 苏格拉底式设计精炼
-- **openspec** — 管理产物生成、增量规格与变更生命周期，统一管理 `.powersnexus/` 下的所有文档
+- **openspec** — 管理产物生成、增量规格与变更生命周期，统一管理 `.novaway/powersnexus/` 下的所有文档
 - **writing-plans** — 详细的实施计划
 
 ### 开发
