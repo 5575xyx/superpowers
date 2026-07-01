@@ -59,8 +59,8 @@ You MUST create a task for each of these items and complete them in order:
    - 2-4 clear options (multiSelect: false/true)
    - Focus on: purpose, constraints, success criteria
    - Prioritize the most critical questions first
-6. **Propose 2-3 approaches** — with trade-offs and your recommendation (use decision expert framework)
-7. **Present design** — in sections scaled to their complexity, get user approval after each section
+6. **Propose 2-3 approaches** — Use the `question` tool to present approaches with trade-offs and your recommendation (use decision expert framework). User must select one approach before proceeding.
+7. **Present design** — in sections scaled to their complexity. After each section, use the `question` tool to get user approval. If user rejects, revise and re-present.
 
 ### Phase 2: Quality Assurance
 8. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies (Standard/Complete Paths)
@@ -77,7 +77,7 @@ You MUST create a task for each of these items and complete them in order:
     - **Standard Path:** proposal.md + delta-specs/ + design.md + tasks.md + cross-reference.md
     - **Complete Path:** all artifacts + risk assessment + NFR documentation + red-team-review.md
 13. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
-14. **User reviews written spec** — ask user to review the spec file before proceeding (Standard/Complete Paths only)
+14. **User reviews written spec** — Use the `question` tool to ask user to review the spec file before proceeding (Standard/Complete Paths only)
 
 ### Phase 4: Transition to Implementation
 15. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -201,16 +201,17 @@ Based on your description, I've evaluated this project as:
 **Exploring approaches:**
 
 - Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
+- Use the `question` tool to present options with your recommendation and reasoning
 - Lead with your recommended option and explain why
+- User must select one approach before proceeding
 
 **Presenting the design:**
 
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
+- After each section, use the `question` tool to ask "Does this look right so far?" with options: [Approved, Needs changes, Skip to next section]
 - Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
+- Be ready to go back and revise if user selects "Needs changes"
 
 **Design for isolation and clarity:**
 
@@ -387,11 +388,14 @@ After writing the spec document, look at it with fresh eyes:
 Fix any issues inline. No need to re-review — just fix and move on.
 
 **User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+After the spec review loop passes, use the `question` tool to ask the user to review the written spec before proceeding:
 
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+Question options:
+- Approved - Proceed to implementation
+- Needs changes - I'll revise the spec
+- Skip - Move to implementation without review
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+Wait for the user's response. If they select "Needs changes", make them and re-run the spec review loop. Only proceed once the user approves.
 
 **Implementation:**
 
@@ -401,8 +405,8 @@ Wait for the user's response. If they request changes, make them and re-run the 
 ## Key Principles
 
 - **One question at a time** - Don't overwhelm with multiple questions
-- **Use question tool** - Always use the tool for structured questions
-- **Max 8 questions** - Be sharp, ask only the most critical
+- **Use question tool everywhere** - Always use the tool for ANY structured question or user confirmation throughout the entire process (clarifying questions, approach selection, design approval, spec review, etc.)
+- **Max 8 clarifying questions** - Be sharp, ask only the most critical during requirements gathering
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
