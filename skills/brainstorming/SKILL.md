@@ -57,7 +57,6 @@ You MUST create a task for each of these items and complete them in order:
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 5. **Ask clarifying questions** — Use the `question` tool. One question at a time. MAXIMUM 8 questions total. Each question MUST have:
    - 2-4 clear options (multiSelect: false/true)
-   - An "Other" option at the end for custom input
    - Focus on: purpose, constraints, success criteria
    - Prioritize the most critical questions first
 6. **Propose 2-3 approaches** — with trade-offs and your recommendation (use decision expert framework)
@@ -189,7 +188,6 @@ Based on your description, I've evaluated this project as:
 - **Question format requirements:**
   - Always use `question` tool (NOT plain text)
   - 2-4 clear options per question
-  - ALWAYS include an "Other" option at the end for custom input
   - Set multiSelect to true only when multiple choices make sense
   - One question per tool call
 - **Priority order for questions:**
@@ -406,7 +404,6 @@ Wait for the user's response. If they request changes, make them and re-run the 
 - **Use question tool** - Always use the tool for structured questions
 - **Max 8 questions** - Be sharp, ask only the most critical
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **Always include "Other"** - For custom input when options don't cover all cases
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
 - **Incremental validation** - Present design, get approval before moving on
