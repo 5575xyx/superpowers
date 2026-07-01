@@ -211,15 +211,12 @@ powersnexus check consistency <change-name>
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
+After saving the plan, use the `question` tool to offer execution choice:
 
-**"Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Two execution options:**
-
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
+Question: "Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Which execution approach would you like to use?"
+Options:
+- Subagent-Driven (recommended) - Fresh subagent per task with two-stage review
+- Inline Execution - Execute tasks in this session with checkpoints
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use PowersNexus:subagent-driven-development

@@ -305,12 +305,12 @@ These documents contain binding requirements that MUST be followed throughout im
 
 | Type | Example | Handling |
 |------|---------|----------|
-| ✅ Technical optimization | MySQL → PostgreSQL | Record + user approval |
+| ✅ Technical optimization | MySQL → PostgreSQL | Record + use `question` tool for user approval |
 | ✅ API refinement | Parameter name change | Update design document |
-| ✅ Implementation simplification | Remove redundant step | Record + user approval |
-| ❌ Requirement scope change | Remove feature | Must user confirmation |
+| ✅ Implementation simplification | Remove redundant step | Record + use `question` tool for user approval |
+| ❌ Requirement scope change | Remove feature | Use `question` tool for user confirmation |
 | ❌ Security downgrade | Skip validation | Forbidden |
-| ❌ Data model change | Change table structure | Must user confirmation |
+| ❌ Data model change | Change table structure | Use `question` tool for user confirmation |
 
 **Deviation Log:** Store at `.novaway/powersnexus/changes/<name>/deviations.md`
 

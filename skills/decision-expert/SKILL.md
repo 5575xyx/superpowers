@@ -88,7 +88,8 @@
 1. Evaluate options with pros/cons
 2. Pick recommendation with reasoning
 3. Present clearly with "recommended" label
-4. User can confirm with single response
+4. Use the `question` tool to get user confirmation
+5. User can override later
 
 **Example Output:**
 ```
@@ -145,7 +146,7 @@
 1. Present options with full analysis
 2. Give clear recommendation
 3. Explain risks and tradeoffs
-4. Wait for user confirmation
+4. Use the `question` tool to wait for user confirmation
 5. Proceed only after approval
 
 ---
@@ -167,8 +168,9 @@
 1. Present all viable options
 2. Provide objective analysis
 3. Clearly state that this requires user decision
-4. Do NOT express preference (stay neutral)
-5. Wait for user decision
+4. Use the `question` tool to present options
+5. Do NOT express preference (stay neutral)
+6. Wait for user decision
 
 ---
 
@@ -192,6 +194,8 @@ Instead of asking the user about every single decision, collect multiple decisio
 - **Large batch:** 8+ decisions (only if user explicitly wants)
 
 ### Batch Decision Format
+
+Present the batch decision summary first, then use the `question` tool for confirmation:
 
 ```markdown
 ## 📋 决策批量确认（共 5 项）
@@ -224,16 +228,15 @@ Instead of asking the user about every single decision, collect multiple decisio
 - **理由：** JSON 支持好，社区活跃
 - **备选：** MySQL（更熟悉）
 - **状态：** ⏳ 需您选择
-
----
-
-### ✅ 一键确认所有推荐
-回复 "全部确认" 即可应用所有推荐（项 1-4）
-项 5 需要您单独决策。
-
-### 📝 逐项调整
-或者告诉我您想调整哪一项。
 ```
+
+Then use the `question` tool:
+
+Question: "以上是本次开发中的决策汇总，请确认："
+Options:
+- 全部确认（应用所有推荐方案）
+- 逐项确认（我要逐项查看并确认）
+- 需要调整某些决策（请列出具体项）
 
 ### Batch Decision Triggers
 
