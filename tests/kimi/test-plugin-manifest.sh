@@ -1,11 +1,24 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 MANIFEST="$REPO_ROOT/.kimi-plugin/plugin.json"
 
-python3 - "$MANIFEST" <<'PY'
+python_command=()
+for candidate in python3 python; do
+    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(sys.version_info.major != 3)' >/dev/null 2>&1; then
+        python_command=("$candidate")
+        break
+    fi
+done
+
+if [ ${#python_command[@]} -eq 0 ]; then
+    echo "错误：Kimi 插件清单测试需要可执行的 Python 3（python3 或 python）。" >&2
+    exit 1
+fi
+
+"${python_command[@]}" - "$MANIFEST" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -21,11 +34,11 @@ def assert_present(text, needle, label):
     if needle not in text:
         raise AssertionError(f"{label}: missing {needle!r}")
 
-assert_equal(manifest.get("name"), "PowersNexus", "plugin name")
+assert_equal(manifest.get("name"), "powersnexus", "plugin name")
 assert_equal(manifest.get("skills"), "./skills/", "skills path")
 assert_equal(
     manifest.get("sessionStart", {}).get("skill"),
-    "using-PowersNexus",
+    "using-powersnexus",
     "sessionStart.skill",
 )
 

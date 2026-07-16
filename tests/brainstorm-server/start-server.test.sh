@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Fast tests for start-server.sh shell-only platform decisions.
 set -uo pipefail
 

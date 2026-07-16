@@ -1,0 +1,4 @@
+interface:
+  display_name: "UIUX设计智能"
+  short_description: "为前端团队提供本地设计系统生成检索与可执行视觉规范支持"
+  default_prompt: "为这个界面生成设计系统并给出实现建议。"

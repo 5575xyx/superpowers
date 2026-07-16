@@ -60,6 +60,13 @@ Subagent (general-purpose):
     - Integration tests where they matter?
     - All tests passing?
 
+    **Visual UI review (only when the change contains user-visible UI):**
+    - Read `skills/frontend-quality/references/visual-review.md`.
+    - Inspect the actual running page at one desktop and one mobile viewport using the supplied preview URL or screenshots.
+    - Compare the result with the approved design contract or design-system artifact.
+    - Check hierarchy, responsive behavior, interaction states, accessibility and visual consistency.
+    - If preview evidence is unavailable, report an Important issue. A code diff is not visual evidence.
+
     **Production readiness:**
     - Migration strategy if schema changed?
     - Backward compatibility considered?
@@ -101,6 +108,9 @@ Subagent (general-purpose):
 
     ### Recommendations
     [Improvements for code quality, architecture, or process]
+
+    ### UI Review Evidence (UI changes only)
+    [Preview URL or screenshot paths, desktop/mobile findings, and any required fixes.]
 
     ### Assessment
 

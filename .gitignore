@@ -1,11 +1,13 @@
 .worktrees/
 .private-journal/
 .claude/
+.codex/
 .novaway/
 .idea/
 .trae/
 .DS_Store
 node_modules/
+dist/
 inspo
 triage/
 

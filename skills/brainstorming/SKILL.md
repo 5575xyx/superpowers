@@ -1,16 +1,16 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. Auto-triggers task-size-assessor to recommend L0-L4 process level."
+description: "Use for L1+ behavior or feature work after L0-L4 classification. Produces a design proportionate to task risk; L0 mechanical changes bypass this skill."
 ---
 
 # Brainstorming Ideas Into Designs
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+对 L2+，先理解项目上下文，再按风险提出必要问题并形成设计契约。L1 使用简短假设和验收说明，不展开完整设计流程。
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+L1+ 行为或功能变更，在完成与其风险相称的设计说明前，不要进入实现。L0 的机械性改动不调用本技能，直接修改并聚焦验证。
 </HARD-GATE>
 
 ## Five-Level Process System（五级流程体系）
@@ -20,26 +20,33 @@ PowersNexus uses a 5-level process system. The task-size-assessor skill automati
 | Level | Name | Use Case | Core Steps | Docs Output | Est. Time |
 |-------|------|----------|------------|-------------|-----------|
 | **L0** | Micro Fix | typo, config, copy | Change → Verify → Commit | None | < 5 min |
-| **L1** | Quick Fix | small features, bug fixes | Quick design → Implement → Test | tasks.md | < 30 min |
-| **L2** | Standard | medium features, modules | design + tasks + review + test | design + tasks | 1-2 hrs |
+| **L1** | Quick Fix | small features, bug fixes | 简短假设 → 实现 → 测试 | 简短验收说明 | < 30 min |
+| **L2** | Standard | medium features, modules | 设计契约 + 计划 + 审查 + 测试 | design + tasks | 1-2 hrs |
 | **L3** | Full Process | large features, architecture | Full OpenSpec + Red Team | full docs | 4-8 hrs |
 | **L4** | Heavyweight | core architecture, major refactor | L3 + multi-review + user approval | full + review records | 1 day+ |
 
-**Assessment trigger:** Automatically invoke task-size-assessor at the start of brainstorming to evaluate task size and recommend process level.
+**Assessment trigger:** L2+ 在 brainstorming 开始时调用 task-size-assessor；L1 可使用 CLI 快速评估，不再额外加载完整评估技能。
+
+## 渐进执行规则
+
+- **L0**：不要调用本技能。直接修改、运行聚焦验证、简要说明结果。
+- **L1**：只在缺少关键事实时询问一次；以一段假设、范围和验收条件代替完整工件。无需红队审查、OpenSpec 初始化或重复批准。
+- **L2**：一次设计契约后进入计划；保留必要的风险、审查和测试。
+- **L3/L4**：按完整流程执行。L4 增加多轮审查和明确用户批准。
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+L1+ 项目都需要与风险相称的设计。L0 的文案、配置和机械性微调不进入本技能；它们以变更说明和聚焦验证替代设计工件。
 
-**L0/L1 exceptions:** For L0 (micro fix) and L1 (quick fix), the design can be extremely brief — even just a few lines. But you still need to present and get approval.
+**L1 例外：** 设计可以只有几行。若用户目标和验收条件已明确，可记录假设后直接实施；仅在关键选择未明确时请求一次澄清。
 
-## Checklist
+## Checklist（仅 L2+）
 
-You MUST create a task for each of these items and complete them in order:
+L1 已按“渐进执行规则”完成简短假设后直接进入实现和聚焦测试；不要执行下列完整清单。L2+ 为每项创建任务并按顺序完成：
 
 ### Phase 0: Project Assessment
 1. **Explore project context** — check files, docs, recent commits, knowledge base
-2. **Task size assessment** — invoke task-size-assessor skill to evaluate task and recommend L0-L4 process level; get user approval
+2. **Task size assessment** — invoke task-size-assessor skill to evaluate task and recommend L0-L4 process level；若已有自动本地交付授权，记录评估和关键假设后连续推进，不重复请求阶段批准
 
    **Quick CLI shortcut (optional):**
    You can use the PowersNexus CLI for a quick initial assessment:
@@ -53,14 +60,14 @@ You MUST create a task for each of these items and complete them in order:
 3. **Module existence check** — for each target module, check if `.novaway/powersnexus/specs/<module>/spec.md` exists; determine create mode (Greenfield/Brownfield/Mixed)
 4. **Initialize OpenSpec** — create `.novaway/powersnexus/changes/<name>/` directory structure (skip for L0/L1)
 
-### Phase 1: Design (All Paths)
+### Phase 1: Design
 4. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 5. **Ask clarifying questions** — Use the `question` tool. One question at a time. MAXIMUM 8 questions total. Each question MUST have:
    - 2-4 clear options (multiSelect: false/true)
    - Focus on: purpose, constraints, success criteria
    - Prioritize the most critical questions first
 6. **Propose 2-3 approaches** — Use the `question` tool to present approaches with trade-offs and your recommendation (use decision expert framework). User must select one approach before proceeding.
-7. **Present design** — in sections scaled to their complexity. After each section, use the `question` tool to get user approval. If user rejects, revise and re-present.
+7. **Present design** — in sections scaled to their complexity. 默认在每段后使用 `question` 工具获取批准；已有自动本地交付授权时，在不涉及外部或不可逆操作的前提下记录设计并连续推进，只有关键未知项才提问。
 
 ### Phase 2: Quality Assurance
 8. **Risk assessment** — identify technical risks, dependencies, and mitigation strategies (Standard/Complete Paths)
@@ -71,18 +78,19 @@ You MUST create a task for each of these items and complete them in order:
     - **Fast Path:** No red team review
 11. **Fix critical issues** — address all 🔴 Critical issues from red team review
 
-### Phase 3: Generate Artifacts (All Paths)
+### Phase 3: Generate Artifacts
 12. **Generate OpenSpec artifacts** — create appropriate documents based on selected path:
     - **Fast Path:** design.md + tasks.md
     - **Standard Path:** proposal.md + delta-specs/ + design.md + tasks.md + cross-reference.md
     - **Complete Path:** all artifacts + risk assessment + NFR documentation + red-team-review.md
-13. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
-14. **User reviews written spec** — Use the `question` tool to ask user to review the spec file before proceeding (Standard/Complete Paths only)
+13. **Initialize delivery contract** — 对 L2+ 创建 `delivery.json`，优先运行 `powersnexus init delivery <change-name> --profile <application|library>`，并把真实 argv、启动冒烟和健康检查要求交给 writing-plans。
+14. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (Standard/Complete Paths only)
+15. **User reviews written spec** — 默认使用 `question` 工具请求审阅；已有自动本地交付授权时记录审阅结论并连续进入 writing-plans，除非存在关键未知项或外部影响。
 
 ### Phase 4: Transition to Implementation
-15. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+16. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
-## Process Flow
+## Process Flow（L2+）
 
 ```dot
 digraph brainstorming {
@@ -123,13 +131,13 @@ digraph brainstorming {
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**L2+ 的终态是：** UI 工作先调用 `ui-ux-pro-max`，再调用 `frontend-quality`，最后调用 `writing-plans`；非 UI 工作直接调用 `writing-plans`。L1 完成简短假设后直接进入实现和聚焦测试，不加载此完整流程。
 
-## The Process
+## The Process（L2+）
 
 ### Project Complexity Assessment
 
-**Before asking detailed questions, assess the project complexity:**
+**L2+ 在提出详细问题前评估复杂度：**
 
 ```markdown
 ## Project Complexity Assessment

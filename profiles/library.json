@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "1",
+  "id": "library",
+  "displayName": "可发布库",
+  "requiredSteps": ["build", "test", "integration", "package"],
+  "runnerOwnedSteps": []
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "前端质量"
+  short_description: "帮助团队建立可验证的前端设计契约和完整视觉验收闭环"
+  default_prompt: "为这个界面建立设计契约并完成视觉验收。"

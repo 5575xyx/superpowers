@@ -181,11 +181,12 @@ After design approval in brainstorming:
 4. Generate delta specs based on requirements (with mode field in header)
 5. Generate design document
 6. Generate tasks checklist
-7. **Conditional Master Spec Initialization**:
+7. **Initialize delivery contract** — Run `powersnexus init delivery <change-name> --profile <application|library>` after the change directory exists; writing-plans replaces its pending argv placeholders with concrete project commands.
+8. **Conditional Master Spec Initialization**:
    - **Greenfield (A)**: Create master spec at `.novaway/powersnexus/specs/<module>/spec.md` using `master-spec.md` template
    - **Brownfield (B)**: Skip; master spec will be updated during archive
    - **Mixed (C)**: For each new module, create master spec; for existing modules, skip
-8. Transition to writing-plans skill
+9. Transition to writing-plans skill
 
 ### Writing Plans → OpenSpec
 

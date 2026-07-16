@@ -1,4 +1,13 @@
-﻿# PowersNexus Release Notes
+# PowersNexus Release Notes
+
+## v6.1.0 (2026-07-15)
+
+### 可靠核心与设计质量
+
+- **内置 UI/UX 设计智能。** 插件现在随包分发 UI/UX Pro Max 的本地设计数据与检索器；UI 工作流会先生成设计系统，再形成视觉契约、桌面/移动端证据与合并前视觉审查。
+- **基础测试不再隐式依赖 Python。** `npm test` 只运行 Node 核心测试；`npm run test:uiux` 在 Python 3 环境验证 UI/UX 设计智能。GitHub Actions 分别运行两套测试。
+- **平台版本自动校验。** 新增测试确保所有插件清单与根包版本一致，且 JSON 清单不包含会破坏解析的 UTF-8 BOM。
+- **设计产物路径修正。** 持久化设计系统位于 `design-system/<project-slug>/MASTER.md`，与生成器实际输出一致。
 
 ## v6.0.3 (2026-06-18)
 

@@ -15,6 +15,7 @@ Dispatch a code reviewer subagent to catch issues before they cascade. The revie
 - After each task in subagent-driven development
 - After completing major feature
 - Before merge to main
+- 对用户可见的 UI 任务：在实现完成后，且在合并前完成实际页面的视觉审查
 
 **Optional but valuable:**
 - When stuck (fresh perspective)
@@ -44,6 +45,11 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 - Fix Important issues before proceeding
 - Note Minor issues for later
 - Push back if reviewer is wrong (with reasoning)
+
+**UI 任务附加要求：**
+- 先加载 `frontend-quality` 的 [视觉审查协议](../frontend-quality/references/visual-review.md)。
+- 向审查者提供设计契约、预览 URL 或截图，以及桌面和移动端证据。
+- 审查者必须检查实际页面；没有预览证据时，标记为 Important，不能以代码 diff 代替视觉审查。
 
 ## Example
 

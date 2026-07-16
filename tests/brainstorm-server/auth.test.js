@@ -16,12 +16,13 @@ const { spawn } = require('child_process');
 const http = require('http');
 const WebSocket = require('ws');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const assert = require('assert');
 
 const SERVER_PATH = path.join(__dirname, '../../skills/brainstorming/scripts/server.cjs');
 const TEST_PORT = 3335;
-const TEST_DIR = '/tmp/brainstorm-auth-test';
+const TEST_DIR = path.join(os.tmpdir(), `brainstorm-auth-test-${process.pid}`);
 const CONTENT_DIR = path.join(TEST_DIR, 'content');
 const TOKEN = 'testtoken-0123456789abcdef0123456789abcdef';
 const COOKIE_NAME = `brainstorm-key-${TEST_PORT}`;
@@ -34,11 +35,20 @@ const EXPECTED_SECURITY_HEADERS = {
 };
 
 function cleanup() {
-  if (fs.existsSync(TEST_DIR)) fs.rmSync(TEST_DIR, { recursive: true });
+  if (fs.existsSync(TEST_DIR)) {
+    fs.rmSync(TEST_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
 }
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function stopServer(server) {
+  if (server.exitCode !== null) return;
+  const exited = new Promise(resolve => server.once('exit', resolve));
+  server.kill();
+  await Promise.race([exited, sleep(2000)]);
 }
 
 // Raw HTTP GET with optional key query and Cookie header.
@@ -303,8 +313,7 @@ async function runTests() {
       return;
     }
   } finally {
-    server.kill();
-    await sleep(100);
+    await stopServer(server);
     cleanup();
   }
 }

@@ -90,6 +90,8 @@ verification step in the final integration test task.]
 - **Maintainability:** code quality standards, documentation requirements
 - **Observability:** logging, metrics, error reporting requirements
 
+For user-interface work, also include the approved visual contract: design system or token source, responsive breakpoints, component states, accessibility expectations, and desktop/mobile visual acceptance evidence.
+
 Include only what's relevant. Copy exact values from the spec if present.]
 
 ---
@@ -176,6 +178,8 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **6. Integration test task:** Is there a final integration/end-to-end test task that verifies the whole feature works together? This should be the last task before completion.
 
+**7. Delivery contract:** 对 L2+，计划必须包含填写 `delivery.json` 真实 argv、`powersnexus verify delivery <change-name>`、`powersnexus check delivery <change-name>` 与 `powersnexus archive <change-name>`。application 使用启动冒烟和健康检查，library 使用制品验证。
+
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
 ## Consistency Check (Auto-Verify)
@@ -195,10 +199,11 @@ powersnexus check consistency <change-name>
 ```
 
 **What it checks:**
-- All REQ IDs in design.md are covered in tasks.md
-- All REQ IDs in design.md are covered in test-plan.md
-- All IDs follow the naming convention
-- No orphaned requirements
+- Delta Spec 的每个 REQ-ID 都映射到 proposal.md、design.md、tasks.md 与 cross-reference.md
+- 必需规划工件和至少一个 Delta Spec 均存在
+- 任务完成度仅作进度展示；规划阶段允许未完成任务
+
+**交付完成后：** 使用 `powersnexus check delivery <change-name>` 验证任务、追踪和 delivery.json 证据，再归档。
 
 **If inconsistencies are found:**
 - Fix them before proceeding
@@ -211,7 +216,7 @@ powersnexus check consistency <change-name>
 
 ## Execution Handoff
 
-After saving the plan, use the `question` tool to offer execution choice:
+After saving the plan, 默认使用 `question` 工具提供执行选择；如果当前会话已经有自动本地交付授权，直接按推荐执行路径继续，不重复询问执行选择。
 
 Question: "Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Which execution approach would you like to use?"
 Options:

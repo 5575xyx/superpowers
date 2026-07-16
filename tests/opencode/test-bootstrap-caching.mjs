@@ -69,7 +69,7 @@ if (failures.length > 0) {
 console.log(JSON.stringify(result, null, 2));
 
 function isBootstrapSkillPath(filePath) {
-  return String(filePath).replaceAll('\\', '/').includes('using-PowersNexus/SKILL.md');
+  return String(filePath).replaceAll('\\', '/').includes('using-powersnexus/SKILL.md');
 }
 
 function makeOutput(text) {

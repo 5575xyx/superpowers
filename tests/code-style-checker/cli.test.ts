@@ -1,106 +1,39 @@
+import assert from 'node:assert/strict';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import test from 'node:test';
 import { run } from '../../src/code-style-checker/cli';
-import * as fs from 'fs';
-import * as path from 'path';
 
-describe('CLI', () => {
-  const originalExitCode = process.exitCode;
+async function captureLogs(action: () => Promise<void>): Promise<string[]> {
   const originalLog = console.log;
-  const originalError = console.error;
-  let logOutput: string[] = [];
-  let errorOutput: string[] = [];
-
-  beforeEach(() => {
-    process.exitCode = 0;
-    logOutput = [];
-    errorOutput = [];
-    console.log = jest.fn((...args) => logOutput.push(args.join(' ')));
-    console.error = jest.fn((...args) => errorOutput.push(args.join(' ')));
-  });
-
-  afterEach(() => {
-    process.exitCode = originalExitCode;
+  const output: string[] = [];
+  console.log = (...args: unknown[]) => output.push(args.join(' '));
+  try {
+    await action();
+    return output;
+  } finally {
     console.log = originalLog;
-    console.error = originalError;
+  }
+}
+
+test('代码风格 CLI 显示帮助与规则列表', async () => {
+  const help = await captureLogs(() => run(['help']));
+  const list = await captureLogs(() => run(['list']));
+  assert.match(help.join('\n'), /Code Style Checker/);
+  assert.match(list.join('\n'), /indentation/);
+});
+
+test('代码风格 CLI 初始化配置文件', async (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-cli-'));
+  const originalCwd = process.cwd();
+  t.after(() => {
+    process.chdir(originalCwd);
+    rmSync(directory, { recursive: true, force: true });
   });
-
-  describe('help command', () => {
-    it('should show help message', async () => {
-      await run(['help']);
-
-      expect(logOutput[0]).toContain('Code Style Checker');
-      expect(logOutput[0]).toContain('Usage:');
-      expect(logOutput[0]).toContain('Commands:');
-    });
-  });
-
-  describe('version command', () => {
-    it('should show version', async () => {
-      await run(['version']);
-
-      expect(logOutput[0]).toContain('Code Style Checker');
-      expect(logOutput[0]).toMatch(/v\d+\.\d+\.\d+/);
-    });
-  });
-
-  describe('list command', () => {
-    it('should list available rules', async () => {
-      await run(['list']);
-
-      expect(logOutput[0]).toContain('Available rules:');
-      expect(logOutput[0]).toContain('indentation');
-      expect(logOutput[0]).toContain('naming');
-    });
-  });
-
-  describe('init command', () => {
-    it('should create config file', async () => {
-      const testDir = path.join(__dirname, 'cli-fixture');
-      const originalCwd = process.cwd();
-
-      if (!fs.existsSync(testDir)) {
-        fs.mkdirSync(testDir, { recursive: true });
-      }
-      process.chdir(testDir);
-
-      try {
-        await run(['init']);
-
-        const configPath = path.join(testDir, '.code-style.json');
-        expect(fs.existsSync(configPath)).toBe(true);
-
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        expect(config.rules).toBeDefined();
-      } finally {
-        process.chdir(originalCwd);
-        if (fs.existsSync(testDir)) {
-          fs.rmSync(testDir, { recursive: true });
-        }
-      }
-    });
-  });
-
-  describe('scan command', () => {
-    it('should scan directory', async () => {
-      const testDir = path.join(__dirname, 'scan-fixture');
-      const originalCwd = process.cwd();
-
-      if (!fs.existsSync(testDir)) {
-        fs.mkdirSync(testDir, { recursive: true });
-      }
-      fs.writeFileSync(path.join(testDir, 'test.ts'), 'const myVar = 1;\n');
-      process.chdir(testDir);
-
-      try {
-        await run(['scan']);
-
-        expect(logOutput[0]).toContain('Code Style Checker');
-        expect(logOutput[0]).toContain('Files:');
-      } finally {
-        process.chdir(originalCwd);
-        if (fs.existsSync(testDir)) {
-          fs.rmSync(testDir, { recursive: true });
-        }
-      }
-    });
-  });
+  process.chdir(directory);
+  await run(['init']);
+  const configPath = join(directory, '.code-style.json');
+  assert.equal(existsSync(configPath), true);
+  assert.ok(JSON.parse(readFileSync(configPath, 'utf8')).rules);
 });

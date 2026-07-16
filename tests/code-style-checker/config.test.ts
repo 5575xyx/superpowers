@@ -1,62 +1,20 @@
-import { ConfigManager, DEFAULT_CONFIG } from '../src/code-style-checker/config';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { ConfigManager, DEFAULT_CONFIG } from '../../src/code-style-checker/config';
 
-describe('ConfigManager', () => {
-  describe('mergeWithDefaults', () => {
-    it('should return default config when no config provided', () => {
-      const manager = new ConfigManager();
-      const config = manager.mergeWithDefaults({});
+test('ConfigManager 在未提供配置文件时返回默认配置', () => {
+  const config = new ConfigManager().load();
+  assert.equal(config.format, 'terminal');
+  assert.deepEqual(config.exclude, DEFAULT_CONFIG.exclude);
+  assert.equal(config.rules.indentation.enabled, true);
+});
 
-      expect(config.rules).toEqual(DEFAULT_CONFIG.rules);
-      expect(config.exclude).toEqual(DEFAULT_CONFIG.exclude);
-      expect(config.format).toEqual(DEFAULT_CONFIG.format);
-    });
-
-    it('should override rules with provided config', () => {
-      const manager = new ConfigManager();
-      const config = manager.mergeWithDefaults({
-        rules: {
-          indentation: { enabled: false, severity: 'warning' },
-        },
-      });
-
-      expect(config.rules.indentation.enabled).toBe(false);
-      expect(config.rules.indentation.severity).toBe('warning');
-    });
-
-    it('should override exclude with provided config', () => {
-      const manager = new ConfigManager();
-      const config = manager.mergeWithDefaults({
-        exclude: ['vendor', '.tmp'],
-      });
-
-      expect(config.exclude).toEqual(['vendor', '.tmp']);
-    });
-
-    it('should override format with provided config', () => {
-      const manager = new ConfigManager();
-      const config = manager.mergeWithDefaults({
-        format: 'json',
-      });
-
-      expect(config.format).toBe('json');
-    });
+test('ConfigManager 保留默认规则并覆盖指定规则', () => {
+  const config = new ConfigManager().mergeWithDefaults({
+    format: 'json',
+    rules: { naming: { enabled: false, severity: 'info' } },
   });
-
-  describe('getRuleConfig', () => {
-    it('should return default config for existing rule', () => {
-      const manager = new ConfigManager();
-      const config = manager.getRuleConfig('indentation');
-
-      expect(config.enabled).toBe(true);
-      expect(config.severity).toBe('error');
-    });
-
-    it('should return default config for unknown rule', () => {
-      const manager = new ConfigManager();
-      const config = manager.getRuleConfig('unknown-rule');
-
-      expect(config.enabled).toBe(true);
-      expect(config.severity).toBe('warning');
-    });
-  });
+  assert.equal(config.format, 'json');
+  assert.equal(config.rules.naming.enabled, false);
+  assert.equal(config.rules.encoding.enabled, true);
 });

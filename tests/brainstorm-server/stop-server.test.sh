@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Tests for stop-server.sh PID-ownership safety.
 #
 # A stale server.pid (e.g. after a reboot, when the kernel has recycled the PID)

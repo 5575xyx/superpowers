@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Windows lifecycle tests for the brainstorm server.
 #
 # Verifies brainstorm server lifecycle behavior, including:

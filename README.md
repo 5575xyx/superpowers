@@ -5,6 +5,7 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 ## 核心特性
 
 - **五级流程体系（L0-L4）**：根据任务规模自动匹配流程，简单任务简单做，复杂任务完整做，效率提升 80%+
+- **内置 UI/UX 设计智能**：集成离线 UI/UX Pro Max 数据与检索器，先生成设计系统，再执行响应式与视觉验收
 - **任务规模自动评估**：6 维度智能评估（代码改动量、影响范围、风险等级等），自动推荐合适的流程级别
 - **多平台支持**：兼容 Claude Code、Cursor、OpenCode、Kimi Code、Copilot CLI 等主流编码代理
 - **统一文档管理**：所有工作流文档统一存储在 `.novaway/powersnexus/` 目录下
@@ -64,6 +65,7 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 | `changes/<name>/design.md` | 设计文档，技术方案和架构决策 | brainstorming 设计批准后 |
 | `changes/<name>/tasks.md` | 任务清单，实施步骤和验证方法 | writing-plans 技能生成 |
 | `changes/<name>/delta-specs/` | 增量规格，记录 ADDED/MODIFIED/REMOVED | brainstorming 设计批准后 |
+| `changes/<name>/delivery-report.md` | 本地交付的人类可读摘要，包含实际步骤、环境、证据文件和 SHA-256 | `verify delivery` 成功后 |
 | `changes/archive/` | 已完成变更归档，保留完整审计轨迹 | finishing-a-development-branch 技能 |
 
 ## 安装方式
@@ -89,7 +91,7 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ## 五级流程体系（L0-L4）
 
-PowersNexus v3.0 采用五级流程体系，根据任务规模自动匹配最合适的流程，不再每次走完完整流程。
+PowersNexus v6.1.0 采用五级流程体系，根据任务规模自动匹配最合适的流程，不再每次走完完整流程。
 
 | 级别 | 名称 | 适用场景 | 预计耗时 | 核心特点 |
 |------|------|----------|----------|----------|
@@ -170,8 +172,21 @@ node src/cli/powersnexus-cli.js
 |------|------|----------|
 | `powersnexus start "<任务描述>"` | 任务规模评估，推荐 L0-L4 级别 | brainstorming 阶段 |
 | `powersnexus check consistency <变更名>` | 文档一致性检查（REQ 映射完整性） | writing-plans 完成后 |
+| `powersnexus check delivery <变更名>` | 校验任务、追踪和交付证明；归档前必须通过 | 本地交付验证完成后 |
+| `powersnexus verify delivery <变更名>` | 显式执行交付命令并写回实际退出码 | 交付命令配置完成后 |
+| `powersnexus init delivery <变更名> --profile <类型>` | 初始化 application 或 library 的交付契约 | OpenSpec 工件创建后 |
 | `powersnexus archive <变更名>` | 自动归档合并（Delta Specs → 主规格） | finishing 阶段 |
 | `powersnexus trace <变更名>` | 需求追踪自动生成 | 任意阶段 |
+| `powersnexus next <变更名>` | 根据已有工件推荐唯一下一步 | 恢复会话或不确定当前阶段时 |
+| `powersnexus checkpoint save/list` | 显式保存或查看长任务恢复点 | L3/L4 会话中断前后 |
+| `powersnexus telemetry <会话文件.jsonl>` | 只读汇总本地 Claude 会话的 Token 使用量 | 需要建立真实成本基线或回顾会话时 |
+| `powersnexus doctor` | 检查安装包清单、运行时入口和关键技能 | 安装、升级或排障后 |
+
+流程采用 L0-L4 渐进激活：L0 直接修改并聚焦验证，L1 只保留简短假设和必要澄清，L2 才进入设计契约与计划，L3/L4 才启用完整规格和多轮审查。可先运行 `powersnexus start "任务描述"` 查看建议级别与 Token 预算。
+
+对 L2+ 变更，先运行 `powersnexus init delivery <变更名> --profile application`（库使用 `library`）创建 `delivery.json`，再使用无 Shell 的 `argv` 数组配置构建、测试、集成测试及运行/健康检查（或制品）命令。显式运行 `powersnexus verify delivery <变更名>` 后，CLI 会逐项执行命令并写回退出码、时间和交付输入的 SHA-256 指纹；全部门槛通过时还会生成便于人工审阅的 `delivery-report.md`。Delta Spec、常见依赖/构建清单、追踪实现/测试文件、实际 `argv` 或本机运行时元数据此后变化时，必须重新验证；报告不替代实时门槛检查。`archive` 只自动执行 `check delivery`，不会隐式执行项目命令；未完成任务、未回填追踪表、交付证明不完整、证据已过期、规格合并冲突或归档目标重名时不会写入主规格或归档。
+
+`powersnexus telemetry ./session.jsonl` 仅在显式调用时读取本地 Claude Code 风格会话 JSONL，汇总主会话、子代理、缓存与总 Token，并显示会话中已声明的模型标识。`powersnexus telemetry compare ./baseline.jsonl ./candidate.jsonl` 可对比两份用户提供的会话，展示实际差值与相对基线比例；模型标识不同或缺失时会明确警告。仅当任务范围、模型、工具配置和完成标准一致时才有可比性。两种命令都不会默认采集会话、写入状态文件、上传内容或根据不稳定定价估算费用。
 
 ### 自动集成
 

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Test: Plugin Loading
 # Verifies that the PowersNexus plugin loads correctly in OpenCode
 set -euo pipefail
@@ -13,22 +13,22 @@ source "$SCRIPT_DIR/setup.sh"
 # Trap to cleanup on exit
 trap cleanup_test_env EXIT
 
-plugin_link="$OPENCODE_CONFIG_DIR/plugins/PowersNexus.js"
+plugin_link="$OPENCODE_CONFIG_DIR/plugins/powersnexus.js"
 
 # Test 1: Verify plugin file exists and is registered
 echo "Test 1: Checking plugin registration..."
 if [ -L "$plugin_link" ]; then
     echo "  [PASS] Plugin symlink exists"
+    if [ -f "$(readlink -f "$plugin_link")" ]; then
+        echo "  [PASS] Plugin symlink target exists"
+    else
+        echo "  [FAIL] Plugin symlink target does not exist"
+        exit 1
+    fi
+elif [ -f "$plugin_link" ] && cmp -s "$plugin_link" "$PowersNexus_PLUGIN_FILE"; then
+    echo "  [PASS] Plugin file copy is available when symbolic links are unavailable"
 else
-    echo "  [FAIL] Plugin symlink not found at $plugin_link"
-    exit 1
-fi
-
-# Verify symlink target exists
-if [ -f "$(readlink -f "$plugin_link")" ]; then
-    echo "  [PASS] Plugin symlink target exists"
-else
-    echo "  [FAIL] Plugin symlink target does not exist"
+    echo "  [FAIL] Plugin registration is missing or differs from the installed plugin"
     exit 1
 fi
 
@@ -42,12 +42,12 @@ else
     exit 1
 fi
 
-# Test 3: Check using-PowersNexus skill exists (critical for bootstrap)
-echo "Test 3: Checking using-PowersNexus skill (required for bootstrap)..."
-if [ -f "$PowersNexus_SKILLS_DIR/using-PowersNexus/SKILL.md" ]; then
-    echo "  [PASS] using-PowersNexus skill exists"
+# Test 3: Check using-powersnexus skill exists (critical for bootstrap)
+echo "Test 3: Checking using-powersnexus skill (required for bootstrap)..."
+if [ -f "$PowersNexus_SKILLS_DIR/using-powersnexus/SKILL.md" ]; then
+    echo "  [PASS] using-powersnexus skill exists"
 else
-    echo "  [FAIL] using-PowersNexus skill not found (required for bootstrap)"
+    echo "  [FAIL] using-powersnexus skill not found (required for bootstrap)"
     exit 1
 fi
 

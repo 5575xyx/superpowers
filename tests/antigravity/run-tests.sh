@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Run all Antigravity (agy) integration tests.
 set -euo pipefail
 

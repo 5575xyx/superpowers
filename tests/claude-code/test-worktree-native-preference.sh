@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Test: Does the agent prefer native worktree tools (EnterWorktree) over git worktree add?
 # Framework: RED-GREEN-REFACTOR per testing-skills-with-subagents.md
 #

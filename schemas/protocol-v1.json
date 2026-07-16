@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://powersnexus.dev/schemas/protocol-v1.json",
+  "title": "PowersNexus Bridge v1",
+  "type": "object",
+  "required": ["protocolVersion", "powersnexusVersion", "changeName", "phase", "status", "revision", "artifactDigest", "requirements", "tasks", "blockers", "nextAction", "updatedAt"],
+  "properties": {
+    "protocolVersion": { "const": "1.0" },
+    "powersnexusVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$" },
+    "changeName": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$" },
+    "level": { "enum": ["L0", "L1", "L2", "L3", "L4", null] },
+    "phase": {
+      "enum": ["needs_proposal", "needs_spec", "needs_design", "needs_plan", "implementing", "needs_traceability", "needs_delivery_config", "ready_to_verify", "ready_to_archive", "completed"]
+    },
+    "status": { "enum": ["ready", "running", "blocked", "completed"] },
+    "revision": { "type": "integer", "minimum": 0 },
+    "artifactDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirement" } },
+    "tasks": { "type": "array", "items": { "$ref": "#/$defs/task" } },
+    "blockers": { "type": "array", "items": { "$ref": "#/$defs/blocker" } },
+    "nextAction": { "type": ["string", "null"] },
+    "delivery": { "type": ["object", "null"] },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "required": ["id", "module"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^REQ-[0-9]+$" },
+        "module": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "title", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "enum": ["pending", "completed"] }
+      },
+      "additionalProperties": false
+    },
+    "blocker": {
+      "type": "object",
+      "required": ["code", "message", "recoverable", "recoveryActions"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "recoverable": { "type": "boolean" },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "recoveryActions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

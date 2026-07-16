@@ -145,6 +145,8 @@ Stop. Don't proceed to Step 2.
    - Not implemented: [N]
    ```
 
+   追踪表中的“代码实现”和“测试覆盖”必须填写一个或多个相对项目文件路径（以逗号分隔，可带 `:行号`）。`powersnexus check delivery` 会验证每个 Delta REQ 都有完成行，且这些文件真实存在；不能保留待实现、待测试或占位文本。`verify delivery` 会为 Delta Spec、常见依赖/构建清单、这些文件、实际 `argv` 和本机运行时元数据写入 SHA-256 交付指纹；其中任一项在验证后变化时都必须重新验证，不能直接归档。
+
 5. **Apply acceptance rules:**
    - **P0 requirements**: MUST have both code AND tests
    - **P1 requirements**: MUST have code, SHOULD have tests
@@ -239,7 +241,22 @@ Stop. Don't proceed to Step 2.
 
 **Before presenting options, archive the OpenSpec change with mode-aware merge logic:**
 
-**TRY CLI TOOL FIRST (recommended):
+**先运行交付检查，再尝试 CLI 归档（recommended）：**
+
+```bash
+node src/cli/powersnexus-cli.js check delivery <change-name>
+```
+
+交付检查会要求任务完成、需求追踪不含占位状态，并要求 `delivery.json` 记录本地构建、测试、集成测试和运行验证证据。未通过时不得继续归档。
+
+当 `delivery.json` 已配置真实 `argv` 命令数组后，必须显式执行：
+
+```bash
+node src/cli/powersnexus-cli.js verify delivery <change-name>
+```
+
+该命令不使用 Shell，会按 profile 顺序执行本地命令、在首次失败时停止，并把实际退出码和时间写回 `delivery.json`。全部交付门槛通过后还会生成 `delivery-report.md`，汇总运行环境、实际步骤、证据文件与 SHA-256，供人工审阅；报告不替代实时 `check delivery`。`archive` 不会隐式执行这些项目命令。
+
 Use the PowersNexus CLI tool to automate the archive process:
 
 ```bash
@@ -254,7 +271,10 @@ powersnexus archive <change-name>
 
 **What the CLI does automatically:**
 - Reads the create mode from proposal.md
-- Performs Greenfield/Brownfield merge
+- Creates Greenfield master specs after the delivery gate passes
+- Applies Brownfield ADDED/MODIFIED/REMOVED requirement blocks after the delivery gate passes
+- Writes a pre-merge snapshot for each updated Brownfield master spec
+- Generates or refreshes the human-readable delivery report after all prechecks pass
 - Generates merge report
 - Saves pre-merge snapshot
 - Moves change to archive
@@ -321,7 +341,7 @@ Apply when: Multiple modules, all master specs exist.
 
 After merge completes:
 1. **Generate merge report**: Create `merge-report.md` from `templates/merge-report.md`
-2. **Save pre-merge snapshot**: Copy existing master specs to `archive/pre-merge-snapshot/`
+2. **Save pre-merge snapshot**: Copy existing master specs to `<change>/.powersnexus/pre-merge-snapshot/`；归档后该快照随变更保留
 3. **Move to archive**: `mv .novaway/powersnexus/changes/<name>/ .novaway/powersnexus/changes/archive/YYYY-MM-DD-<name>/`
 4. **Preserve context**: All artifacts remain intact for audit trail
 

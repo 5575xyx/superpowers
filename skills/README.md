@@ -9,6 +9,8 @@ A collection of agentic skills for software development workflows. Each skill gu
 | [brainstorming](brainstorming/) | You MUST use this before any creative work - explores user intent, requirements and design before implementation |
 | [writing-plans](writing-plans/) | Use when you have a spec or requirements for a multi-step task, before touching code |
 | [openspec](openspec/) | Manages artifact generation, delta specs, and change lifecycle for PowersNexus |
+| [ui-ux-pro-max](ui-ux-pro-max/) | Use for UI/UX design intelligence: local design-system generation and framework-aware visual guidance |
+| [frontend-quality](frontend-quality/) | Use for user-facing interface work to define a visual contract and verify responsive, accessible, polished delivery |
 
 ## Development
 
@@ -42,11 +44,13 @@ A collection of agentic skills for software development workflows. Each skill gu
 1. **using-powersnexus** - Initialize skills context at session start
 2. **brainstorming** - Explore requirements and design
 3. **openspec** - Generate proposal, specs, design, and tasks
-4. **writing-plans** - Create detailed implementation plan
-5. **test-driven-development** - Implement with tests
-6. **subagent-driven-development** - Execute tasks with subagents
-7. **requesting-code-review** - Verify work quality
-8. **finishing-a-development-branch** - Complete and merge
+4. **ui-ux-pro-max** - Generate and query local design intelligence for user-interface work
+5. **frontend-quality** - Define and review the visual contract when the change includes a user interface
+6. **writing-plans** - Create detailed implementation plan
+7. **test-driven-development** - Implement with tests
+8. **subagent-driven-development** - Execute tasks with subagents
+9. **requesting-code-review** - Verify work quality
+10. **finishing-a-development-branch** - Complete and merge
 
 ## Documentation
 

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "1",
+  "id": "web",
+  "displayName": "Web 应用",
+  "requiredSteps": ["build", "test", "integration", "run", "health", "browser"],
+  "runnerOwnedSteps": ["run", "health", "browser"]
+}

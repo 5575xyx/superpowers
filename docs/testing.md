@@ -19,7 +19,17 @@ Live in `tests/`. Currently:
 - `tests/claude-code/test-worktree-native-preference.sh` — RED-GREEN-REFACTOR validation for worktree skill (drill covers the PRESSURE phase; bash also covers RED/GREEN baselines).
 - `tests/explicit-skill-requests/` — Haiku-specific, multi-turn, and skill-name-prompted tests not covered by drill.
 
-Run plugin tests via the relevant directory's `run-*.sh` or `npm test`.
+Run the Node-only core suite with `npm test` (or `npm run test:core`). It does not require Python.
+
+Run `npm run test:uiux` only in an environment with Python 3; it verifies the bundled UI/UX Pro Max search engine against its local data set.
+
+Run `npm run test:platform` on Linux, macOS, or a correctly configured Git Bash environment to execute the fast cross-platform suites: SessionStart Hook output, OpenCode plugin loading and bootstrap caching, Kimi manifest wiring, Antigravity tool mappings, Shell lint behavior, and brainstorm-server service/lifecycle coverage. This command installs the locked `tests/brainstorm-server` test dependency before running that suite. If `rsync` is installed, it also runs the Codex plugin synchronization regression; CI requires that tool and fails if it is unavailable. It deliberately excludes tests requiring an installed AI client, including OpenCode integration tests.
+
+Run `npm run test:package` to validate the npm release contents without creating an archive. It checks that runtime skills and plugin code are included, while tests, local review records, legacy files, and Python caches are excluded.
+
+Run `npm run test:all` for the complete local release gate: core tests, UI/UX design intelligence, platform tests, then the package artifact check. On Windows, run it from a configured Git Bash shell because the platform phase requires Bash.
+
+Individual platform-specific Bash suites remain available via the relevant directory's `run-*.sh` scripts.
 
 ## Skill behavior evals
 

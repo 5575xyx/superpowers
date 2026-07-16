@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Integration Test: subagent-driven-development workflow
 # Actually executes a plan and verifies the new workflow behaviors
 #

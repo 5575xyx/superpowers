@@ -1,0 +1,10 @@
+{
+  "profile": "application",
+  "steps": [
+    { "id": "build", "argv": ["REPLACE_EXECUTABLE", "REPLACE_BUILD_ARGUMENTS"], "status": "pending" },
+    { "id": "test", "argv": ["REPLACE_EXECUTABLE", "REPLACE_TEST_ARGUMENTS"], "status": "pending" },
+    { "id": "integration", "argv": ["REPLACE_EXECUTABLE", "REPLACE_INTEGRATION_ARGUMENTS"], "status": "pending" },
+    { "id": "run", "argv": ["REPLACE_EXECUTABLE", "REPLACE_RUN_ARGUMENTS"], "status": "pending" },
+    { "id": "health", "argv": ["REPLACE_EXECUTABLE", "REPLACE_HEALTH_ARGUMENTS"], "status": "pending" }
+  ]
+}

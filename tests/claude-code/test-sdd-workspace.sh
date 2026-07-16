@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Tests for the SDD workspace: scripts/sdd-workspace resolves a self-ignoring
 # working-tree directory for SDD artifacts, and the SDD scripts write into it.
 set -euo pipefail

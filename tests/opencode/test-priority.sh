@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Test: Skill Priority Resolution
 # Documents current OpenCode duplicate-name behavior for local and bundled
 # skills. The desired local-shadowing behavior is tracked separately; this

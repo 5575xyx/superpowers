@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Setup script for OpenCode plugin tests
 # Creates an isolated test environment with proper plugin installation
 set -euo pipefail
@@ -16,12 +16,12 @@ export OPENCODE_CONFIG_DIR="$TEST_HOME/.config/opencode"
 # Standard install layout:
 #   $OPENCODE_CONFIG_DIR/PowersNexus/             ← package root
 #   $OPENCODE_CONFIG_DIR/PowersNexus/skills/      ← skills dir (../../skills from plugin)
-#   $OPENCODE_CONFIG_DIR/PowersNexus/.opencode/plugins/PowersNexus.js ← plugin file
-#   $OPENCODE_CONFIG_DIR/plugins/PowersNexus.js   ← symlink OpenCode reads
+#   $OPENCODE_CONFIG_DIR/PowersNexus/.opencode/plugins/powersnexus.js ← plugin file
+#   $OPENCODE_CONFIG_DIR/plugins/powersnexus.js   ← symlink OpenCode reads
 
 PowersNexus_DIR="$OPENCODE_CONFIG_DIR/PowersNexus"
 PowersNexus_SKILLS_DIR="$PowersNexus_DIR/skills"
-PowersNexus_PLUGIN_FILE="$PowersNexus_DIR/.opencode/plugins/PowersNexus.js"
+PowersNexus_PLUGIN_FILE="$PowersNexus_DIR/.opencode/plugins/powersnexus.js"
 
 # Install skills
 mkdir -p "$PowersNexus_DIR"
@@ -29,11 +29,19 @@ cp -r "$REPO_ROOT/skills" "$PowersNexus_DIR/"
 
 # Install plugin
 mkdir -p "$(dirname "$PowersNexus_PLUGIN_FILE")"
-cp "$REPO_ROOT/.opencode/plugins/PowersNexus.js" "$PowersNexus_PLUGIN_FILE"
+cp "$REPO_ROOT/.opencode/plugins/powersnexus.js" "$PowersNexus_PLUGIN_FILE"
 
 # Register plugin via symlink (what OpenCode actually reads)
 mkdir -p "$OPENCODE_CONFIG_DIR/plugins"
-ln -sf "$PowersNexus_PLUGIN_FILE" "$OPENCODE_CONFIG_DIR/plugins/PowersNexus.js"
+plugin_registration="$OPENCODE_CONFIG_DIR/plugins/powersnexus.js"
+ln -sf "$PowersNexus_PLUGIN_FILE" "$plugin_registration" || true
+
+# Windows Git Bash 可能没有创建符号链接的权限。OpenCode 同样可加载常规文件，
+# 因此隔离夹具在此情况下保留等价文件副本；Linux 仍会验证符号链接布局。
+if [ ! -L "$plugin_registration" ]; then
+    rm -f "$plugin_registration"
+    cp "$PowersNexus_PLUGIN_FILE" "$plugin_registration"
+fi
 
 # Create test skills in different locations for testing
 
@@ -70,7 +78,7 @@ echo "OPENCODE_CONFIG_DIR:  $OPENCODE_CONFIG_DIR"
 echo "PowersNexus dir:      $PowersNexus_DIR"
 echo "Skills dir:           $PowersNexus_SKILLS_DIR"
 echo "Plugin file:          $PowersNexus_PLUGIN_FILE"
-echo "Plugin registered at: $OPENCODE_CONFIG_DIR/plugins/PowersNexus.js"
+echo "Plugin registered at: $OPENCODE_CONFIG_DIR/plugins/powersnexus.js"
 echo "Test project at:      $TEST_HOME/test-project"
 
 # Helper function for cleanup (call from tests or trap)

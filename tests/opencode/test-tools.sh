@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Test: Native Skill Tool Functionality
 # Verifies that OpenCode's native skill tool can load personal, project,
 # and bundled PowersNexus skills.

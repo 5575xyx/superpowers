@@ -12,12 +12,13 @@ const { spawn } = require('child_process');
 const http = require('http');
 const WebSocket = require('ws');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const assert = require('assert');
 
 const SERVER_PATH = path.join(__dirname, '../../skills/brainstorming/scripts/server.cjs');
 const TEST_PORT = 3334;
-const TEST_DIR = '/tmp/brainstorm-test';
+const TEST_DIR = path.join(os.tmpdir(), `brainstorm-test-${process.pid}`);
 const CONTENT_DIR = path.join(TEST_DIR, 'content');
 const STATE_DIR = path.join(TEST_DIR, 'state');
 // Fixed session key so the test client can authenticate (see auth.test.js for
@@ -26,12 +27,19 @@ const TOKEN = 'testtoken-server-0123456789abcdef';
 
 function cleanup() {
   if (fs.existsSync(TEST_DIR)) {
-    fs.rmSync(TEST_DIR, { recursive: true });
+    fs.rmSync(TEST_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 }
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function stopServer(server) {
+  if (server.exitCode !== null) return;
+  const exited = new Promise(resolve => server.once('exit', resolve));
+  server.kill();
+  await Promise.race([exited, sleep(2000)]);
 }
 
 async function fetch(url) {
@@ -580,8 +588,7 @@ async function runTests() {
     if (failed > 0) process.exit(1);
 
   } finally {
-    server.kill();
-    await sleep(100);
+    await stopServer(server);
     cleanup();
   }
 }

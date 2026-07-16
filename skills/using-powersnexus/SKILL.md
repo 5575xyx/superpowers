@@ -1,19 +1,31 @@
 ﻿---
 name: using-PowersNexus
-description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+description: Use when starting a coding session or choosing a workflow - classifies work by L0-L4 and activates only the smallest directly responsible skill set
 ---
 
 <SUBAGENT-STOP>
 If you were dispatched as a subagent to execute a specific task, skip this skill.
 </SUBAGENT-STOP>
 
-<EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+<WORKFLOW-ROUTING>
+先按 L0-L4 判断任务规模，再激活当前阶段直接负责的最小技能集合。
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+- L0：直接修改并进行聚焦验证；不要加载流程、规划或审查技能。
+- L1：仅在存在关键未知项时做一次澄清；使用简短假设和验收说明。
+- L2：使用一次设计契约、计划、实现、审查和测试。
+- L3/L4：使用完整规格、风险审查和多阶段验证。
 
-This is not negotiable. This is not optional. You cannot rationalize your way out of this.
-</EXTREMELY-IMPORTANT>
+不得因“可能有用”而推测性预加载技能。用户明确请求的技能，或当前动作直接由其负责的技能，才应激活。
+</WORKFLOW-ROUTING>
+
+## 自动本地交付授权
+
+当用户明确表达“全程自动执行”“自动做到本地可运行”“不要中途停下”或等价意图时，记录为**自动本地交付授权**。
+
+- L2+ 在已获得该授权后，连续完成设计、计划、实现、审查、`init delivery`、`verify delivery`、`check delivery` 和 `archive`；不要为每个正常阶段重复请求批准。
+- 仍须对目标、技术约束或验收标准中的关键未知项做最少必要澄清；若无法澄清，记录可逆假设并继续。
+- 下列动作不包含在自动本地交付授权内：推送、创建 PR、合并、部署、账号/密钥操作、付费操作、数据删除或其他不可逆外部影响。到达这些边界时停止并请求明确授权。
+- L0/L1 保持渐进式轻量流程，不为自动化创建 OpenSpec 或交付工件。
 
 ## Instruction Priority
 
@@ -47,7 +59,7 @@ Skills speak in actions ("dispatch a subagent", "create a todo", "read a file") 
 
 ## The Rule
 
-**Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means that you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
+**在当前动作直接需要某技能，或用户明确请求该技能时，先激活它。** 不要为探索、寒暄、L0 修改或仅仅“可能相关”的情况预加载技能。
 
 ```dot
 digraph skill_flow {
@@ -55,7 +67,7 @@ digraph skill_flow {
     "About to enter plan mode?" [shape=doublecircle];
     "Already brainstormed?" [shape=diamond];
     "Invoke brainstorming skill" [shape=box];
-    "Might any skill apply?" [shape=diamond];
+    "有直接负责的技能？" [shape=diamond];
     "Invoke the skill" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
     "Has checklist?" [shape=diamond];
@@ -65,12 +77,12 @@ digraph skill_flow {
 
     "About to enter plan mode?" -> "Already brainstormed?";
     "Already brainstormed?" -> "Invoke brainstorming skill" [label="no"];
-    "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
-    "Invoke brainstorming skill" -> "Might any skill apply?";
+    "Already brainstormed?" -> "有直接负责的技能？" [label="yes"];
+    "Invoke brainstorming skill" -> "有直接负责的技能？";
 
-    "User message received" -> "Might any skill apply?";
-    "Might any skill apply?" -> "Invoke the skill" [label="yes, even 1%"];
-    "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
+    "User message received" -> "有直接负责的技能？";
+    "有直接负责的技能？" -> "Invoke the skill" [label="yes"];
+    "有直接负责的技能？" -> "Respond (including clarifications)" [label="no"];
     "Invoke the skill" -> "Announce: 'Using [skill] to [purpose]'";
     "Announce: 'Using [skill] to [purpose]'" -> "Has checklist?";
     "Has checklist?" -> "Create a todo per item" [label="yes"];
@@ -81,22 +93,23 @@ digraph skill_flow {
 
 ## Red Flags
 
-These thoughts mean STOP—you're rationalizing:
+这些情况说明需要重新判断阶段，而不是盲目加载更多技能：
 
 | Thought | Reality |
 |---------|---------|
-| "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
-| "Let me gather information first" | Skills tell you HOW to gather information. |
-| "This doesn't need a formal skill" | If a skill exists, use it. |
-| "I remember this skill" | Skills evolve. Read current version. |
-| "This doesn't count as a task" | Action = task. Check for skills. |
-| "The skill is overkill" | Simple things become complex. Use it. |
-| "I'll just do this one thing first" | Check BEFORE doing anything. |
-| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
-| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+| "这是 L0，但涉及多模块、接口或数据迁移" | 重新评估到 L1/L2，而不是直接修改。 |
+| "我还没确定验收条件，却要开始实现" | 为 L1 做简短假设，或升级到 L2 设计契约。 |
+| "为保险起见先加载所有技能" | 只加载当前阶段直接需要的技能，避免上下文膨胀。 |
+| "复杂任务想跳过验证或审查" | 保持 L2+ 的质量门槛，不以节省 token 为由删除验证。 |
+
+## 渐进激活速查
+
+| 级别 | 激活范围 | Token 策略 |
+|---|---|---|
+| L0 | 无流程技能 | 直接改测，聚焦输出 |
+| L1 | 当前领域技能 + 简短验收说明 | 最多一次必要澄清 |
+| L2 | brainstorming、writing-plans 与直接领域技能 | 一次设计契约，不重复确认 |
+| L3/L4 | 完整规格、审查、验证技能 | 以风险换取质量，不压缩关键证据 |
 
 ## Skill Priority
 
@@ -105,7 +118,7 @@ When multiple skills could apply, use this order:
 1. **Process skills first** (brainstorming, systematic-debugging) - these determine HOW to approach the task
 2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
-"Let's build X" → brainstorming first, then implementation skills.
+"Let's build X" → 先按 L0-L4 分类；L1+ 再使用 brainstorming，然后激活实现技能。
 "Fix this bug" → systematic-debugging first, then domain-specific skills.
 
 ## Skill Types

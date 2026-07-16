@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Regression check: PowersNexus should not route new worktrees through the old
 # global worktree directory.
 
