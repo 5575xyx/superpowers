@@ -108,6 +108,21 @@ PowersNexus v6.1.0 采用五级流程体系，根据任务规模自动匹配最�
 - **Config Mode** — 配置修改：极简流程，快速验证
 - **Doc Mode** — 文档更新：无需代码测试
 
+## 通用化轨道路由（双轴）
+
+PowersNexus 不限于编码任务，按**工作类型**（编码/非编码）与**规模**（L0-L4）双轴路由：
+
+| 工作类型 | 规模 | 轨道 | 入口 | 交付 |
+|---|---|---|---|---|
+| 编码 | 大/中（L2-L4） | 重型链 | brainstorming → openspec → plans → SDD → review → finish | application/library/web |
+| 编码 | 小/个人（L0-L1） | 轻量链 | **grill-me 拷问** → 实现 → 聚焦测试 → 自审 → 提交 | 默认跳过 |
+| 非编码（文档/PRD/数据/运营） | — | 非编码链 | **grill-me 拷问** → 轻量任务清单 → 执行 → document 交付 | **document** |
+| 用户主动 "grill me/盘问" | 任意 | 拷问入口 | grill-me 直入，零文档副作用 | 不适用 |
+
+**grill-me 升级交接：** 拷问中暴露复杂度（跨模块/架构决策/风险中上/需文档记录）时单向升级 L2+，把已收敛的契约交接给 brainstorming，brainstorming 从方案比选阶段接手、不再重问需求。
+
+**document 交付：** 非编码工作的验证 = agent 自证 + 人工审阅，不执行构建命令。`init delivery <name> --profile document` 生成空验证步骤，`verify delivery` 只写回时间戳与 SHA-256 指纹，`check delivery` 仍校验规划/任务/追踪完整性作为归档门槛。
+
 ## 基本工作流程（标准 L2/L3 路径）
 
 1. **brainstorming**（头脑风暴） — 在写代码前自动激活。通过任务规模评估推荐 L0-L4 级别，提问打磨初步想法、探索替代方案、分段呈现设计以供确认。生成设计文档。
@@ -125,6 +140,7 @@ PowersNexus v6.1.0 采用五级流程体系，根据任务规模自动匹配最�
 
 ### 规划与设计
 
+- **grill-me** — 需求拷问入口：小项目、个人项目、非编码工作（文档/PRD/数据分析/运营流程）的轻量澄清，零文档副作用；发现复杂度时单向升级到 brainstorming
 - **brainstorming** — 苏格拉底式设计精炼，自动触发任务规模评估
 - **task-size-assessor** — 任务规模评估（6 维度），自动推荐 L0-L4 流程级别
 - **openspec** — 管理产物生成、增量规格与变更生命周期，统一管理 `.novaway/powersnexus/` 下的所有文档
@@ -173,8 +189,9 @@ node src/cli/powersnexus-cli.js
 | `powersnexus start "<任务描述>"` | 任务规模评估，推荐 L0-L4 级别 | brainstorming 阶段 |
 | `powersnexus check consistency <变更名>` | 文档一致性检查（REQ 映射完整性） | writing-plans 完成后 |
 | `powersnexus check delivery <变更名>` | 校验任务、追踪和交付证明；归档前必须通过 | 本地交付验证完成后 |
+| `powersnexus audit <变更名>` | 流程执行审计（级别路由 / TDD 证据 / 审查记录 / 合规声明）；归档前必须通过 | check delivery 通过后、archive 前 |
 | `powersnexus verify delivery <变更名>` | 显式执行交付命令并写回实际退出码 | 交付命令配置完成后 |
-| `powersnexus init delivery <变更名> --profile <类型>` | 初始化 application 或 library 的交付契约 | OpenSpec 工件创建后 |
+| `powersnexus init delivery <变更名> --profile <类型>` | 初始化 application / library / web / document 的交付契约 | OpenSpec 工件创建后 |
 | `powersnexus archive <变更名>` | 自动归档合并（Delta Specs → 主规格） | finishing 阶段 |
 | `powersnexus trace <变更名>` | 需求追踪自动生成 | 任意阶段 |
 | `powersnexus next <变更名>` | 根据已有工件推荐唯一下一步 | 恢复会话或不确定当前阶段时 |
@@ -184,7 +201,7 @@ node src/cli/powersnexus-cli.js
 
 流程采用 L0-L4 渐进激活：L0 直接修改并聚焦验证，L1 只保留简短假设和必要澄清，L2 才进入设计契约与计划，L3/L4 才启用完整规格和多轮审查。可先运行 `powersnexus start "任务描述"` 查看建议级别与 Token 预算。
 
-对 L2+ 变更，先运行 `powersnexus init delivery <变更名> --profile application`（库使用 `library`）创建 `delivery.json`，再使用无 Shell 的 `argv` 数组配置构建、测试、集成测试及运行/健康检查（或制品）命令。显式运行 `powersnexus verify delivery <变更名>` 后，CLI 会逐项执行命令并写回退出码、时间和交付输入的 SHA-256 指纹；全部门槛通过时还会生成便于人工审阅的 `delivery-report.md`。Delta Spec、常见依赖/构建清单、追踪实现/测试文件、实际 `argv` 或本机运行时元数据此后变化时，必须重新验证；报告不替代实时门槛检查。`archive` 只自动执行 `check delivery`，不会隐式执行项目命令；未完成任务、未回填追踪表、交付证明不完整、证据已过期、规格合并冲突或归档目标重名时不会写入主规格或归档。
+对 L2+ 变更，先运行 `powersnexus init delivery <变更名> --profile application`（库使用 `library`）创建 `delivery.json`，再使用无 Shell 的 `argv` 数组配置构建、测试、集成测试及运行/健康检查（或制品）命令。显式运行 `powersnexus verify delivery <变更名>` 后，CLI 会逐项执行命令并写回退出码、时间和交付输入的 SHA-256 指纹；全部门槛通过时还会生成便于人工审阅的 `delivery-report.md`。Delta Spec、常见依赖/构建清单、追踪实现/测试文件、实际 `argv` 或本机运行时元数据此后变化时，必须重新验证；报告不替代实时门槛检查。`archive` 自动执行 `check delivery` 与 `audit`，不会隐式执行项目命令；未完成任务、未回填追踪表、交付证明不完整、证据已过期、流程合规声明缺失、规格合并冲突或归档目标重名时不会写入主规格或归档。
 
 `powersnexus telemetry ./session.jsonl` 仅在显式调用时读取本地 Claude Code 风格会话 JSONL，汇总主会话、子代理、缓存与总 Token，并显示会话中已声明的模型标识。`powersnexus telemetry compare ./baseline.jsonl ./candidate.jsonl` 可对比两份用户提供的会话，展示实际差值与相对基线比例；模型标识不同或缺失时会明确警告。仅当任务范围、模型、工具配置和完成标准一致时才有可比性。两种命令都不会默认采集会话、写入状态文件、上传内容或根据不稳定定价估算费用。
 

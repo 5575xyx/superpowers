@@ -31,3 +31,26 @@ test('入口技能按任务级别渐进激活，避免推测性加载', async ()
   assert.match(writingPlansSkill, /powersnexus verify delivery <change-name>/);
   assert.match(openSpecSkill, /powersnexus init delivery <change-name> --profile/);
 });
+
+test('通用化路由将非编码与轻量编码工作接入 grill-me 拷问入口', async () => {
+  const [usingSkill, grillMeSkill, assessorSkill] = await Promise.all([
+    readFile(usingSkillPath, 'utf8'),
+    readFile(resolve(repoRoot, 'skills/grill-me/SKILL.md'), 'utf8'),
+    readFile(resolve(repoRoot, 'skills/task-size-assessor/SKILL.md'), 'utf8'),
+  ]);
+
+  assert.match(usingSkill, /通用化轨道路由（双轴）/);
+  assert.match(usingSkill, /非编码（文档\/PRD\/数据\/运营）/);
+  assert.match(usingSkill, /小\/个人（L0-L1） \| 轻量链/);
+  assert.match(usingSkill, /grill-me 拷问中暴露复杂度.*单向升级 L2\+/);
+
+  assert.match(grillMeSkill, /^---\nname: grill-me/s);
+  assert.match(grillMeSkill, /升级触发线/);
+  assert.match(grillMeSkill, /升级交接协议/);
+  assert.match(grillMeSkill, /零文档副作用/);
+  assert.match(grillMeSkill, /每次只问一个问题（使用 `question` 工具/);
+
+  assert.match(assessorSkill, /7\. 工作类型（通用化路由）/);
+  assert.match(assessorSkill, /非编码 → 跳过 L0-L4 打分，直接路由非编码轨道/);
+  assert.match(assessorSkill, /小项目\/个人项目/);
+});

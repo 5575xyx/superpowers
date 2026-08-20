@@ -462,37 +462,10 @@ Final reviewer: All requirements met, ready to merge
 Done!
 ```
 
-## Advantages
+## Tradeoffs
 
-**vs. Manual execution:**
-- Subagents follow TDD naturally
-- Fresh context per task (no confusion)
-- Parallel-safe (subagents don't interfere)
-- Subagent can ask questions (before AND during work)
-
-**vs. Executing Plans:**
-- Same session (no handoff)
-- Continuous progress (no waiting)
-- Review checkpoints automatic
-
-**Efficiency gains:**
-- Controller curates exactly what context is needed; bulk artifacts move
-  as files, not pasted text
-- Subagent gets complete information upfront
-- Questions surfaced before work begins (not after)
-
-**Quality gates:**
-- Self-review catches issues before handoff
-- Task review carries two verdicts: spec compliance and code quality
-- Review loops ensure fixes actually work
-- Spec compliance prevents over/under-building
-- Code quality ensures implementation is well-built
-
-**Cost:**
-- More subagent invocations (implementer + reviewer per task)
-- Controller does more prep work (extracting all tasks upfront)
-- Review loops add iterations
-- But catches issues early (cheaper than debugging later)
+- Subagents follow TDD naturally; fresh context per task keeps them focused and parallel-safe (context preserved for coordination)
+- **Cost:** More subagent invocations (implementer + reviewer per task), controller prep (extracting all tasks upfront), and review-loop iterations — but catches issues early, cheaper than debugging later
 
 ## Red Flags
 

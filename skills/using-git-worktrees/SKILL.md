@@ -183,6 +183,11 @@ Ready to implement <feature-name>
 - **Problem:** Can't distinguish new bugs from pre-existing issues
 - **Fix:** Report failures, get explicit permission to proceed
 
+### Cleaning up a refused worktree without asking
+
+- **Problem:** `git worktree remove` 因未跟踪文件被拒时直接加 `--force` 强删，可能丢数据
+- **Fix:** 先列出将受影响的内容（`git worktree remove --dry-run <path>`，或在目录内 `git status -uall` 查看未跟踪文件），把真实文件名呈现给用户并请求确认；未获确认前不得使用 `--force`。
+
 ## Red Flags
 
 **Never:**
@@ -192,6 +197,7 @@ Ready to implement <feature-name>
 - Create worktree without verifying it's ignored (project-local)
 - Skip baseline test verification
 - Proceed with failing tests without asking
+- Run `git worktree remove --force` without first showing the files that will be removed and getting explicit confirmation
 
 **Always:**
 - Run Step 0 detection first

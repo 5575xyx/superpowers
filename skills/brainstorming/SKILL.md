@@ -13,6 +13,14 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 L1+ 行为或功能变更，在完成与其风险相称的设计说明前，不要进入实现。L0 的机械性改动不调用本技能，直接修改并聚焦验证。
 </HARD-GATE>
 
+## 入口路由（本技能与 grill-me 的分工）
+
+本技能（brainstorming）只服务 **L2+ 编码工作**。小项目、个人项目、非编码工作（文档/PRD/数据分析/运营流程）由 **grill-me** 拷问入口接管；用户主动说 "grill me/盘问一下" 时也直入 grill-me。
+
+**从 grill-me 升级接入：** 若本技能被 grill-me 按[升级交接协议]升级唤入，交接契约（目标/验收/边界/已验证假设）已存在，**跳过 Phase 1 的澄清问题，从"提出 2-3 个方案比选"接手**——不重问用户已答过的问题。无交接契约时走完整流程。
+
+**反向不成立：** brainstorming 不会降级回 grill-me，已进入重型轨道就按重型流程走完。
+
 ## Five-Level Process System（五级流程体系）
 
 PowersNexus uses a 5-level process system. The task-size-assessor skill automatically evaluates the task and recommends the appropriate level.
@@ -227,6 +235,8 @@ Based on your description, I've evaluated this project as:
 - For each unit, you should be able to answer: what does it do, how do you use it, and what does it depend on?
 - Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
 - Smaller, well-bounded units are also easier for you to work with - you reason better about code you can hold in context at once, and your edits are more reliable when files are focused. When a file grows large, that's often a signal that it's doing too much.
+
+**bounded 定义（防误判）：** "bounded" 指**本仓库已有代码、可在现有结构内修改的单元**。它不是"我熟悉的应用类型"——把全新项目或陌生领域误判为 bounded 是最常见的分类错误（上游实测 3/3 全错）。只有能在既有文件/模块内完成、无需新建架构的改动才算 bounded。
 
 **Working in existing codebases:**
 

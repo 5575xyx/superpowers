@@ -7,7 +7,7 @@ description: Use when about to claim work is complete, fixed, or passing, before
 
 ## Overview
 
-Claiming work is complete without verification is dishonesty, not efficiency.
+Claiming work is complete without verification is dishonesty, not efficiency. 虚假完成声明会破坏信任、让缺陷上线并造成返工——诚实是核心价值。
 
 **Core principle:** Evidence before claims, always.
 
@@ -130,11 +130,3 @@ From 24 failure memories:
 - Paraphrases and synonyms
 - Implications of success
 - ANY communication suggesting completion/correctness
-
-## The Bottom Line
-
-**No shortcuts for verification.**
-
-Run the command. Read the output. THEN claim the result.
-
-This is non-negotiable.

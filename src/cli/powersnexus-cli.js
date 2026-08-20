@@ -142,7 +142,7 @@ function initializeDelivery(changeName, args) {
   const profileIndex = args.indexOf('--profile');
   const profile = profileIndex === -1 ? 'application' : args[profileIndex + 1];
   if (!DELIVERY_PROFILES[profile]) {
-    console.error('❌ --profile 仅支持 application 或 library。');
+    console.error('❌ --profile 仅支持 application、library、web 或 document。');
     return 1;
   }
   const deliveryPath = join(changeDir, 'delivery.json');
@@ -165,7 +165,7 @@ function validateDeliveryEvidence(changeDir, { requireExecution = true } = {}) {
   const { evidence } = loaded;
   const requiredSteps = DELIVERY_PROFILES[evidence.profile];
   if (!requiredSteps) {
-    errors.push('profile 必须为 application 或 library');
+    errors.push('profile 必须是已注册的交付 profile（application/library/web/document）');
   }
   if (requireExecution && (typeof evidence.verifiedAt !== 'string' || Number.isNaN(Date.parse(evidence.verifiedAt)))) {
     errors.push('verifiedAt 必须是有效的 ISO 时间');
@@ -881,6 +881,154 @@ function checkDelivery(changeName) {
   return 1;
 }
 
+// ============== 流程执行审计 ==============
+
+function collectTraceabilityRows(changeDir) {
+  const traceability = readMarkdown(join(changeDir, 'traceability.md'));
+  if (!traceability) return [];
+  const rows = [];
+  for (const line of traceability.split(/\r?\n/)) {
+    if (!/^\|\s*REQ-\d+\s*\|/.test(line)) continue;
+    const columns = line.split('|').slice(1, -1).map((column) => column.trim());
+    if (columns.length < 5) continue;
+    const splitPaths = (value) => value.split(',').map((path) => path.trim().replace(/^`|`$/g, '').replace(/:\d+$/, '')).filter(Boolean);
+    rows.push({ id: columns[0], impl: splitPaths(columns[2]), test: splitPaths(columns[3]) });
+  }
+  return rows;
+}
+
+function countLines(relativePath) {
+  try {
+    return readFileSync(join(BASE_DIR, relativePath), 'utf8').split(/\r?\n/).length;
+  } catch {
+    return 0;
+  }
+}
+
+function inferProcessLevel(changeDir, rows, isDocument = false) {
+  const implFiles = [...new Set(rows.flatMap((row) => row.impl))];
+  const totalLines = implFiles.reduce((sum, file) => sum + countLines(file), 0);
+  const deltaSpecsDir = join(changeDir, 'delta-specs');
+  const modules = existsSync(deltaSpecsDir)
+    ? readdirSync(deltaSpecsDir).filter((module) => existsSync(join(deltaSpecsDir, module, 'spec.md')))
+    : [];
+  const taskItems = extractChecklistItems(readMarkdown(join(changeDir, 'tasks.md')) || '');
+  const requirementIds = collectDeltaRequirementIds(changeDir);
+
+  let level = 0;
+  if (isDocument) {
+    // 文档/技能类变更的实现文件即被修改的大文档，整文件行数会虚高级别；
+    // 改用需求数、任务数、模块数推断，忽略 totalLines 信号。
+    if (implFiles.length > 10 || requirementIds.length > 10) level = Math.max(level, 4);
+    if (modules.length >= 3 || taskItems.length > 10) level = Math.max(level, 3);
+    if (modules.length >= 2 || taskItems.length > 4 || requirementIds.length >= 3) level = Math.max(level, 2);
+    if (implFiles.length > 1 || modules.length >= 1 || taskItems.length >= 1 || requirementIds.length >= 1) level = Math.max(level, 1);
+  } else {
+    if (totalLines >= 1000 || implFiles.length > 10 || requirementIds.length > 10) level = Math.max(level, 4);
+    if (totalLines >= 200 || modules.length >= 3 || taskItems.length > 10) level = Math.max(level, 3);
+    if (totalLines >= 50 || modules.length >= 2 || taskItems.length > 4 || requirementIds.length >= 3) level = Math.max(level, 2);
+    if (totalLines >= 10 || implFiles.length > 1 || modules.length >= 1 || taskItems.length >= 1 || requirementIds.length >= 1) level = Math.max(level, 1);
+  }
+  return { level, signals: { totalLines, implFiles: implFiles.length, modules: modules.length, tasks: taskItems.length, reqs: requirementIds.length } };
+}
+
+function extractDeclaredLevel(changeDir) {
+  const proposal = readMarkdown(join(changeDir, 'proposal.md')) || '';
+  const declaration = readMarkdown(join(changeDir, 'process-declaration.md')) || '';
+  const match = (declaration + '\n' + proposal).match(/声明级别[：:]\s*(L[0-4])|流程级别[：:]\s*(L[0-4])/);
+  return match ? (match[1] || match[2]) : null;
+}
+
+function checkTddReferences(rows) {
+  const issues = [];
+  for (const row of rows) {
+    for (const impl of row.impl) {
+      const implBase = basename(impl).replace(/\.[^.]+$/, '').toLowerCase();
+      const referenced = row.test.some((testPath) => {
+        let content = '';
+        try { content = readFileSync(join(BASE_DIR, testPath), 'utf8'); } catch {}
+        const testBase = basename(testPath).replace(/\.[^.]+$/, '').toLowerCase();
+        return testBase.includes(implBase) || content.toLowerCase().includes(implBase) || content.includes(impl);
+      });
+      if (!referenced) issues.push(`${row.id} 的测试未引用实现 ${impl}`);
+    }
+  }
+  return issues;
+}
+
+function auditChange(changeName) {
+  const changeDir = join(CHANGES_DIR, changeName);
+  if (!existsSync(changeDir)) {
+    console.error(`❌ 错误: 变更目录不存在: ${changeDir}`);
+    return 1;
+  }
+
+  console.log(`\n🔎 流程执行审计: ${changeName}\n`);
+  const errors = [];
+  const warnings = [];
+
+  const declarationPath = join(changeDir, 'process-declaration.md');
+  if (!existsSync(declarationPath)) {
+    errors.push('缺少 process-declaration.md 流程合规声明（须声明级别、遵循步骤、跳过步骤及理由）');
+  } else {
+    const declaration = readMarkdown(declarationPath);
+    if (!/声明级别[：:]\s*L[0-4]/.test(declaration)) errors.push('process-declaration.md 缺少「声明级别」');
+    if (!/遵循步骤/.test(declaration)) errors.push('process-declaration.md 缺少「遵循步骤」');
+    if (!/跳过步骤|跳过|理由/.test(declaration)) errors.push('process-declaration.md 缺少「跳过步骤及理由」');
+  }
+
+  const rows = collectTraceabilityRows(changeDir);
+  const delivery = loadDeliveryEvidence(changeDir);
+  const isDocument = delivery.valid && delivery.evidence.profile === 'document';
+  const inferred = inferProcessLevel(changeDir, rows, isDocument);
+  console.log(`📡 信号: 实现文件 ${inferred.signals.implFiles} 个 / 共 ${inferred.signals.totalLines} 行 / 模块 ${inferred.signals.modules} 个 / 任务 ${inferred.signals.tasks} 项 / 需求 ${inferred.signals.reqs} 项`);
+  console.log(`📐 推断最低级别: L${inferred.level}${isDocument ? '（document 变更，不计实现文件行数）' : ''}`);
+
+  const declared = extractDeclaredLevel(changeDir);
+  if (declared) {
+    const declaredNumber = Number(declared[1]);
+    if (declaredNumber < inferred.level) {
+      errors.push(`级别路由不符：声明 ${declared} 低于推断最低级别 L${inferred.level}`);
+    } else {
+      console.log(`  ✅ 声明级别 ${declared} 不低于推断级别 L${inferred.level}`);
+    }
+  } else {
+    warnings.push(`未声明级别，按推断级别 L${inferred.level} 校验`);
+  }
+
+  if (!isDocument) {
+    const tddIssues = checkTddReferences(rows);
+    for (const issue of tddIssues) errors.push(issue);
+    if (tddIssues.length === 0 && rows.length > 0) console.log('  ✅ TDD 证据：每个需求均有测试引用实现');
+
+    const reviewLevel = Math.max(inferred.level, declared ? Number(declared[1]) : 0);
+    if (reviewLevel >= 2) {
+      const hasReview = existsSync(join(changeDir, 'code-red-team-review.md'))
+        || existsSync(join(changeDir, 'red-team-review.md'))
+        || /审查/.test(readMarkdown(declarationPath) || '');
+      if (hasReview) {
+        console.log(`  ✅ 审查证据：L${reviewLevel} 需要审查记录，已存在`);
+      } else {
+        errors.push(`L${reviewLevel} 需要审查记录（code-red-team-review.md 或 red-team-review.md 或声明中的审查段）`);
+      }
+    }
+  } else {
+    const declaration = readMarkdown(declarationPath) || '';
+    if (/用户确认/.test(declaration)) console.log('  ✅ 文档交付：已记录用户确认');
+    else warnings.push('document 交付建议在 process-declaration.md 记录用户确认');
+  }
+
+  console.log('\n📊 审计结果');
+  for (const warning of warnings) console.log(`  ⚠️  ${warning}`);
+  for (const error of errors) console.log(`  ❌ ${error}`);
+  if (errors.length === 0) {
+    console.log('✅ 流程执行审计通过：过程合规、证据齐全。\n');
+    return 0;
+  }
+  console.log('❌ 流程执行审计未通过：存在断链，修复后再宣称完成或归档。\n');
+  return 1;
+}
+
 /**
  * 归档合并自动化
  * 识别创建模式，合并 delta-specs 到主规格，生成 merge-report
@@ -996,6 +1144,11 @@ function archiveChange(changeName) {
 
   if (checkDelivery(changeName) !== 0) {
     console.log('ℹ️  交付门槛未通过：未写入主规格、未生成归档报告，也未移动变更目录。');
+    return 1;
+  }
+
+  if (auditChange(changeName) !== 0) {
+    console.log('ℹ️  流程审计未通过：未写入主规格、未生成归档报告，也未移动变更目录。');
     return 1;
   }
 
@@ -1359,7 +1512,13 @@ function startTask(taskDesc, forcedLevel) {
     confidence = 100;
   }
 
+  // 轨道检测：非编码关键词 → 非编码轨道（document 交付）
+  const NON_CODING_KEYWORDS = ['文档', 'prd', '需求文档', '调研', '数据分析', '报表', '运营', '写作', '方案'];
+  const isNonCoding = NON_CODING_KEYWORDS.some((keyword) => lowerDesc.includes(keyword));
+  const track = isNonCoding ? '非编码轨道（grill-me → document 交付）' : `编码轨道（L${level.replace('L', '')}，按规模分级）`;
+
   console.log(`📊 评估结果：`);
+  console.log(`  推荐轨道: ${track}`);
   console.log(`  推荐级别: ${level} - ${levelName}`);
   console.log(`  置信度: ${confidence}%`);
   console.log('');
@@ -1509,7 +1668,7 @@ function recommendNext(changeName) {
 
   const deliveryConfiguration = validateDeliveryEvidence(changeDir, { requireExecution: false });
   if (!deliveryConfiguration.valid) {
-    return recommend('初始化并填写 delivery.json，使用 application 或 library profile 配置真实 argv 命令数组。', `powersnexus init delivery ${changeName} --profile application`);
+    return recommend('初始化并填写 delivery.json，使用 application/library/web profile 配置真实 argv 命令数组，非编码工作使用 document profile。', `powersnexus init delivery ${changeName} --profile application`);
   }
   const deliveryEvidence = validateDeliveryEvidence(changeDir);
   if (!deliveryEvidence.valid) {
@@ -1519,7 +1678,7 @@ function recommendNext(changeName) {
     return recommend('交付输入已变化，重新执行本地验证以刷新证据。', `powersnexus verify delivery ${changeName}`);
   }
 
-  return recommend('运行交付检查；通过后归档变更。', `powersnexus check delivery ${changeName} && powersnexus archive ${changeName}`);
+  return recommend('运行流程审计和交付检查；通过后归档变更。', `powersnexus audit ${changeName} && powersnexus check delivery ${changeName} && powersnexus archive ${changeName}`);
 }
 
 /**
@@ -1691,7 +1850,8 @@ PowersNexus CLI - 自动化工具集 v${PACKAGE_VERSION}
   check consistency <change-name>   规划工件一致性检查
   check delivery <change-name>      归档前交付门槛检查
   verify delivery <change-name>     显式执行 delivery.json 中的本地验证命令
-  init delivery <change-name> [--profile application|library]
+  audit <change-name>               归档前流程执行审计（级别路由/TDD/审查/合规声明）
+  init delivery <change-name> [--profile application|library|web|document]
                                       初始化交付命令契约（不覆盖已有文件）
   archive <change-name>             归档合并自动化
   start <task-description> [--level L0-L4]
@@ -1717,6 +1877,7 @@ PowersNexus CLI - 自动化工具集 v${PACKAGE_VERSION}
   powersnexus check consistency my-feature
   powersnexus check delivery my-feature
   powersnexus verify delivery my-feature
+  powersnexus audit my-feature
   powersnexus init delivery my-feature --profile application
   powersnexus archive my-feature
   powersnexus start "添加用户登录功能"
@@ -1801,6 +1962,10 @@ function main() {
 
     case 'next':
       process.exit(recommendNext(subCommand));
+      break;
+
+    case 'audit':
+      process.exit(auditChange(subCommand));
       break;
 
     case 'telemetry':

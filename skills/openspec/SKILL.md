@@ -265,6 +265,11 @@ artifacts:
   - id: cross-reference
     generates: cross-reference.md
     requires: [proposal, specs, design, tasks]
+
+  - id: process-declaration
+    generates: process-declaration.md
+    requires: [tasks, traceability]
+    note: L2+ 归档前流程审计要求：声明级别、遵循步骤、跳过步骤及理由、审查记录
 ```
 
 Dependencies are enablers, not gates. You can create artifacts in any order that makes sense.

@@ -67,7 +67,9 @@ function createDeliveryFingerprint(directory, changeDir, traceabilityFiles) {
   ])].sort();
   const requiredSteps = delivery.profile === 'library'
     ? ['build', 'test', 'integration', 'package']
-    : ['build', 'test', 'integration', 'run', 'health'];
+    : delivery.profile === 'document'
+      ? []
+      : ['build', 'test', 'integration', 'run', 'health'];
   const commands = requiredSteps.map((id) => {
     const step = delivery.steps.find((item) => item.id === id);
     return { id, argv: step.argv, timeoutMs: step.timeoutMs ?? null };
@@ -165,7 +167,14 @@ test('帮助信息声明交付检查命令', () => {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /check delivery <change-name>\s+归档前交付门槛检查/);
   assert.match(result.stdout, /verify delivery <change-name>\s+显式执行 delivery\.json 中的本地验证命令/);
-  assert.match(result.stdout, /init delivery <change-name> \[--profile application\|library\]/);
+  assert.match(result.stdout, /init delivery <change-name> \[--profile application\|library\|web\|document\]/);
+});
+
+test('帮助信息声明流程审计命令', () => {
+  const result = runCli(repoRoot, 'help');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /audit <change-name>\s+归档前流程执行审计/);
 });
 
 test('帮助信息声明 telemetry 命令', () => {
@@ -294,8 +303,8 @@ test('next 在任务完成且存在追踪表时建议一致性检查和归档', 
   const result = runCli(directory, 'next', 'example');
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /运行交付检查；通过后归档变更/);
-  assert.match(result.stdout, /powersnexus check delivery example && powersnexus archive example/);
+  assert.match(result.stdout, /运行流程审计和交付检查；通过后归档变更/);
+  assert.match(result.stdout, /powersnexus audit example && powersnexus check delivery example && powersnexus archive example/);
 });
 
 test('next 在交付输入变化后建议重新执行交付验证', (t) => {
@@ -309,6 +318,92 @@ test('next 在交付输入变化后建议重新执行交付验证', (t) => {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /交付输入已变化，重新执行本地验证以刷新证据/);
   assert.match(result.stdout, /powersnexus verify delivery example/);
+});
+
+test('audit 通过合规变更（声明级别与信号匹配且证据齐全）', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-pass-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  createDeliverableChange(directory);
+
+  const result = runCli(directory, 'audit', 'example');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /流程执行审计通过/);
+  assert.match(result.stdout, /声明级别 L2 不低于推断级别/);
+});
+
+test('audit 拒绝缺少流程合规声明的变更', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-no-declaration-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = createDeliverableChange(directory);
+  rmSync(join(changeDir, 'process-declaration.md'));
+
+  const result = runCli(directory, 'audit', 'example');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /缺少 process-declaration\.md 流程合规声明/);
+});
+
+test('audit 拒绝声明级别低于信号推断级别的变更', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-low-level-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = createDeliverableChange(directory);
+  writeFileSync(join(changeDir, 'process-declaration.md'), '声明级别: L0\n遵循步骤: 直接修改\n跳过步骤及理由: 无\n审查记录: 无\n');
+  writeFileSync(join(directory, 'src', 'example.js'), Array(60).fill('export const x = 1;').join('\n') + '\n');
+  updateDeliveryFingerprint(directory, changeDir, ['src/example.js', 'tests/example.test.js']);
+
+  const result = runCli(directory, 'audit', 'example');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /级别路由不符/);
+  assert.match(result.stdout, /声明 L0 低于推断最低级别/);
+});
+
+test('audit 拒绝 L2 及以上缺少审查证据的变更', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-no-review-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = createDeliverableChange(directory);
+  rmSync(join(changeDir, 'code-red-team-review.md'));
+  writeFileSync(join(changeDir, 'process-declaration.md'), '声明级别: L3\n遵循步骤: 完整流程\n跳过步骤及理由: 无\n');
+
+  const result = runCli(directory, 'audit', 'example');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /需要审查记录/);
+});
+
+test('audit 拒绝变更目录不存在的审计请求', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-missing-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const result = runCli(directory, 'audit', 'nonexistent');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /变更目录不存在/);
+});
+
+test('audit 对 document 变更不计实现文件行数推断级别', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-audit-document-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = createDeliverableChange(directory);
+
+  // 模拟 document 交付：profile 为 document，无执行步骤
+  writeFileSync(join(changeDir, 'delivery.json'), `${JSON.stringify({
+    profile: 'document',
+    verifiedAt: '2026-07-15T00:00:00.000Z',
+    steps: [],
+  }, null, 2)}\n`);
+  // 实现文件行数虚高（如被修改的大文档），但实际改动小、声明 L2
+  writeFileSync(join(directory, 'src', 'example.js'), Array(1200).fill('export const x = 1;').join('\n') + '\n');
+  writeFileSync(join(changeDir, 'traceability.md'), '| REQ-ID | 模块 | 代码实现 | 测试覆盖 | 状态 |\n| REQ-101 | module-a | src/example.js | tests/example.test.js | ✅ 完成 |\n');
+  updateDeliveryFingerprint(directory, changeDir, ['src/example.js', 'tests/example.test.js']);
+
+  const result = runCli(directory, 'audit', 'example');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /document 变更，不计实现文件行数/);
+  assert.match(result.stdout, /声明级别 L2 不低于推断级别/);
+  assert.match(result.stdout, /流程执行审计通过/);
 });
 
 function createDeliverableChange(directory, name = 'example') {
@@ -329,6 +424,8 @@ function createDeliverableChange(directory, name = 'example') {
   writeFileSync(join(changeDir, 'cross-reference.md'), 'REQ-101\n');
   writeFileSync(join(deltaDir, 'spec.md'), '## ADDED Requirements\nREQ-101\n');
   writeFileSync(join(changeDir, 'traceability.md'), '| REQ-ID | 模块 | 代码实现 | 测试覆盖 | 状态 |\n| REQ-101 | module-a | src/example.js | tests/example.test.js | ✅ 完成 |\n');
+  writeFileSync(join(changeDir, 'process-declaration.md'), '声明级别: L2\n遵循步骤: 设计契约 → 计划 → 实现 → 测试 → 审查\n跳过步骤及理由: 无\n审查记录: 已完成代码专家审查\n');
+  writeFileSync(join(changeDir, 'code-red-team-review.md'), '# 代码红队审查\n\n审查结论：通过\n');
   const executedStep = (id) => ({
     id,
     argv: [process.execPath, '-e', 'process.exit(0)'],
@@ -468,6 +565,59 @@ test('init delivery 创建 library 交付契约', (t) => {
   const delivery = JSON.parse(readFileSync(join(changeDir, 'delivery.json'), 'utf8'));
   assert.equal(delivery.profile, 'library');
   assert.deepEqual(delivery.steps.map((step) => step.id), ['build', 'test', 'integration', 'package']);
+});
+
+test('init delivery 创建 document 交付契约（非编码，无构建命令）', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-delivery-init-document-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = join(directory, '.novaway', 'powersnexus', 'changes', 'example');
+  mkdirSync(changeDir, { recursive: true });
+
+  const result = runCli(directory, 'init', 'delivery', 'example', '--profile', 'document');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /已初始化 document 交付契约/);
+  const delivery = JSON.parse(readFileSync(join(changeDir, 'delivery.json'), 'utf8'));
+  assert.equal(delivery.profile, 'document');
+  assert.deepEqual(delivery.steps, []);
+});
+
+test('init delivery 拒绝未知 profile', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-delivery-init-unknown-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = join(directory, '.novaway', 'powersnexus', 'changes', 'example');
+  mkdirSync(changeDir, { recursive: true });
+
+  const result = runCli(directory, 'init', 'delivery', 'example', '--profile', 'unknown');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /仅支持 application、library、web 或 document/);
+});
+
+test('document profile 的 verify/check delivery 以自证通过，不执行任何命令', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'powersnexus-delivery-document-pass-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const changeDir = createDeliverableChange(directory);
+  writeFileSync(join(changeDir, 'delivery.json'), JSON.stringify({ profile: 'document', steps: [] }));
+  updateDeliveryFingerprint(directory, changeDir, ['src/example.js', 'tests/example.test.js']);
+
+  const verified = runCli(directory, 'verify', 'delivery', 'example');
+  assert.equal(verified.status, 0);
+  assert.match(verified.stdout, /所有交付命令已实际通过/);
+  const delivery = JSON.parse(readFileSync(join(changeDir, 'delivery.json'), 'utf8'));
+  assert.match(delivery.verifiedAt, /^202\d-/);
+  assert.deepEqual(delivery.deliveryFingerprint.commands, []);
+
+  const checked = runCli(directory, 'check', 'delivery', 'example');
+  assert.equal(checked.status, 0);
+  assert.match(checked.stdout, /交付检查通过/);
+});
+
+test('start 将非编码任务识别为非编码轨道', () => {
+  const result = runCli(repoRoot, 'start', '写一份产品 PRD');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /推荐轨道: 非编码轨道/);
 });
 
 test('check delivery 拒绝原样保留在交付模板中的命令占位文本', (t) => {

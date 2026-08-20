@@ -18,6 +18,19 @@ If you were dispatched as a subagent to execute a specific task, skip this skill
 不得因“可能有用”而推测性预加载技能。用户明确请求的技能，或当前动作直接由其负责的技能，才应激活。
 </WORKFLOW-ROUTING>
 
+## 通用化轨道路由（双轴）
+
+先按**工作类型**（编码/非编码）分流，再按**规模**（L0-L4）分级。非编码与轻量编码从 grill-me 拷问入口开始。
+
+| 工作类型 | 规模 | 轨道 | 入口 | 交付 |
+|---|---|---|---|---|
+| 编码 | 大/中（L2-L4） | 重型链 | brainstorming → openspec → plans → SDD → review → finish | application/library/web |
+| 编码 | 小/个人（L0-L1） | 轻量链 | **grill-me** → 实现 → 聚焦测试 → 自审 → 提交 | 默认跳过 |
+| 非编码（文档/PRD/数据/运营） | — | 非编码链 | **grill-me** → 轻量任务清单 → 执行 → document 交付 | **document** |
+| 用户主动 "grill me/盘问" | 任意 | 拷问入口 | grill-me 直入，零文档副作用 | 不适用 |
+
+**升级方向：** grill-me 拷问中暴露复杂度（跨模块/架构决策/风险中上/需文档记录）→ 单向升级 L2+，按[升级交接协议]交接给 brainstorming，brainstorming 从方案比选阶段接手、不再重问需求。反向不存在。
+
 ## 自动本地交付授权
 
 当用户明确表达“全程自动执行”“自动做到本地可运行”“不要中途停下”或等价意图时，记录为**自动本地交付授权**。
@@ -67,6 +80,8 @@ digraph skill_flow {
     "About to enter plan mode?" [shape=doublecircle];
     "Already brainstormed?" [shape=diamond];
     "Invoke brainstorming skill" [shape=box];
+    "小/个人/非编码？" [shape=diamond];
+    "Invoke grill-me skill" [shape=box];
     "有直接负责的技能？" [shape=diamond];
     "Invoke the skill" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
@@ -77,10 +92,13 @@ digraph skill_flow {
 
     "About to enter plan mode?" -> "Already brainstormed?";
     "Already brainstormed?" -> "Invoke brainstorming skill" [label="no"];
-    "Already brainstormed?" -> "有直接负责的技能？" [label="yes"];
-    "Invoke brainstorming skill" -> "有直接负责的技能？";
+    "Already brainstormed?" -> "小/个人/非编码？" [label="yes"];
+    "Invoke brainstorming skill" -> "小/个人/非编码？";
+    "小/个人/非编码？" -> "Invoke grill-me skill" [label="是"];
+    "小/个人/非编码？" -> "有直接负责的技能？" [label="否"];
 
-    "User message received" -> "有直接负责的技能？";
+    "User message received" -> "小/个人/非编码？";
+    "Invoke grill-me skill" -> "有直接负责的技能？";
     "有直接负责的技能？" -> "Invoke the skill" [label="yes"];
     "有直接负责的技能？" -> "Respond (including clarifications)" [label="no"];
     "Invoke the skill" -> "Announce: 'Using [skill] to [purpose]'";
@@ -99,6 +117,7 @@ digraph skill_flow {
 |---------|---------|
 | "这是 L0，但涉及多模块、接口或数据迁移" | 重新评估到 L1/L2，而不是直接修改。 |
 | "我还没确定验收条件，却要开始实现" | 为 L1 做简短假设，或升级到 L2 设计契约。 |
+| "grill-me 拷问发现复杂度，但轻量轨道已经开始了" | 按升级交接协议升级 L2+，不要硬压轻量。 |
 | "为保险起见先加载所有技能" | 只加载当前阶段直接需要的技能，避免上下文膨胀。 |
 | "复杂任务想跳过验证或审查" | 保持 L2+ 的质量门槛，不以节省 token 为由删除验证。 |
 
@@ -106,8 +125,9 @@ digraph skill_flow {
 
 | 级别 | 激活范围 | Token 策略 |
 |---|---|---|
-| L0 | 无流程技能 | 直接改测，聚焦输出 |
-| L1 | 当前领域技能 + 简短验收说明 | 最多一次必要澄清 |
+| L0 | grill-me（可选快速澄清）→ 无流程技能 | 直接改测，聚焦输出 |
+| L1 | grill-me（入口拷问）→ 当前领域技能 + 简短验收说明 | 最多一次必要澄清 |
+| 非编码 | grill-me（入口拷问）→ 轻量任务清单 → document 交付 | 零代码流程开销 |
 | L2 | brainstorming、writing-plans 与直接领域技能 | 一次设计契约，不重复确认 |
 | L3/L4 | 完整规格、审查、验证技能 | 以风险换取质量，不压缩关键证据 |
 

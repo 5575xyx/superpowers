@@ -241,13 +241,14 @@ Stop. Don't proceed to Step 2.
 
 **Before presenting options, archive the OpenSpec change with mode-aware merge logic:**
 
-**先运行交付检查，再尝试 CLI 归档（recommended）：**
+**先运行交付检查与流程审计，再尝试 CLI 归档（recommended）：**
 
 ```bash
+node src/cli/powersnexus-cli.js audit <change-name>
 node src/cli/powersnexus-cli.js check delivery <change-name>
 ```
 
-交付检查会要求任务完成、需求追踪不含占位状态，并要求 `delivery.json` 记录本地构建、测试、集成测试和运行验证证据。未通过时不得继续归档。
+流程审计会验证级别路由、TDD 证据、审查记录与 `process-declaration.md` 合规声明；交付检查要求任务完成、需求追踪不含占位状态，并要求 `delivery.json` 记录本地构建、测试、集成测试和运行验证证据。两项未通过时不得继续归档。
 
 当 `delivery.json` 已配置真实 `argv` 命令数组后，必须显式执行：
 
@@ -488,22 +489,33 @@ Or ask: "This branch split from main - is that correct?"
 
 ### Step 5: Present Options
 
-**Normal repo and named-branch worktree — present exactly these 4 options using the `question` tool:**
+**Normal repo and named-branch worktree — present exactly these 3 options using the `question` tool:**
 
 Question: "Implementation complete. What would you like to do?"
 Options:
 1. Merge back to <base-branch> locally
 2. Push and create a Pull Request
 3. Keep the branch as-is (I'll handle it later)
-4. Discard this work
 
-**Detached HEAD — present exactly these 3 options using the `question` tool:**
+**Detached HEAD — present exactly these 2 options using the `question` tool:**
 
 Question: "Implementation complete. You're on a detached HEAD (externally managed workspace)."
 Options:
 1. Push as new branch and create a Pull Request
 2. Keep as-is (I'll handle it later)
-3. Discard this work
+
+**Discard is not offered by default.** Offering a discard option at every completion promotes destroying work that just passed its tests. Only offer it if the user explicitly asks to discard. If they do, present this confirmation:
+
+**Explicit discard request:**
+Question: "This will permanently delete:
+- Branch <name>
+- All commits: <commit-list>
+- Worktree at <path>
+
+Are you sure you want to discard this work?"
+Options:
+- Yes, discard permanently
+- No, keep the work
 
 **Don't add explanation** - keep options concise.
 
@@ -548,7 +560,9 @@ Report: "Keeping branch <name>. Worktree preserved at <path>."
 
 **Don't cleanup worktree.**
 
-#### Option 4: Discard
+#### Option 4: Discard（仅显式请求时使用）
+
+**只在用户明确请求丢弃（Step 5 的显式丢弃请求）时执行。默认选项不包含 Discard。**
 
 **Confirm first using the `question` tool:**
 
@@ -575,7 +589,7 @@ git branch -D <feature-branch>
 
 ### Step 7: Cleanup Workspace
 
-**Only runs for Options 1 and 4.** Options 2 and 3 always preserve the worktree.
+**Only runs for Option 1 (merge) and an explicit discard request.** Options 2 and 3 always preserve the worktree.
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -603,7 +617,7 @@ git worktree prune  # Self-healing: clean up any stale registrations
 | 1. Merge locally | yes | - | - | yes |
 | 2. Create PR | - | yes | yes | - |
 | 3. Keep as-is | - | - | yes | - |
-| 4. Discard | - | - | - | yes (force) |
+| Discard（仅显式请求） | - | - | - | yes (force) |
 
 ## Common Mistakes
 
@@ -613,11 +627,11 @@ git worktree prune  # Self-healing: clean up any stale registrations
 
 **Open-ended questions**
 - **Problem:** "What should I do next?" is ambiguous
-- **Fix:** Present exactly 4 structured options (or 3 for detached HEAD)
+- **Fix:** Present exactly 3 structured options (or 2 for detached HEAD)
 
 **Cleaning up worktree for Option 2**
 - **Problem:** Remove worktree user needs for PR iteration
-- **Fix:** Only cleanup for Options 1 and 4
+- **Fix:** Only cleanup for Option 1 and explicit discard requests
 
 **Deleting branch before removing worktree**
 - **Problem:** `git branch -d` fails because worktree still references the branch
@@ -649,9 +663,9 @@ git worktree prune  # Self-healing: clean up any stale registrations
 **Always:**
 - Verify tests before offering options
 - Detect environment before presenting menu
-- Present exactly 4 options (or 3 for detached HEAD)
-- Get typed confirmation for Option 4
-- Clean up worktree for Options 1 & 4 only
+- Present exactly 3 options (or 2 for detached HEAD)
+- Only offer Discard on explicit request, and get typed confirmation
+- Clean up worktree for Option 1 and explicit discard requests only
 - `cd` to main repo root before worktree removal
 - Run `git worktree prune` after removal
 

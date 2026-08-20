@@ -34,6 +34,7 @@ A collection of agentic skills for software development workflows. Each skill gu
 | Skill | Description |
 |-------|-------------|
 | [using-powersnexus](using-powersnexus/) | Use when starting any conversation - establishes how to find and use skills |
+| [grill-me](grill-me/) | 需求拷问入口：小项目、个人项目、非编码工作（文档/PRD/数据/运营）的轻量澄清，零文档副作用；也可在用户说 "grill me/盘问一下" 时主动触发 |
 | [using-git-worktrees](using-git-worktrees/) | Use when starting feature work that needs isolation from current workspace |
 | [finishing-a-development-branch](finishing-a-development-branch/) | Use when implementation is complete, all tests pass, and you need to decide how to integrate the work |
 | [systematic-debugging](systematic-debugging/) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes |
