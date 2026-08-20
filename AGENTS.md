@@ -36,6 +36,8 @@
 
 ## 环境与 Git
 
+> 以下为本仓库实例配置。fork 后按你自己的远程地址与工作分支修改，框架本身不绑定特定仓库。
+
 - 本机开发环境为 Windows，默认 shell 是 PowerShell；平台相关测试须切到 Git Bash。
 - `.opencode/bin/rg.exe` 是内置 ripgrep，插件启动时加入 PATH，勿删。
-- 远程：`gitee` = nova-way/powersnexus（主要发布目标），`origin` = 5575xyx/superpowers（上游分叉）。当前工作分支为 `main`；对上游提 PR 时目标分支应为 `dev`。未获明确授权不要 push。
+- 远程（本仓库实例）：`gitee` = nova-way/powersnexus（主要发布目标），`origin` = 5575xyx/superpowers（上游分叉）。当前工作分支为 `main`；对上游提 PR 时目标分支应为 `dev`。未获明确授权不要 push。
