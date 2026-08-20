@@ -2,7 +2,9 @@
 .private-journal/
 .claude/
 .codex/
-.novaway/
+# OpenSpec 变更工作区：进行中的 changes/ 忽略，归档后的主规格与已归档变更入库。
+.novaway/powersnexus/changes/*
+!.novaway/powersnexus/changes/archive/
 .idea/
 .trae/
 .DS_Store
