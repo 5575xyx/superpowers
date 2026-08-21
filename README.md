@@ -1,5 +1,7 @@
 # PowersNexus
 
+> **要求：** Node.js ≥ 22（用于 CLI 工具和测试）
+
 PowersNexus 是一套完整的编码代理（coding agent）软件开发方法论，基于一组可组合的技能（skills）和初始指令构建而成，确保你的代理能够正确地使用它们。
 
 ## 核心特性
@@ -72,8 +74,19 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 不同编码代理的安装方式各不相同。如果你使用多个代理，请分别为每个代理安装 PowersNexus。
 
+### Claude Code
 
-手动配置 opencode.json**
+```bash
+/plugin install powersnexus@claude-plugins-official
+```
+
+或从 Gitee 手动安装：
+
+```bash
+/plugin install powersnexus@git+https://gitee.com/nova-way/powersnexus.git
+```
+
+### OpenCode
 
 在 `opencode.json`（全局或项目级别）中添加：
 
@@ -85,7 +98,67 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 重启 OpenCode，插件将自动安装并注册所有技能。
 
-验证安装：询问 "告诉我你的 powersnexus 是什么"
+### Cursor
+
+在 Agent 聊天中安装：
+
+```text
+/add-plugin powersnexus
+```
+
+或在插件市场搜索 "powersnexus"。
+
+### Kimi Code
+
+打开插件管理器：
+
+```text
+/plugins
+```
+
+前往 `Marketplace` > `powersnexus` 安装。
+
+或直接从仓库安装：
+
+```text
+/plugins install https://gitee.com/nova-way/powersnexus
+```
+
+### Codex CLI
+
+```bash
+/plugins
+```
+
+搜索 `powersnexus` 并选择 `Install Plugin`。
+
+### Devin CLI
+
+```bash
+devin plugins install nova-way/powersnexus
+```
+
+更新：
+
+```bash
+devin plugins update powersnexus
+```
+
+### Pi
+
+```bash
+pi install git:gitee.com/nova-way/powersnexus
+```
+
+本地开发：
+
+```bash
+pi -e /path/to/powersnexus
+```
+
+### 验证安装
+
+询问你的编码代理："告诉我你的 powersnexus 是什么"。如果它能识别并描述 PowersNexus 的能力，说明安装成功。
 
 
 
