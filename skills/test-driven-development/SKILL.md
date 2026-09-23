@@ -182,6 +182,17 @@ Confirm:
 
 **Other tests fail?** Fix now.
 
+### Project suite green
+
+The task is not green until **the project's suite** is green — not only the
+file you were editing. A change can turn a file's own tests green while
+breaking a suite the task never named: the plan's acceptance criteria, the
+repository's test:core / test:all gates, or a dependent package. Run the
+suite the plan's completion contract names (or the repository's default
+suite when the plan is silent) after every task and before claiming done;
+redirect long output to a workspace file and read its tail. A suite you
+never ran is a suite you never checked.
+
 ### REFACTOR - Clean Up
 
 After green only:
@@ -196,6 +207,8 @@ Keep tests green. Don't add behavior.
 Next failing test for next feature.
 
 ## Good Tests
+
+For the full standard — including how to **Name the Break** (点名会坏掉的生产改动) and run a **Mutation Check** (变异检查) — read [writing-good-tests.md](writing-good-tests.md).
 
 | Quality | Good | Bad |
 |---------|------|-----|

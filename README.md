@@ -88,7 +88,7 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 
 ### OpenCode
 
-在 `opencode.json`（全局或项目级别）中添加：
+在 `opencode.json`（全局或项目级别）中添加。V1 使用 `plugin`，V2（2.0.4+）使用 `plugins`：
 
 ```json
 {
@@ -96,7 +96,13 @@ PowersNexus 是一套完整的编码代理（coding agent）软件开发方法�
 }
 ```
 
-重启 OpenCode，插件将自动安装并注册所有技能。
+```json
+{
+  "plugins": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
+}
+```
+
+重启 OpenCode，插件将自动安装并注册所有技能。详见 [docs/README.opencode.md](docs/README.opencode.md)。
 
 ### Cursor
 

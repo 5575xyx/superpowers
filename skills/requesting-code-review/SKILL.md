@@ -26,9 +26,10 @@ Dispatch a code reviewer subagent to catch issues before they cascade. The revie
 
 **1. Get git SHAs:**
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+BASE_SHA=$(git rev-parse HEAD~1)  # or: git merge-base origin/main HEAD
 HEAD_SHA=$(git rev-parse HEAD)
 ```
+多提交分支的 BASE 不要用裸 `origin/main`（main 前进后会把新文件算成幻影删除）；用 `git merge-base origin/main HEAD`。
 
 **2. Dispatch code reviewer subagent:**
 
@@ -85,13 +86,20 @@ You: [Fix progress indicators]
 - Catch issues before they compound
 - Fix before moving to next task
 
-**Executing Plans:**
-- Review after each task or at natural checkpoints
+**Executing Plans (Native):**
+- One whole-branch review at the end (plus self-fix pass on Critical/Important)
 - Get feedback, apply, continue
 
 **Ad-Hoc Development:**
 - Review before merge
 - Review when stuck
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "I'll just review the diff myself instead of dispatching a reviewer" | You're the coordinator — reviewing the diff inline burns the context window you need to keep driving the work. Dispatch a reviewer subagent: the diff and the evaluation live in its context, and only the findings come back to you. |
+| "The reviewer needs my whole session history to understand the change" | Hand it precisely crafted context, never your session's history. That keeps the reviewer on the work product, not your thought process. |
 
 ## Red Flags
 

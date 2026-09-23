@@ -8,6 +8,7 @@ import test from 'node:test';
 const repoRoot = resolve(import.meta.dirname, '..');
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const requiredFiles = [
+  'index.js',
   '.opencode/plugins/powersnexus.js',
   'skills/frontend-quality/SKILL.md',
   'skills/ui-ux-pro-max/SKILL.md',

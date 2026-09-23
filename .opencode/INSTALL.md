@@ -6,15 +6,34 @@
 
 ## Installation
 
-Add powersnexus to the `plugin` array in your `opencode.json` (global or project-level):
+OpenCode V2 requires version 2.0.4 or later.
+
+### OpenCode V1
+
+Use the existing V1 plugin configuration:
 
 ```json
 {
-  "plugin": ["powersnexus@git+https://github.com/obra/powersnexus.git"]
+  "plugin": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
 }
 ```
 
-Restart OpenCode. The plugin installs through OpenCode's plugin manager and
+### OpenCode V2 (2.0.4 or later)
+
+Use the V2 plugin configuration:
+
+```json
+{
+  "plugins": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
+}
+```
+
+For a local V2 installation, configure the repository directory containing
+`index.js`. OpenCode 2.0.4 and 2.0.7 reject a configured direct JavaScript-file
+path. Discovered plugin symlinks remain supported.
+
+Restart OpenCode. V2 uses the `opencode` command; `opencode2` may be available
+as an alias. The plugin installs through OpenCode's plugin manager and
 registers all skills.
 
 Verify by asking: "Tell me about your powersnexus"
@@ -55,19 +74,25 @@ and Bun versions pin that resolved git dependency in a lockfile or cache, so a
 restart may not pick up the newest PowersNexus commit. If updates do not appear,
 clear OpenCode's package cache or reinstall the plugin.
 
-To pin a specific version:
+To pin a specific version, add a tag or commit to the spec (same form for the
+V1 `plugin` key and the V2 `plugins` key):
 
 ```json
 {
-  "plugin": ["powersnexus@git+https://github.com/obra/powersnexus.git#v5.0.3"]
+  "plugin": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git#v6.1.0"]
 }
 ```
+
+On V2, pin `v6.1.0` or later; earlier releases load only on V1.
 
 ## Troubleshooting
 
 ### Plugin not loading
 
-1. Check logs: `opencode run --print-logs "hello" 2>&1 | grep -i powersnexus`
+1. Check logs. V1: `opencode run --print-logs "hello" 2>&1 | grep -i powersnexus`.
+   V2 loads plugins in the background server, so add `--standalone`:
+   `opencode run --standalone --print-logs "hello" 2>&1 | grep -i powersnexus`,
+   or inspect `~/.local/share/opencode/log/opencode.log` filtering for `role=server`.
 2. Verify the plugin line in your `opencode.json`
 3. Make sure you're running a recent version of OpenCode
 
@@ -80,14 +105,26 @@ the plugin, try installing with system npm and pointing OpenCode at the local
 package:
 
 ```powershell
-npm install powersnexus@git+https://github.com/obra/powersnexus.git --prefix "$HOME\.config\opencode"
+npm install powersnexus@git+https://gitee.com/nova-way/powersnexus.git --prefix "$HOME\.config\opencode"
 ```
 
-Then use the installed package path in `opencode.json`:
+Then use the absolute path of the installed package in `opencode.json` for your
+OpenCode version. OpenCode does not expand `~`; a `~/...` entry is treated as a
+package name, not a local directory.
+
+**V1:**
 
 ```json
 {
-  "plugin": ["~/.config/opencode/node_modules/powersnexus"]
+  "plugin": ["C:\\Users\\<you>\\.config\\opencode\\node_modules\\powersnexus"]
+}
+```
+
+**V2 (2.0.4 or later):**
+
+```json
+{
+  "plugins": ["C:\\Users\\<you>\\.config\\opencode\\node_modules\\powersnexus"]
 }
 ```
 
@@ -98,7 +135,9 @@ Then use the installed package path in `opencode.json`:
 
 ### Tool mapping
 
-Skills speak in actions ("create a todo", "dispatch a subagent", "read a file"). On OpenCode these resolve to:
+Skills speak in actions ("create a todo", "dispatch a subagent", "read a file"). The plugin injects a flavor-specific mapping — check your OpenCode version:
+
+**V1 (`opencode` 1.x):**
 
 - "Create a todo" / "mark complete in todo list" → `todowrite`
 - `Subagent (general-purpose):` template → `task` tool with `subagent_type: "general"` (or `"explore"` for codebase exploration)
@@ -109,7 +148,19 @@ Skills speak in actions ("create a todo", "dispatch a subagent", "read a file").
 - "Search file contents" / "find files by name" → `grep`, `glob`
 - "Fetch a URL" → `webfetch`
 
+**V2 (`opencode` 2.0.4 or later; `opencode2` may be available as an alias):**
+
+- "Create a todo" → V2 has no todo tool; track the plan in a markdown file instead
+- `Subagent (general-purpose):` template → `subagent` tool with `agent: "general"` (or `"explore"`); pass `sessionID` to continue a previous subagent
+- "Invoke a skill" → OpenCode's native `skill` tool
+- "Read a file" → `read`
+- "Create, edit, or delete files" → use `patch` with `patchText` when available; otherwise use `write` to create or overwrite files, `edit` for targeted changes, and `shell` for deletion
+- "Run a shell command" → `shell` (`command`, `workdir`, `timeout`, `background`)
+- "Search file contents" / "find files by name" → `grep`, `glob`
+- "Fetch a URL" → `webfetch`
+- "Search the web" → `websearch`
+
 ## Getting Help
 
-- Report issues: https://github.com/obra/powersnexus/issues
-- Full documentation: https://github.com/obra/powersnexus/blob/main/docs/README.opencode.md
+- Report issues: https://gitee.com/nova-way/powersnexus/issues
+- Full documentation: https://gitee.com/nova-way/powersnexus/blob/main/docs/README.opencode.md

@@ -67,6 +67,9 @@ independently testable deliverable.
 
 **Tech Stack:** [Key technologies/libraries]
 
+**Spec:** [path to the spec/design doc this plan implements — the plan
+argues from the spec, so the spec travels with it; executors read both]
+
 ## Global Constraints
 
 [The spec's project-wide requirements — version floors, dependency limits,
@@ -93,6 +96,19 @@ verification step in the final integration test task.]
 For user-interface work, also include the approved visual contract: design system or token source, responsive breakpoints, component states, accessibility expectations, and desktop/mobile visual acceptance evidence.
 
 Include only what's relevant. Copy exact values from the spec if present.]
+
+## Review Focus
+
+[The five input classes or failure modes the spec implies but no task's
+tests exercise that are most likely to bite a person using this software —
+one line each, naming the input or condition and the behavior a
+reasonable person would expect, most likely first. The spec is a vision
+document: it says what the software must do, not everything it will
+meet, and its silence on an input is not permission for that input to
+break the program. Write the list here, once, with the spec in front of
+you. Then, for each line, add the test that pins it to the task that
+owns the code, in that task's own step style. An empty section means
+you checked and found none, not that you skipped the check.]
 
 ---
 ```
@@ -172,7 +188,9 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **6. Integration test task:** Is there a final integration/end-to-end test task that verifies the whole feature works together? This should be the last task before completion.
 
-**7. Delivery contract:** 对 L2+，计划必须包含填写 `delivery.json` 真实 argv、`powersnexus verify delivery <change-name>`、`powersnexus check delivery <change-name>` 与 `powersnexus archive <change-name>`。application 使用启动冒烟和健康检查，library 使用制品验证。
+**7. Review Focus:** For each input class or failure mode the spec implies, is there a task whose tests exercise it? The five uncovered ones most likely to bite a person go in the Review Focus section, and each line there gets its test added to the owning task. An empty section means you checked and found none, not that you skipped the check.
+
+**8. Delivery contract:** 对 L2+，计划必须包含填写 `delivery.json` 真实 argv、`powersnexus verify delivery <change-name>`、`powersnexus check delivery <change-name>` 与 `powersnexus archive <change-name>`。application 使用启动冒烟和健康检查，library 使用制品验证。
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
@@ -210,17 +228,37 @@ powersnexus check consistency <change-name>
 
 ## Execution Handoff
 
-After saving the plan, 默认使用 `question` 工具提供执行选择；如果当前会话已经有自动本地交付授权，直接按推荐执行路径继续，不重复询问执行选择。
+After saving and self-reviewing the plan, link it for your human partner
+to read. Approving an idea or a scope no longer counts as approving a plan
+you have not seen: wait for that review before implementation.
 
-Question: "Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Which execution approach would you like to use?"
-Options:
-- Subagent-Driven (recommended) - Fresh subagent per task with two-stage review
-- Inline Execution - Execute tasks in this session with checkpoints
+If they have already explicitly supplied an execution method, ask them to
+confirm the plan captures what they want; wait for that review, then use
+the preserved method. Otherwise, ask them to review the plan and choose an
+execution method before implementation.
 
-**If Subagent-Driven chosen:**
+If the current session already has 自动本地交付授权, skip re-asking for the
+execution method and continue on the recommended path after the plan link.
+
+默认使用 `question` 工具提供执行选择。
+
+**When no execution method has already been supplied:**
+
+**"Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Please review the plan. Which execution approach would you prefer?**
+
+- **Subagent-driven** — A fresh subagent implements each task and a fresh reviewer checks it before the next one starts, then a whole-branch review at the end. Most thorough; costs a fresh context per task and per review.
+- **Native** — I implement every task myself in this session, then one fresh reviewer on the most capable model checks the whole branch. Cheapest and fastest; no independent review until the end. Runs well with a mid-tier session model, since the plan carries the design.
+
+**For this plan I recommend &lt;one of the two&gt;, because &lt;one sentence from the plan: how much the tasks depend on each other's interfaces, how many there are, what a shipped mistake would cost&gt;. Does the plan capture what you want, and which approach should we use?"**
+
+**When an execution method has already been supplied:**
+
+**"Plan complete and saved to `.novaway/powersnexus/changes/<name>/tasks.md`. Please review the plan. Does it capture what you want?"**
+
+**If Subagent-driven chosen:**
 - **REQUIRED SUB-SKILL:** Use PowersNexus:subagent-driven-development
 - Fresh subagent per task + two-stage review
 
-**If Inline Execution chosen:**
+**If Native chosen:**
 - **REQUIRED SUB-SKILL:** Use PowersNexus:executing-plans
-- Batch execution with checkpoints for review
+- Continuous inline execution; one whole-branch review at the end

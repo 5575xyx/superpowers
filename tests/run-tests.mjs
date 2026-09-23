@@ -17,6 +17,7 @@ const tests = [
   'tests/progressive-activation.test.mjs',
   'tests/opencode/bootstrap-caching.test.mjs',
   'tests/frontend-quality-skill.test.mjs',
+  'tests/upstream-absorption.test.mjs',
   'tests/pi/test-pi-extension.mjs',
 ].map((file) => resolve(repoRoot, file));
 

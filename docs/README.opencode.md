@@ -4,15 +4,31 @@ PowersNexus 与 [OpenCode.ai](https://opencode.ai) 的完整集成指南。
 
 ## 安装
 
+OpenCode V2 要求 2.0.4 或更高版本。V1 与 V2 使用不同的配置键：
+
+### OpenCode V1
+
 在 `opencode.json`（全局或项目级别）的 `plugin` 数组中添加 PowersNexus：
 
 ```json
 {
-  "plugin": ["PowersNexus@git+https://gitee.com/nova-way/powersnexus.git"]
+  "plugin": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
 }
 ```
 
-重启 OpenCode。插件会通过 OpenCode 的插件管理器安装，并自动注册所有技能。
+### OpenCode V2（2.0.4 或更高）
+
+在 `opencode.json` 的 `plugins` 数组中添加：
+
+```json
+{
+  "plugins": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git"]
+}
+```
+
+本地 V2 安装请配置包含根目录 `index.js` 的仓库目录；OpenCode 2.0.4/2.0.7 拒绝直接指向 `.js` 文件的路径，已发现的插件 symlink 仍受支持。
+
+重启 OpenCode。V2 使用 `opencode` 命令（`opencode2` 可能是别名）。插件会通过 OpenCode 的插件管理器安装，并自动注册所有技能。
 
 **验证安装**：问 agent "告诉我你的 powersnexus 是什么"
 
@@ -104,28 +120,32 @@ description: Use when [condition] - [what it does]
 
 OpenCode 通过 git-backed 包规范安装 PowersNexus。某些 OpenCode 和 Bun 版本会将解析的 git 依赖固定在 lockfile 或缓存中，重启可能不会获取最新的提交。如果更新未生效，请清除 OpenCode 的包缓存或重新安装插件。
 
-固定特定版本：
+固定特定版本（V1 用 `plugin`，V2 用 `plugins`）：
 
 ```json
 {
-  "plugin": ["PowersNexus@git+https://gitee.com/nova-way/powersnexus.git#v6.0.3"]
+  "plugin": ["powersnexus@git+https://gitee.com/nova-way/powersnexus.git#v6.1.0"]
 }
 ```
 
+V2 请 pin `v6.1.0` 或更高版本；更早的发布仅能在 V1 加载。
+
 ## 工作原理
 
-插件做了三件事：
+插件做了三件事（双栈：V1 命名导出 + V2 默认导出）：
 
-1. **注入 bootstrap 上下文**：通过 `experimental.chat.messages.transform` hook，将 PowersNexus 意识注入每个对话的第一条用户消息
-2. **注册技能目录**：通过 `config` hook，让 OpenCode 自动发现所有 PowersNexus 技能，无需 symlink 或手动配置
+1. **注入 bootstrap 上下文**：V1 经 `experimental.chat.messages.transform` hook；V2 经 `ctx.session.hook("context")`，将 PowersNexus 意识注入每个对话的第一条用户消息（子会话 `parentID` 跳过）
+2. **注册技能目录**：V1 通过 `config` hook 注册 skills 路径；V2 通过 `ctx.skill.transform()` 原生注册，无需 symlink 或手动配置
 3. **设置 ripgrep PATH**：插件启动时自动将内置的 `rg.exe` 添加到 PATH 环境变量
 
 ### 工具映射
 
-技能使用动作描述而非特定平台的工具名。在 OpenCode 中对应：
+技能使用动作描述而非特定平台的工具名。插件按宿主形态注入 V1 或 V2 映射：
 
-| 技能动作 | OpenCode 工具 |
-|---------|--------------|
+**V1（`opencode` 1.x）：**
+
+| 技能动作 | OpenCode V1 工具 |
+|---------|------------------|
 | 创建/更新 todo | `todowrite` |
 | 分发子代理 | `task`（`subagent_type: "general"`） |
 | 调用技能 | `skill`（OpenCode 原生） |
@@ -135,20 +155,35 @@ OpenCode 通过 git-backed 包规范安装 PowersNexus。某些 OpenCode 和 Bun
 | 搜索内容 | `grep` / `glob` |
 | 抓取 URL | `webfetch` |
 
+**V2（`opencode` 2.0.4 或更高）：**
+
+| 技能动作 | OpenCode V2 工具 |
+|---------|------------------|
+| 创建/更新 todo | 无 todo 工具；改用 markdown 计划文件 |
+| 分发子代理 | `subagent`（`agent: "general"`；`sessionID` 续跑） |
+| 调用技能 | `skill`（OpenCode 原生） |
+| 读取文件 | `read` |
+| 编辑文件 | `patch`（`patchText`）或 `write` / `edit` / `shell` |
+| 运行命令 | `shell` |
+| 搜索内容 | `grep` / `glob` |
+| 抓取 URL | `webfetch` / `websearch` |
+
 ## 故障排查
 
 ### 插件未加载
 
-1. 检查 OpenCode 日志：`opencode run --print-logs "hello" 2>&1 | grep -i PowersNexus`
-2. 验证 `opencode.json` 中的 plugin 配置是否正确
-3. 确保运行的是较新版本的 OpenCode
+1. 检查 OpenCode 日志：
+   - V1：`opencode run --print-logs "hello" 2>&1 | grep -i powersnexus`
+   - V2 在后台 server 加载插件，需加 `--standalone`：`opencode run --standalone --print-logs "hello" 2>&1 | grep -i powersnexus`，或查看 `~/.local/share/opencode/log/opencode.log` 中 `role=server` 的记录
+2. 验证 `opencode.json` 中的 `plugin`（V1）或 `plugins`（V2）配置是否正确
+3. 确保运行的是较新版本的 OpenCode（V2 需 2.0.4+）
 
 ### Windows 安装问题
 
 某些 Windows OpenCode 版本存在上游安装器问题，包括 `git+https` URL 的缓存路径和 Bun 无法找到 `git.exe`。如果 OpenCode 无法安装插件，请使用系统 npm 安装并指向本地包：
 
 ```powershell
-npm install PowersNexus@git+https://gitee.com/nova-way/powersnexus.git --prefix "$HOME\.config\opencode"
+npm install powersnexus@git+https://gitee.com/nova-way/powersnexus.git --prefix "$HOME\.config\opencode"
 ```
 
 然后在 `opencode.json` 中使用安装的包路径：

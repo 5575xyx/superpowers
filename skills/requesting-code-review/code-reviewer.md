@@ -41,6 +41,17 @@ Subagent (general-purpose):
     - Are deviations justified improvements, or problematic departures?
     - Is all planned functionality present?
 
+    **Reasonable person standard:**
+    - Grade findings by what a **reasonable person using this software**
+      actually gets — 合理用户预期 — not by whether the plan or spec
+      names the input that triggers the finding.
+    - The plan/spec is a vision document: its silence on an input is not
+      permission for that input to break the program.
+    - When a finding depends on behavior the plan sets aside, report it
+      under **Declined to judge** with the input, the behavior a
+      reasonable user would expect, and what the code does instead —
+      the coordinator makes that ruling, not you.
+
     **Code quality:**
     - Clean separation of concerns?
     - Proper error handling?
@@ -84,6 +95,21 @@ Subagent (general-purpose):
     If you find issues with the plan itself rather than the implementation,
     say so.
 
+    ## Declined to judge
+
+    Lines you cannot grade from the plan alone go in their own section —
+    **Declined to judge** — not in Critical/Important/Minor. For each line:
+    the input or condition, what a reasonable person using this software
+    would expect, what the code does instead, and why the plan does not
+    settle it. The coordinator re-grades and rules; your job is to surface
+    the choice, not to make it.
+
+    ## You Do Not Dispatch Subagents
+
+    You are a review subagent. Do not dispatch subagents — You Do Not
+    Dispatch Subagents. Findings, evidence, and rulings return in your
+    single final message to the coordinator.
+
     ## Output Format
 
     ### Strengths
@@ -99,6 +125,10 @@ Subagent (general-purpose):
 
     #### Minor (Nice to Have)
     [Code style, optimization opportunities, documentation polish]
+
+    #### Declined to judge
+    [Input + reasonable-person expectation + actual behavior + why the plan
+    does not settle it — one line each, for the coordinator to re-grade.]
 
     For each issue:
     - File:line reference
