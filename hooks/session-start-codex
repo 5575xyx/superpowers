@@ -19,7 +19,12 @@ escape_for_json() {
 }
 
 using_powersnexus_escaped=$(escape_for_json "$using_powersnexus_content")
-session_context="<EXTREMELY_IMPORTANT>\nYou have powersnexus.\n\n**Below is the full content of your 'powersnexus:using-powersnexus' skill - your introduction to using skills. For all other skills, follow the Codex skill-loading instructions in that skill:**\n\n${using_powersnexus_escaped}\n</EXTREMELY_IMPORTANT>"
+update_notice="$("${BASH:-bash}" "${PLUGIN_ROOT}/hooks/check-update" 2>/dev/null || true)"
+if [ -n "$update_notice" ]; then
+  session_context="<EXTREMELY_IMPORTANT>\nYou have powersnexus.\n\n**Below is the full content of your 'powersnexus:using-powersnexus' skill - your introduction to using skills. For all other skills, follow the Codex skill-loading instructions in that skill:**\n\n${using_powersnexus_escaped}\n</EXTREMELY_IMPORTANT>\n\n${update_notice}"
+else
+  session_context="<EXTREMELY_IMPORTANT>\nYou have powersnexus.\n\n**Below is the full content of your 'powersnexus:using-powersnexus' skill - your introduction to using skills. For all other skills, follow the Codex skill-loading instructions in that skill:**\n\n${using_powersnexus_escaped}\n</EXTREMELY_IMPORTANT>"
+fi
 
 printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context" | cat
 

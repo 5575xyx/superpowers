@@ -130,6 +130,8 @@ OpenCode 通过 git-backed 包规范安装 PowersNexus。某些 OpenCode 和 Bun
 
 V2 请 pin `v6.1.0` 或更高版本；更早的发布仅能在 V1 加载。
 
+其他宿主（Claude Code、Codex、Cursor、Copilot CLI）的 SessionStart 钩子：会话启动时若检测到 gitee 上有更新版本，注入上下文会附带一行版本提示；检查失败时静默，不影响会话。
+
 ## 工作原理
 
 插件做了三件事（双栈：V1 命名导出 + V2 默认导出）：

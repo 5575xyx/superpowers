@@ -1,0 +1,101 @@
+{
+  "profile": "library",
+  "steps": [
+    {
+      "id": "build",
+      "argv": [
+        "bash",
+        "hooks/check-update"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-23T13:50:08.135Z"
+    },
+    {
+      "id": "test",
+      "argv": [
+        "bash",
+        "tests/hooks/test-update-notice.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-23T13:50:08.944Z"
+    },
+    {
+      "id": "integration",
+      "argv": [
+        "bash",
+        "tests/hooks/test-update-notice.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-23T13:50:09.747Z"
+    },
+    {
+      "id": "package",
+      "argv": [
+        "node",
+        "--test",
+        "tests/package-artifact.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-23T13:50:17.321Z"
+    }
+  ],
+  "deliveryFingerprint": {
+    "algorithm": "sha256",
+    "files": [
+      ".novaway/powersnexus/changes/session-start-update-notice/delta-specs/hooks/spec.md",
+      "hooks/check-update",
+      "hooks/session-start",
+      "hooks/session-start-codex",
+      "package-lock.json",
+      "package.json",
+      "tests/hooks/test-session-start.sh",
+      "tests/hooks/test-update-notice.sh"
+    ],
+    "commands": [
+      {
+        "id": "build",
+        "argv": [
+          "bash",
+          "hooks/check-update"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "test",
+        "argv": [
+          "bash",
+          "tests/hooks/test-update-notice.sh"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "integration",
+        "argv": [
+          "bash",
+          "tests/hooks/test-update-notice.sh"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "package",
+        "argv": [
+          "node",
+          "--test",
+          "tests/package-artifact.test.mjs"
+        ],
+        "timeoutMs": null
+      }
+    ],
+    "environment": {
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v22.22.1"
+    },
+    "digest": "2d81f3878651964bc8bdfeeed1f0cb1b08606c357894b3ede84be9c0b192d247"
+  },
+  "verifiedAt": "2026-09-23T13:50:17.326Z"
+}

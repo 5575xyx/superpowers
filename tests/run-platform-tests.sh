@@ -18,6 +18,7 @@ run_test() {
 }
 
 run_test "SessionStart Hook 输出协议" bash "$REPO_ROOT/tests/hooks/test-session-start.sh"
+run_test "版本更新提示" bash "$REPO_ROOT/tests/hooks/test-update-notice.sh"
 run_test "OpenCode 快速插件测试" bash "$REPO_ROOT/tests/opencode/run-tests.sh"
 run_test "Kimi 插件清单" bash "$REPO_ROOT/tests/kimi/run-tests.sh"
 run_test "Antigravity 工具映射" bash "$REPO_ROOT/tests/antigravity/run-tests.sh"

@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# 会话启动版本提示：本地 package.json 与 gitee raw 比对；失败静默，退出码恒 0。
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+DEFAULT_URL="https://gitee.com/nova-way/powersnexus/raw/main/package.json"
+UPDATE_URL="${POWERSNexus_UPDATE_URL:-$DEFAULT_URL}"
+CACHE_FILE="${POWERSNexus_UPDATE_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/powersnexus/update-check.json}"
+
+extract_version() {
+    printf '%s' "$1" | sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([0-9]\+\.[0-9]\+\.[0-9]\+\)".*/\1/p' | head -n1
+}
+
+version_gt() {
+    # 远程 > 本地？三段数字比较
+    local remote="$1" local_v="$2"
+    [ -n "$remote" ] && [ -n "$local_v" ] || return 1
+    local i r l
+    for i in 1 2 3; do
+        r="$(printf '%s' "$remote" | cut -d. -f"$i")"
+        l="$(printf '%s' "$local_v" | cut -d. -f"$i")"
+        [ "$r" -gt "$l" ] 2>/dev/null || { [ "$r" -eq "$l" ] 2>/dev/null || return 1; }
+        if [ "$r" -gt "$l" ] 2>/dev/null; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+notice_for() {
+    local remote="$1" local_v="$2"
+    version_gt "$remote" "$local_v" || return 0
+    printf '[powersnexus] 检测到新版本 %s（当前 %s）。更新：重新安装插件或 git pull 后重启会话。' \
+        "$remote" "$local_v"
+}
+
+today="$(date +%F)"
+local_json="$(cat "${PLUGIN_ROOT}/package.json" 2>/dev/null || true)"
+local_version="$(extract_version "$local_json")"
+[ -n "$local_version" ] || exit 0
+
+latest=""
+if [ -f "$CACHE_FILE" ]; then
+    cached="$(cat "$CACHE_FILE" 2>/dev/null || true)"
+    cached_at="$(printf '%s' "$cached" | sed -n 's/.*"checkedAt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+    if [ "$cached_at" = "$today" ]; then
+        latest="$(printf '%s' "$cached" | sed -n 's/.*"latest"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+    fi
+fi
+
+if [ -z "$latest" ]; then
+    remote_json=""
+    if [ "${UPDATE_URL#file://}" != "$UPDATE_URL" ]; then
+        # 本地文件直读（测试/离线场景）；MINGW 下 curl file:// 不兼容，避免走网络栈
+        local_file="${UPDATE_URL#file://}"
+        if command -v cygpath >/dev/null 2>&1; then
+            local_file="$(cygpath -u "$local_file" 2>/dev/null || printf '%s' "$local_file")"
+        fi
+        remote_json="$(cat "$local_file" 2>/dev/null || true)"
+    elif command -v curl >/dev/null 2>&1; then
+        remote_json="$(curl -fsSL --max-time 3 "$UPDATE_URL" 2>/dev/null || true)"
+    elif command -v wget >/dev/null 2>&1; then
+        remote_json="$(wget -q -T 3 -O - "$UPDATE_URL" 2>/dev/null || true)"
+    fi
+    latest="$(extract_version "$remote_json")"
+    if [ -n "$latest" ]; then
+        cache_dir="$(dirname "$CACHE_FILE")"
+        mkdir -p "$cache_dir" 2>/dev/null || true
+        printf '{"checkedAt":"%s","latest":"%s"}\n' "$today" "$latest" >"$CACHE_FILE" 2>/dev/null || true
+    fi
+fi
+
+[ -n "$latest" ] || exit 0
+notice_for "$latest" "$local_version"
+exit 0
