@@ -1,6 +1,6 @@
 {
   "name": "powersnexus",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "PowersNexus skills and runtime bootstrap for coding agents",
   "type": "module",
   "main": ".opencode/plugins/powersnexus.js",
