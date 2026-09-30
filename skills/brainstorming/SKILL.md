@@ -42,6 +42,16 @@ PowersNexus uses a 5-level process system. The task-size-assessor skill automati
 - **L2**：一次设计契约后进入计划；保留必要的风险、审查和测试。
 - **L3/L4**：按完整流程执行。L4 增加多轮审查和明确用户批准。
 
+## 三路径分级（spike / bounded / architectural）
+
+在 L2+ 已由 task-size-assessor 决定进入本技能后，再按请求性质选择仪式深度。开工前先说出分类（如"这看起来是 bounded，我会在这里给一份简短设计，而不是写 spec"），以便人类纠正：
+
+- **Spike** — 可行性问题（"能不能…"、"是否可能…"、"快速粗糙即可"），产出是答案而非保留的代码。用 2-3 句给出问题与探针计划，得到点头后以最低成本查明。无 design doc、无 spec。结论作为建议报告；任何临时产物标注为 throwaway。
+- **Bounded** — 对**本仓库已有代码**的范围明确改动：新增开关、小端点、单文件修复。**"熟悉这类应用"不算 bounded**——bounded 指要改的流程已在本仓库可读；若没有既有流程可改，就不是 bounded。只问关键澄清问题，给一份**对话内的简短设计**（几句话到几段），然后**停下**。只有在人类明确同意后才开始实现——bounded 的批准门槛与 architectural 一样硬。不写 spec 文件、不写实现计划文档。
+- **Architectural** — 新项目、新子系统、重构组件协作方式或改动他人依赖的接口。走完整流程：澄清问题、方案比选、分段设计、写 spec，再进入 writing-plans。
+
+每条路径都在实现前以人类批准相应设计收尾。bounded 可能只需两句话；新的 todo-list 项目属 architectural，需要写 spec 与规划交接。按所选路径伸缩工件，并在实现前完成该路径的评审。
+
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
 L1+ 项目都需要与风险相称的设计。L0 的文案、配置和机械性微调不进入本技能；它们以变更说明和聚焦验证替代设计工件。

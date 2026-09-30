@@ -1,6 +1,6 @@
 {
   "name": "powersnexus",
-  "version": "6.2.0",
+  "version": "1.0.0",
   "description": "PowersNexus skills and runtime bootstrap for coding agents",
   "type": "module",
   "main": ".opencode/plugins/powersnexus.js",
@@ -32,6 +32,7 @@
     "test:uiux": "node --test tests/ui-ux-pro-max.test.mjs",
     "test:platform": "bash tests/run-platform-tests.sh",
     "test:package": "node --test tests/package-artifact.test.mjs",
+    "test:hermes": "python -m pytest tests/hermes",
     "release:build": "node scripts/build-release-artifact.mjs",
     "release:sign": "node scripts/sign-release-manifest.mjs",
     "test:all": "npm run test:core && npm run test:uiux && npm run test:platform && npm run test:package"

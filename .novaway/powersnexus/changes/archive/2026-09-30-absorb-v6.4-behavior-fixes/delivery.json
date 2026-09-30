@@ -1,0 +1,107 @@
+{
+  "profile": "library",
+  "steps": [
+    {
+      "id": "build",
+      "argv": [
+        "node",
+        "-e",
+        "JSON.parse(require('fs').readFileSync('hooks/hooks.json','utf8'))"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-30T10:57:24.287Z"
+    },
+    {
+      "id": "test",
+      "argv": [
+        "node",
+        "tests/run-tests.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-30T10:57:32.475Z"
+    },
+    {
+      "id": "integration",
+      "argv": [
+        "node",
+        "--test",
+        "tests/package-artifact.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-30T10:57:34.559Z"
+    },
+    {
+      "id": "package",
+      "argv": [
+        "node",
+        "--test",
+        "tests/package-artifact.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "executedAt": "2026-09-30T10:57:36.573Z"
+    }
+  ],
+  "deliveryFingerprint": {
+    "algorithm": "sha256",
+    "files": [
+      ".novaway/powersnexus/changes/absorb-v6.4-behavior-fixes/delta-specs/hooks/spec.md",
+      ".novaway/powersnexus/changes/absorb-v6.4-behavior-fixes/delta-specs/skills/spec.md",
+      "hooks/hooks.json",
+      "package-lock.json",
+      "package.json",
+      "skills/finishing-a-development-branch/SKILL.md",
+      "skills/systematic-debugging/find-polluter.sh",
+      "tests/claude-code/test-worktree-path-policy.sh",
+      "tests/hooks/test-session-start.sh",
+      "tests/systematic-debugging/test-find-polluter.sh"
+    ],
+    "commands": [
+      {
+        "id": "build",
+        "argv": [
+          "node",
+          "-e",
+          "JSON.parse(require('fs').readFileSync('hooks/hooks.json','utf8'))"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "test",
+        "argv": [
+          "node",
+          "tests/run-tests.mjs"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "integration",
+        "argv": [
+          "node",
+          "--test",
+          "tests/package-artifact.test.mjs"
+        ],
+        "timeoutMs": null
+      },
+      {
+        "id": "package",
+        "argv": [
+          "node",
+          "--test",
+          "tests/package-artifact.test.mjs"
+        ],
+        "timeoutMs": null
+      }
+    ],
+    "environment": {
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v22.22.1"
+    },
+    "digest": "21de4c063b2d45dce1f94d74e378e4ac6d4a7e1ed0798216b0983acc9781759d"
+  },
+  "verifiedAt": "2026-09-30T10:57:36.580Z"
+}

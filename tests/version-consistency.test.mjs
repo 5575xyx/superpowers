@@ -11,6 +11,9 @@ const versionFiles = [
   ['.codex-plugin/plugin.json', (json) => json.version],
   ['.cursor-plugin/plugin.json', (json) => json.version],
   ['.kimi-plugin/plugin.json', (json) => json.version],
+  ['.devin-plugin/plugin.json', (json) => json.version],
+  ['.muse-plugin/plugin.json', (json) => json.version],
+  ['.muse-plugin/marketplace.json', (json) => json.plugins[0].version],
   ['gemini-extension.json', (json) => json.version],
 ];
 
@@ -26,4 +29,14 @@ test('所有平台清单使用 package.json 的发布版本', async () => {
     const manifest = await readJson(path);
     assert.equal(selectVersion(manifest), packageJson.version, `${path} 版本不一致`);
   }
+});
+
+test('Hermes YAML 清单版本与 package.json 一致', async () => {
+  const packageJson = await readJson('package.json');
+  const relativePath = '.hermes-plugin/plugin.yaml';
+  const content = await readFile(resolve(repoRoot, relativePath), 'utf8');
+  assert.notEqual(content.charCodeAt(0), 0xFEFF, `${relativePath} 不能包含 UTF-8 BOM`);
+  const match = content.match(/^version:\s*(\S+)/m);
+  assert.ok(match, `${relativePath} 缺少 version 字段`);
+  assert.equal(match[1], packageJson.version, `${relativePath} 版本不一致`);
 });

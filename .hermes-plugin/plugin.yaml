@@ -1,0 +1,6 @@
+name: powersnexus
+version: 1.0.0
+description: PowersNexus skills and workflow bootstrap for Hermes Agent
+author: powersnexus
+provides_hooks:
+  - pre_llm_call

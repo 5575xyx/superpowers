@@ -45,6 +45,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
+      - run: sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && sudo chmod +x /usr/local/bin/yq
       - run: npm run test:platform
         env:
           PowersNexus_REQUIRE_RSYNC_TESTS: '1'
@@ -60,3 +61,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:package
+
+  hermes:
+    name: Hermes plugin tests (Python 3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest
+      - run: python -m pytest tests/hermes

@@ -6,3 +6,5 @@ docs/
 superpowers-main/
 tests/
 dist/
+__pycache__/
+*.pyc

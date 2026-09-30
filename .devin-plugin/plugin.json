@@ -1,0 +1,21 @@
+{
+  "name": "powersnexus",
+  "version": "1.0.0",
+  "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
+  "author": {
+    "name": "PowersNexus"
+  },
+  "homepage": "https://gitee.com/nova-way/powersnexus",
+  "repository": "https://gitee.com/nova-way/powersnexus",
+  "license": "MIT",
+  "keywords": [
+    "brainstorming",
+    "subagent-driven-development",
+    "skills",
+    "planning",
+    "tdd",
+    "debugging",
+    "code-review",
+    "workflow"
+  ]
+}

@@ -10,6 +10,8 @@
 .DS_Store
 node_modules/
 dist/
+__pycache__/
+*.pyc
 inspo
 triage/
 

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "name": "powersnexus",
+  "displayName": "PowersNexus",
+  "version": "1.0.0",
+  "description": "Core skills library for Muse: TDD, debugging, collaboration patterns, and proven techniques",
+  "compat": {
+    "source": "native",
+    "manifestDir": ".muse-plugin"
+  },
+  "capabilities": {
+    "skills": [
+      {
+        "id": "brainstorming",
+        "path": "skills/brainstorming/SKILL.md"
+      },
+      {
+        "id": "decision-expert",
+        "path": "skills/decision-expert/SKILL.md"
+      },
+      {
+        "id": "diagnosing-superpowers",
+        "path": "skills/diagnosing-superpowers/SKILL.md"
+      },
+      {
+        "id": "dispatching-parallel-agents",
+        "path": "skills/dispatching-parallel-agents/SKILL.md"
+      },
+      {
+        "id": "executing-plans",
+        "path": "skills/executing-plans/SKILL.md"
+      },
+      {
+        "id": "exploration",
+        "path": "skills/exploration/SKILL.md"
+      },
+      {
+        "id": "finishing-a-development-branch",
+        "path": "skills/finishing-a-development-branch/SKILL.md"
+      },
+      {
+        "id": "frontend-quality",
+        "path": "skills/frontend-quality/SKILL.md"
+      },
+      {
+        "id": "grill-me",
+        "path": "skills/grill-me/SKILL.md"
+      },
+      {
+        "id": "openspec",
+        "path": "skills/openspec/SKILL.md"
+      },
+      {
+        "id": "receiving-code-review",
+        "path": "skills/receiving-code-review/SKILL.md"
+      },
+      {
+        "id": "red-team",
+        "path": "skills/red-team/SKILL.md"
+      },
+      {
+        "id": "requesting-code-review",
+        "path": "skills/requesting-code-review/SKILL.md"
+      },
+      {
+        "id": "subagent-driven-development",
+        "path": "skills/subagent-driven-development/SKILL.md"
+      },
+      {
+        "id": "systematic-debugging",
+        "path": "skills/systematic-debugging/SKILL.md"
+      },
+      {
+        "id": "task-size-assessor",
+        "path": "skills/task-size-assessor/SKILL.md"
+      },
+      {
+        "id": "test-driven-development",
+        "path": "skills/test-driven-development/SKILL.md"
+      },
+      {
+        "id": "ui-ux-pro-max",
+        "path": "skills/ui-ux-pro-max/SKILL.md"
+      },
+      {
+        "id": "using-git-worktrees",
+        "path": "skills/using-git-worktrees/SKILL.md"
+      },
+      {
+        "id": "using-powersnexus",
+        "path": "skills/using-powersnexus/SKILL.md"
+      },
+      {
+        "id": "verification-before-completion",
+        "path": "skills/verification-before-completion/SKILL.md"
+      },
+      {
+        "id": "writing-plans",
+        "path": "skills/writing-plans/SKILL.md"
+      },
+      {
+        "id": "writing-skills",
+        "path": "skills/writing-skills/SKILL.md"
+      }
+    ],
+    "commands": [],
+    "hooks": [
+      {
+        "id": "session-start",
+        "event": "SessionStart",
+        "command": [
+          "sh",
+          "hooks/session-start"
+        ],
+        "timeoutMs": 5000
+      }
+    ],
+    "mcpServers": [],
+    "reminders": []
+  }
+}

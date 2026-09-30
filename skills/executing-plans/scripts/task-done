@@ -30,7 +30,7 @@ ledger="$dir/progress.md"
 cmd=""
 for a in "$@"; do
   case "$a" in
-    *[[:space:]"'\;\|\&]*) cmd="$cmd '$a'" ;;
+    *[[:space:]\"\;\|\&]*) cmd="$cmd '$a'" ;;
     *) cmd="$cmd $a" ;;
   esac
 done
@@ -46,7 +46,7 @@ if [ "$rc" -ne 0 ]; then
 fi
 
 last=$(grep -v '^[[:space:]]*$' "$log" | tail -n 1)
-[ -f "$ledger" ] || printf '# PowersNexus ledger — plan: %s\n' "$plan" > "$ledger"
+[ -f "$ledger" ] || printf '# SDD ledger — plan: %s\n' "$plan" > "$ledger"
 line="Task $n: complete (commits $(git rev-parse --short=7 "$base")..$(git rev-parse --short=7 HEAD), tests: $cmd → $last)"
 printf '%s\n' "$line" >> "$ledger"
 echo "ledger: $line"

@@ -23,6 +23,14 @@ run_test "OpenCode 快速插件测试" bash "$REPO_ROOT/tests/opencode/run-tests
 run_test "Kimi 插件清单" bash "$REPO_ROOT/tests/kimi/run-tests.sh"
 run_test "Antigravity 工具映射" bash "$REPO_ROOT/tests/antigravity/run-tests.sh"
 run_test "Shell lint 脚本行为" bash "$REPO_ROOT/tests/shell-lint/test-lint-shell.sh"
+run_test "find-polluter 模式匹配" bash "$REPO_ROOT/tests/systematic-debugging/test-find-polluter.sh"
+run_test "diagnosing-superpowers 技能结构" bash "$REPO_ROOT/tests/diagnosing-superpowers/test-skill-structure.sh"
+run_test "Devin 插件清单" bash "$REPO_ROOT/tests/devin/test-devin-plugin.sh"
+if command -v jq >/dev/null 2>&1 && command -v yq >/dev/null 2>&1; then
+    run_test "版本 bump 脚本" bash "$REPO_ROOT/tests/version-bump/test-bump-version.sh"
+else
+    echo "跳过版本 bump 脚本测试：需要 jq 与 yq。"
+fi
 
 if command -v rsync >/dev/null 2>&1; then
     run_test "Codex 插件同步回归" bash "$REPO_ROOT/tests/codex-plugin-sync/test-sync-to-codex-plugin.sh"

@@ -1,5 +1,5 @@
-﻿---
-name: using-PowersNexus
+---
+name: using-powersnexus
 description: Use when starting a coding session or choosing a workflow - classifies work by L0-L4 and activates only the smallest directly responsible skill set
 ---
 
